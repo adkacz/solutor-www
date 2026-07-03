@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adam Kaczmarek — Solutor.pl | Zamieniam realne problemy w działające produkty cyfrowe</title>
+<meta name="description" content="Adam Kaczmarek — projektuję, buduję i wdrażam aplikacje od pomysłu do produkcji. MedOrganizer Pro, Data Driven Heat Control.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F7F6;
+  --panel:#FFFFFF;
+  --ink:#16232B;
+  --steel:#4A6572;
+  --line:#D9E0DE;
+  --ember:#D64A1F;
+  --ember-soft:#FBEAE3;
+  --ok:#1F7A4D;
+  --radius:14px;
+  --maxw:1120px;
+  --font-display:'Bricolage Grotesque',system-ui,sans-serif;
+  --font-body:'Instrument Sans',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:17px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--ember);outline-offset:3px;border-radius:4px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+/* ---------- NAV ---------- */
+.nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(245,247,246,.88);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav-inner{
+  max-width:var(--maxw);margin:0 auto;padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.brand{
+  font-family:var(--font-mono);font-weight:700;font-size:15px;
+  letter-spacing:.02em;text-decoration:none;display:flex;align-items:center;gap:10px;
+}
+.brand-dot{width:9px;height:9px;border-radius:50%;background:var(--ember);display:inline-block}
+.nav-links{display:flex;gap:26px;align-items:center}
+.nav-links a{
+  text-decoration:none;font-size:15px;font-weight:500;color:var(--steel);
+  transition:color .15s;
+}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{
+  font-family:var(--font-mono);font-size:13px;font-weight:500;
+  border:1.5px solid var(--ink);border-radius:999px;padding:7px 16px;
+  text-decoration:none;transition:background .15s,color .15s;
+}
+.nav-cta:hover{background:var(--ink);color:var(--bg)}
+@media(max-width:680px){.nav-links a:not(.nav-cta){display:none}}
+
+/* ---------- MEASUREMENT AXIS DIVIDER (signature) ---------- */
+.axis{
+  max-width:var(--maxw);margin:0 auto;padding:0 24px;
+  height:34px;position:relative;overflow:hidden;
+}
+.axis svg{display:block;width:100%;height:100%}
+.axis line{stroke:var(--line);stroke-width:1.5}
+.axis .tick{stroke:#B9C4C1}
+.axis .tick-major{stroke:var(--steel)}
+.axis-label{
+  font-family:var(--font-mono);font-size:11px;fill:var(--steel);letter-spacing:.08em;
+}
+
+/* ---------- HERO ---------- */
+.hero{padding:72px 0 64px}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:40px}}
+.eyebrow{
+  font-family:var(--font-mono);font-size:13px;font-weight:500;color:var(--steel);
+  letter-spacing:.14em;text-transform:uppercase;margin-bottom:22px;display:flex;align-items:center;gap:10px;
+}
+.eyebrow::before{content:"";width:26px;height:1.5px;background:var(--ember);display:inline-block}
+h1{
+  font-family:var(--font-display);
+  font-size:clamp(38px,5.4vw,58px);
+  font-weight:800;line-height:1.06;letter-spacing:-.015em;
+  margin-bottom:24px;
+}
+h1 em{font-style:normal;color:var(--ember)}
+.hero-sub{font-size:19px;color:var(--steel);max-width:34em;margin-bottom:34px}
+.hero-sub strong{color:var(--ink);font-weight:600}
+.cta-row{display:flex;gap:14px;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--font-body);font-weight:600;font-size:16px;
+  padding:13px 26px;border-radius:999px;text-decoration:none;
+  transition:transform .15s,box-shadow .15s,background .15s;
+}
+.btn-primary{background:var(--ink);color:#fff;box-shadow:0 2px 0 rgba(22,35,43,.25)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(22,35,43,.22)}
+.btn-ghost{border:1.5px solid var(--line);color:var(--ink);background:var(--panel)}
+.btn-ghost:hover{border-color:var(--steel)}
+.btn .arr{font-family:var(--font-mono);font-weight:400}
+
+/* hero chart card */
+.chart-card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px 26px 20px;box-shadow:0 10px 34px rgba(22,35,43,.07);
+}
+.chart-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px}
+.chart-title{font-family:var(--font-mono);font-size:12.5px;color:var(--steel);letter-spacing:.06em}
+.chart-badge{
+  font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--ember);
+  background:var(--ember-soft);border-radius:999px;padding:3px 11px;white-space:nowrap;
+}
+.chart-note{font-family:var(--font-mono);font-size:11.5px;color:var(--steel);margin-top:10px;text-align:right}
+#etChart{width:100%;height:auto;display:block}
+#etChart .grid-l{stroke:var(--line);stroke-width:1;stroke-dasharray:2 5}
+#etChart .curve{
+  fill:none;stroke:var(--ink);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:600;stroke-dashoffset:600;animation:draw 1.6s .3s ease-out forwards;
+}
+@keyframes draw{to{stroke-dashoffset:0}}
+#etChart .pt{fill:var(--panel);stroke:var(--ink);stroke-width:2}
+#etChart .pt-last{fill:var(--ember);stroke:var(--ember)}
+#etChart .lbl{font-family:var(--font-mono);font-size:11px;fill:var(--steel)}
+#etChart .val{font-family:var(--font-mono);font-size:11.5px;font-weight:700;fill:var(--ink)}
+#etChart .val-last{fill:var(--ember)}
+
+/* ---------- SECTIONS ---------- */
+section{padding:76px 0}
+.sec-head{margin-bottom:44px}
+.sec-eyebrow{
+  font-family:var(--font-mono);font-size:12.5px;color:var(--ember);font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px;
+}
+h2{
+  font-family:var(--font-display);font-size:clamp(28px,3.6vw,40px);
+  font-weight:700;letter-spacing:-.01em;line-height:1.12;
+}
+.sec-lead{color:var(--steel);font-size:18px;max-width:38em;margin-top:14px}
+
+/* pillars */
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:860px){.pillars{grid-template-columns:1fr}}
+.pillar{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:28px 26px;position:relative;
+}
+.pillar::before{
+  content:"";position:absolute;top:0;left:26px;width:44px;height:3px;
+  background:var(--ember);border-radius:0 0 3px 3px;
+}
+.pillar h3{font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:12px;line-height:1.3}
+.pillar p{color:var(--steel);font-size:15.5px}
+
+/* ---------- CASE STUDIES ---------- */
+.case{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:clamp(28px,4vw,48px);margin-bottom:28px;
+}
+.case-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-bottom:8px}
+.case h3{font-family:var(--font-display);font-size:clamp(24px,3vw,32px);font-weight:800;letter-spacing:-.01em}
+.case-tag{font-size:17px;color:var(--steel);margin-bottom:28px}
+.live-link{
+  font-family:var(--font-mono);font-size:13.5px;font-weight:500;
+  display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+  border:1.5px solid var(--line);border-radius:999px;padding:8px 16px;
+  transition:border-color .15s,background .15s;white-space:nowrap;
+}
+.live-link:hover{border-color:var(--ember);background:var(--ember-soft)}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(31,122,77,.15)}
+.case-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px}
+@media(max-width:820px){.case-grid{grid-template-columns:1fr}}
+.case h4{
+  font-family:var(--font-mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--steel);margin-bottom:10px;
+}
+.case p{font-size:15.5px;color:#2E3E48;margin-bottom:22px}
+.case ul{list-style:none;margin-bottom:22px}
+.case ul li{
+  font-size:15.5px;color:#2E3E48;padding-left:22px;position:relative;margin-bottom:9px;
+}
+.case ul li::before{
+  content:"—";position:absolute;left:0;color:var(--ember);font-family:var(--font-mono);
+}
+.stack-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{
+  font-family:var(--font-mono);font-size:12px;color:var(--steel);
+  border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--bg);
+}
+/* stat cards */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:6px 0 26px}
+@media(max-width:860px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{
+  background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px 16px 15px;
+}
+.stat .num{
+  font-family:var(--font-mono);font-weight:700;font-size:clamp(20px,2.3vw,26px);
+  letter-spacing:-.02em;line-height:1.1;
+}
+.stat .num.hot{color:var(--ember)}
+.stat .unit{font-size:.62em;font-weight:500;color:var(--steel);margin-left:2px}
+.stat .cap{font-size:12.5px;color:var(--steel);margin-top:7px;line-height:1.45}
+.efekt-extra{font-size:14.5px;color:var(--steel)}
+.efekt-extra strong{color:var(--ink)}
+
+/* ---------- WARSZTAT ---------- */
+.workshop{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:820px){.workshop{grid-template-columns:1fr}}
+.ws-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:30px 28px}
+.ws-card h3{font-family:var(--font-display);font-size:21px;font-weight:700;margin-bottom:18px}
+.tech-list{list-style:none}
+.tech-list li{
+  display:flex;gap:14px;padding:11px 0;border-bottom:1px dashed var(--line);
+  font-size:15px;align-items:baseline;
+}
+.tech-list li:last-child{border-bottom:none}
+.tech-list .k{
+  font-family:var(--font-mono);font-size:12px;color:var(--steel);min-width:118px;
+  letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;padding-top:2px;
+}
+.ai-step{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start}
+.ai-step .marker{
+  font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--ember);
+  background:var(--ember-soft);border-radius:7px;padding:4px 9px;flex-shrink:0;margin-top:2px;
+}
+.ai-step p{font-size:15px;color:#2E3E48}
+.ai-step p strong{color:var(--ink)}
+.ws-quote{
+  margin-top:20px;padding:16px 18px;background:var(--bg);border-left:3px solid var(--ember);
+  border-radius:0 10px 10px 0;font-size:15px;color:var(--steel);
+}
+.ws-quote strong{color:var(--ink)}
+
+/* ---------- DLA KOGO ---------- */
+.paths{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:820px){.paths{grid-template-columns:1fr}}
+.path{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:32px 30px;display:flex;flex-direction:column;gap:14px;
+}
+.path h3{font-family:var(--font-display);font-size:22px;font-weight:700}
+.path p{color:#2E3E48;font-size:15.5px;flex-grow:1}
+.path .btn{align-self:flex-start}
+
+/* ---------- FOOTER ---------- */
+footer{border-top:1px solid var(--line);padding:44px 0 54px;background:var(--panel)}
+.foot-grid{display:flex;justify-content:space-between;align-items:center;gap:22px;flex-wrap:wrap}
+.foot-id{font-family:var(--font-mono);font-size:14px}
+.foot-id .nm{font-weight:700}
+.foot-id .sep{color:var(--line);margin:0 8px}
+.foot-links{display:flex;gap:22px;flex-wrap:wrap}
+.foot-links a{font-size:15px;color:var(--steel);text-decoration:none}
+.foot-links a:hover{color:var(--ember)}
+.foot-meta{font-family:var(--font-mono);font-size:12.5px;color:var(--steel)}
+
+/* scroll reveal */
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Nawigacja główna">
+  <div class="nav-inner">
+    <a class="brand" href="#top"><span class="brand-dot" aria-hidden="true"></span>solutor.pl</a>
+    <div class="nav-links">
+      <a href="#projekty">Projekty</a>
+      <a href="#warsztat">Warsztat</a>
+      <a href="#wspolpraca">Współpraca</a>
+      <a class="nav-cta" href="mailto:adamkaczmarek303@gmail.com">Napisz do mnie</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">Adam Kaczmarek · Solutor.pl</p>
+      <h1>Zamieniam realne problemy w&nbsp;<em>działające</em> produkty cyfrowe.</h1>
+      <p class="hero-sub">Projektuję, buduję i wdrażam aplikacje od pomysłu do produkcji —
+      łącząc <strong>myślenie produktowe</strong> z nowoczesnym, wspomaganym przez AI
+      procesem wytwórczym.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#projekty">Zobacz projekty <span class="arr">↓</span></a>
+        <a class="btn btn-ghost" href="mailto:adamkaczmarek303@gmail.com">Skontaktuj się</a>
+      </div>
+    </div>
+
+    <figure class="chart-card" aria-label="Wykres: energochłonność termiczna budynku spadła o 29 procent w pięciu sezonach">
+      <div class="chart-head">
+        <span class="chart-title">ENERGOCHŁONNOŚĆ BUDYNKU · GJ/stopniodzień</span>
+        <span class="chart-badge">▼ 29%</span>
+      </div>
+      <svg id="etChart" viewBox="0 0 440 230" role="img">
+        <line class="grid-l" x1="30" y1="40"  x2="430" y2="40"/>
+        <line class="grid-l" x1="30" y1="90"  x2="430" y2="90"/>
+        <line class="grid-l" x1="30" y1="140" x2="430" y2="140"/>
+        <line class="grid-l" x1="30" y1="190" x2="430" y2="190"/>
+        <!-- ET: .1362 .1818 .1618 .1430 .1293 → y = 40 + (0.1818-v)/(0.1818-0.1293)*150 -->
+        <polyline class="curve" points="50,170 145,40 240,97 335,151 420,190"/>
+        <circle class="pt" cx="50"  cy="170" r="5"/>
+        <circle class="pt" cx="145" cy="40"  r="5"/>
+        <circle class="pt" cx="240" cy="97"  r="5"/>
+        <circle class="pt" cx="335" cy="151" r="5"/>
+        <circle class="pt pt-last" cx="420" cy="190" r="6.5"/>
+        <text class="val" x="50"  y="158" text-anchor="middle">0.1362</text>
+        <text class="val" x="145" y="28"  text-anchor="middle">0.1818</text>
+        <text class="val" x="240" y="85"  text-anchor="middle">0.1618</text>
+        <text class="val" x="335" y="139" text-anchor="middle">0.1430</text>
+        <text class="val val-last" x="412" y="178" text-anchor="end">0.1293</text>
+        <text class="lbl" x="50"  y="215" text-anchor="middle">21/22</text>
+        <text class="lbl" x="145" y="215" text-anchor="middle">22/23</text>
+        <text class="lbl" x="240" y="215" text-anchor="middle">23/24</text>
+        <text class="lbl" x="335" y="215" text-anchor="middle">24/25</text>
+        <text class="lbl" x="420" y="215" text-anchor="middle">25/26</text>
+      </svg>
+      <figcaption class="chart-note">rzeczywiste dane · 5 sezonów · 104 506 pomiarów</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="axis" aria-hidden="true">
+  <svg viewBox="0 0 1072 34" preserveAspectRatio="none">
+    <line x1="0" y1="17" x2="1072" y2="17"/>
+    <g class="ticks"></g>
+  </svg>
+</div>
+
+<!-- ================= JAK PRACUJĘ ================= -->
+<section id="proces">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="sec-eyebrow">Jak pracuję</p>
+      <h2>Od problemu do wdrożenia</h2>
+    </div>
+    <div class="pillars">
+      <article class="pillar reveal">
+        <h3>Zaczynam od problemu, nie od technologii</h3>
+        <p>Każdy z moich projektów powstał, bo coś realnie nie działało: chaos w domowej
+        apteczce osoby przewlekle chorej, brak danych o pracy węzła cieplnego budynku.
+        Najpierw rozumiem problem i użytkownika, potem dobieram narzędzia.</p>
+      </article>
+      <article class="pillar reveal">
+        <h3>Dowożę działający produkt, nie prototyp</h3>
+        <p>Wdrożenie na produkcję, własna domena, aplikacja instalowalna na telefonie,
+        monitoring, telemetria, onboarding użytkownika. Projekt jest skończony wtedy,
+        gdy ktoś go używa — nie wtedy, gdy kod się kompiluje.</p>
+      </article>
+      <article class="pillar reveal">
+        <h3>AI jako zespół, ja jako architekt</h3>
+        <p>Pracuję w zdyscyplinowanym procesie z modelami AI: jeden projektuje
+        i recenzuje architekturę, drugi generuje kod, a każda zmiana przechodzi przez
+        weryfikację przed wdrożeniem. Efekt: tempo małego zespołu przy jednoosobowych
+        kosztach.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="axis" aria-hidden="true">
+  <svg viewBox="0 0 1072 34" preserveAspectRatio="none">
+    <line x1="0" y1="17" x2="1072" y2="17"/>
+    <g class="ticks"></g>
+  </svg>
+</div>
+
+<!-- ================= PROJEKTY ================= -->
+<section id="projekty">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="sec-eyebrow">Projekty</p>
+      <h2>Projekty, które żyją na produkcji</h2>
+      <p class="sec-lead">Nie makiety i nie repozytoria-wydmuszki. Oba rozwiązania działają
+      publicznie — możesz je otworzyć teraz.</p>
+    </div>
+
+    <!-- CASE 1: DASHBOARD -->
+    <article class="case reveal">
+      <div class="case-top">
+        <h3>Data Driven Heat Control</h3>
+        <a class="live-link" href="https://data-driven-heat-control.onrender.com" target="_blank" rel="noopener">
+          <span class="live-dot" aria-hidden="true"></span> zobacz na żywo
+        </a>
+      </div>
+      <p class="case-tag">Monitoring i analityka węzła cieplnego budynku wielorodzinnego.</p>
+
+      <div class="stats">
+        <div class="stat"><div class="num">2090<span class="unit">SDG</span></div>
+          <div class="cap">najzimniejszy sezon w 5-letniej historii pomiarów (2025/26)</div></div>
+        <div class="stat"><div class="num">1,16<span class="unit">GJ/24h</span></div>
+          <div class="cap">…a mimo to najniższe dobowe zużycie ciepła w historii</div></div>
+        <div class="stat"><div class="num hot">−29<span class="unit">%</span></div>
+          <div class="cap">spadek energochłonności budynku od szczytu w 2022/23</div></div>
+        <div class="stat"><div class="num hot">~14 000<span class="unit">zł</span></div>
+          <div class="cap">unikniętego kosztu ciepła w trzech kolejnych sezonach</div></div>
+      </div>
+
+      <div class="case-grid">
+        <div>
+          <h4>Problem</h4>
+          <p>Wspólnota mieszkaniowa płaci za ciepło i serwis węzła, ale nie ma żadnych danych,
+          by ocenić, czy instalacja pracuje optymalnie — ani argumentów w rozmowie z dostawcą
+          ciepła i firmą serwisową.</p>
+          <h4>Rozwiązanie</h4>
+          <p>Dashboard analityczny zasilany automatycznie zbieranymi pomiarami co 15 minut
+          (ponad 100&nbsp;000 obserwacji z 5 sezonów). Porównuje sezony z normalizacją pogodową
+          (stopniodni grzewcze), wykrywa anomalie względem sezonu wzorcowego i wylicza autorskie
+          wskaźniki: Energochłonność Termiczną oraz PC&nbsp;Indeks — gotowość instalacji do
+          zastąpienia pompą ciepła, z progiem opłacalności wyliczonym z realnych taryf.</p>
+        </div>
+        <div>
+          <h4>Najciekawsze wyzwania techniczne</h4>
+          <ul>
+            <li>Automatyczny scraper z inteligentnym pobieraniem tylko brakujących danych</li>
+            <li>Algorytm detekcji granic sezonu grzewczego z surowych pomiarów</li>
+            <li>Normalizacja zużycia przez warunki pogodowe — uczciwe porównania rok do roku</li>
+            <li>Zgodność pracy węzła z krzywą wzorcową: wzrost z 19,9% do ~85% po interwencjach popartych danymi</li>
+            <li>Alerty e-mail przy spadku temperatury, harmonogram zadań w tle</li>
+          </ul>
+          <h4>Stack</h4>
+          <div class="stack-row">
+            <span class="chip">Python</span><span class="chip">Dash / Plotly</span>
+            <span class="chip">pandas</span><span class="chip">Selenium</span>
+            <span class="chip">APScheduler</span><span class="chip">Render.com</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- CASE 2: MEDORGANIZER -->
+    <article class="case reveal">
+      <div class="case-top">
+        <h3>MedOrganizer Pro</h3>
+        <a class="live-link" href="https://medorg.pl" target="_blank" rel="noopener">
+          <span class="live-dot" aria-hidden="true"></span> medorg.pl
+        </a>
+      </div>
+      <p class="case-tag">Cyfrowa apteczka dla osób przewlekle chorych i ich opiekunów.</p>
+
+      <div class="case-grid">
+        <div>
+          <h4>Problem</h4>
+          <p>Osoby przyjmujące kilka leków stale balansują między „zapas się kończy"
+          a „recepta traci ważność". Papierowe notatki i pamięć zawodzą — a skutkiem
+          jest przerwa w leczeniu.</p>
+          <h4>Rozwiązanie</h4>
+          <p>Aplikacja webowa (PWA), która czyta e-recepty z PDF, automatycznie śledzi zużycie
+          leków w czasie, przypomina o wykupie i wizycie u lekarza, synchronizuje dane między
+          urządzeniami przez Google Drive i generuje „kartę apteczną" QR z listą zakupów
+          dla farmaceuty.</p>
+          <h4>Efekt</h4>
+          <p class="efekt-extra">Kompletny produkt zbudowany i wdrożony <strong>end-to-end
+          w pojedynkę</strong>: własna domena, instalowalna aplikacja PWA, logowanie Google
+          OAuth, synchronizacja w chmurze, pipeline telemetrii i system onboardingu.
+          Od pierwszej linii kodu do produkcji — jeden autor, pełna odpowiedzialność
+          za każdą warstwę.</p>
+        </div>
+        <div>
+          <h4>Najciekawsze wyzwania techniczne</h4>
+          <ul>
+            <li>Parser e-recept PDF odporny na różne formaty dokumentów</li>
+            <li>Synchronizacja wielourządzeniowa z rozwiązywaniem konfliktów (CRDT/LWW)</li>
+            <li>Model logistyki leków: predykcja wyczerpania zapasu na podstawie dawkowania</li>
+            <li>Onboarding kontekstowy prowadzący użytkownika krok po kroku</li>
+          </ul>
+          <h4>Stack</h4>
+          <div class="stack-row">
+            <span class="chip">Python</span><span class="chip">Flet (PWA)</span>
+            <span class="chip">Google Drive API</span><span class="chip">OAuth 2.0</span>
+            <span class="chip">PyMuPDF</span><span class="chip">Render.com</span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<div class="axis" aria-hidden="true">
+  <svg viewBox="0 0 1072 34" preserveAspectRatio="none">
+    <line x1="0" y1="17" x2="1072" y2="17"/>
+    <g class="ticks"></g>
+  </svg>
+</div>
+
+<!-- ================= WARSZTAT ================= -->
+<section id="warsztat">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="sec-eyebrow">Warsztat</p>
+      <h2>Czym i jak pracuję</h2>
+    </div>
+    <div class="workshop">
+      <div class="ws-card reveal">
+        <h3>Technologie</h3>
+        <ul class="tech-list">
+          <li><span class="k">Backend / dane</span><span>Python, pandas, NumPy</span></li>
+          <li><span class="k">Aplikacje</span><span>Dash / Plotly, Flet (PWA)</span></li>
+          <li><span class="k">Integracje</span><span>Google API (Drive, OAuth, Sheets), Selenium, REST</span></li>
+          <li><span class="k">Wdrożenia</span><span>Render.com, Docker, DNS / domeny, GitHub</span></li>
+          <li><span class="k">Dokumenty</span><span>parsowanie PDF (PyMuPDF, pdfplumber), generowanie QR</span></li>
+        </ul>
+      </div>
+      <div class="ws-card reveal">
+        <h3>Proces z AI</h3>
+        <div class="ai-step">
+          <span class="marker">01</span>
+          <p><strong>Architektura i code review.</strong> Jeden model projektuje rozwiązania,
+          audytuje kod i weryfikuje każdą zmianę.</p>
+        </div>
+        <div class="ai-step">
+          <span class="marker">02</span>
+          <p><strong>Generowanie kodu.</strong> Drugi model implementuje według zatwierdzonej
+          specyfikacji.</p>
+        </div>
+        <div class="ai-step">
+          <span class="marker">03</span>
+          <p><strong>Zasada żelazna.</strong> Żaden wygenerowany kod nie trafia do projektu
+          bez przeglądu.</p>
+        </div>
+        <div class="ws-quote">Ten proces to nie skrót — <strong>to metoda</strong>. Daje mi
+        przewagę szybkości przy zachowaniu kontroli nad jakością i architekturą.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="axis" aria-hidden="true">
+  <svg viewBox="0 0 1072 34" preserveAspectRatio="none">
+    <line x1="0" y1="17" x2="1072" y2="17"/>
+    <g class="ticks"></g>
+  </svg>
+</div>
+
+<!-- ================= WSPÓŁPRACA ================= -->
+<section id="wspolpraca">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="sec-eyebrow">Współpraca</p>
+      <h2>W czym mogę pomóc</h2>
+    </div>
+    <div class="paths">
+      <div class="path reveal">
+        <h3>Dla firm — zlecenie lub współpraca</h3>
+        <p>Buduję narzędzia wewnętrzne, dashboardy analityczne, automatyzacje i aplikacje
+        webowe — od rozmowy o problemie do działającego wdrożenia. Najlepiej sprawdzam się
+        tam, gdzie problem jest realny, a zespołu IT brak albo ma pilniejsze rzeczy.</p>
+        <a class="btn btn-primary" href="mailto:adamkaczmarek303@gmail.com?subject=Wsp%C3%B3%C5%82praca%20%E2%80%94%20Solutor.pl">Opisz mi swój problem</a>
+      </div>
+      <div class="path reveal">
+        <h3>Dla pracodawców — rekrutacja</h3>
+        <p>Szukasz osoby na styku produktu i technologii — kogoś, kto rozumie kod na tyle,
+        by go recenzować i architektować, a jednocześnie myśli wdrożeniem, użytkownikiem
+        i efektem biznesowym? Porozmawiajmy — CV wysyłam na życzenie.</p>
+        <a class="btn btn-ghost" href="mailto:adamkaczmarek303@gmail.com?subject=Rekrutacja%20%E2%80%94%20Adam%20Kaczmarek">Poproś o CV</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap foot-grid">
+    <div class="foot-id">
+      <span class="nm">Adam Kaczmarek</span><span class="sep">·</span>Solutor.pl
+    </div>
+    <div class="foot-links">
+      <a href="mailto:adamkaczmarek303@gmail.com">adamkaczmarek303@gmail.com</a>
+      <a href="https://medorg.pl" target="_blank" rel="noopener">medorg.pl</a>
+      <a href="https://data-driven-heat-control.onrender.com" target="_blank" rel="noopener">heat control</a>
+    </div>
+    <div class="foot-meta">Wrocław / zdalnie · © 2026</div>
+  </div>
+</footer>
+
+<script>
+// Podziałka osi pomiarowej (signature) — generowana, żeby nie klepać 100 linii SVG
+document.querySelectorAll('.axis .ticks').forEach(g => {
+  let s = '';
+  for (let x = 0; x <= 1072; x += 16) {
+    const major = (x % 160 === 0);
+    const h = major ? 8 : 4;
+    s += `<line class="tick ${major ? 'tick-major' : ''}" x1="${x}" y1="${17 - h}" x2="${x}" y2="${17 + h}"/>`;
+  }
+  g.innerHTML = s;
+});
+
+// Scroll reveal (z poszanowaniem prefers-reduced-motion)
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (!prefersReduced && 'IntersectionObserver' in window) {
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+} else {
+  document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+}
+</script>
+</body>
+</html>

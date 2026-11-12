@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Adam Kaczmarek — Solutor.pl | Zamieniam realne problemy w działające produkty cyfrowe</title>
-<meta name="description" content="Adam Kaczmarek — projektuję, buduję i wdrażam aplikacje od pomysłu do produkcji. MedOrganizer Pro, Data Driven Heat Control.">
+<title>Adam Kaczmarek — Solutor.pl | Zamieniam „na oko” w pomiar i narzędzie do decyzji</title>
+<meta name="description" content="Adam Kaczmarek — znajduję miejsca, gdzie firma działa na oko, i zamieniam je w pomiar i narzędzie do decyzji. Przykłady: ogrzewanie budynku, MedOrganizer.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -13,11 +13,13 @@
   --bg:#F5F7F6;
   --panel:#FFFFFF;
   --ink:#16232B;
+  --text:#2E3E48;
   --steel:#4A6572;
   --line:#D9E0DE;
   --ember:#D64A1F;
   --ember-soft:#FBEAE3;
   --ok:#1F7A4D;
+  --ok-soft:#E6F3EC;
   --radius:14px;
   --maxw:1120px;
   --font-display:'Bricolage Grotesque',system-ui,sans-serif;
@@ -39,6 +41,7 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 a{color:inherit}
+img{max-width:100%;height:auto;display:block}
 :focus-visible{outline:3px solid var(--ember);outline-offset:3px;border-radius:4px}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
 
@@ -67,10 +70,11 @@ a{color:inherit}
 .nav-cta{
   font-family:var(--font-mono);font-size:13px;font-weight:500;
   border:1.5px solid var(--ink);border-radius:999px;padding:7px 16px;
-  text-decoration:none;transition:background .15s,color .15s;
+  text-decoration:none;transition:background .15s,color .15s;white-space:nowrap;
 }
-.nav-cta:hover{background:var(--ink);color:var(--bg)}
-@media(max-width:680px){.nav-links a:not(.nav-cta){display:none}}
+.nav-links a.nav-cta{color:var(--ink)}
+.nav-links a.nav-cta:hover{background:var(--ink);color:var(--bg)}
+@media(max-width:760px){.nav-links a:not(.nav-cta){display:none}}
 
 /* ---------- MEASUREMENT AXIS DIVIDER (signature) ---------- */
 .axis{
@@ -81,14 +85,11 @@ a{color:inherit}
 .axis line{stroke:var(--line);stroke-width:1.5}
 .axis .tick{stroke:#B9C4C1}
 .axis .tick-major{stroke:var(--steel)}
-.axis-label{
-  font-family:var(--font-mono);font-size:11px;fill:var(--steel);letter-spacing:.08em;
-}
 
 /* ---------- HERO ---------- */
 .hero{padding:72px 0 64px}
 .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
-@media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:40px}}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:40px}.hero{padding:48px 0 44px}}
 .eyebrow{
   font-family:var(--font-mono);font-size:13px;font-weight:500;color:var(--steel);
   letter-spacing:.14em;text-transform:uppercase;margin-bottom:22px;display:flex;align-items:center;gap:10px;
@@ -96,9 +97,9 @@ a{color:inherit}
 .eyebrow::before{content:"";width:26px;height:1.5px;background:var(--ember);display:inline-block}
 h1{
   font-family:var(--font-display);
-  font-size:clamp(38px,5.4vw,58px);
-  font-weight:800;line-height:1.06;letter-spacing:-.015em;
-  margin-bottom:24px;
+  font-size:clamp(32px,4.5vw,50px);
+  font-weight:800;line-height:1.1;letter-spacing:-.015em;
+  margin-bottom:24px;text-wrap:balance;
 }
 h1 em{font-style:normal;color:var(--ember)}
 .hero-sub{font-size:19px;color:var(--steel);max-width:34em;margin-bottom:34px}
@@ -108,7 +109,7 @@ h1 em{font-style:normal;color:var(--ember)}
   display:inline-flex;align-items:center;gap:9px;
   font-family:var(--font-body);font-weight:600;font-size:16px;
   padding:13px 26px;border-radius:999px;text-decoration:none;
-  transition:transform .15s,box-shadow .15s,background .15s;
+  transition:transform .15s,box-shadow .15s,background .15s,border-color .15s;
 }
 .btn-primary{background:var(--ink);color:#fff;box-shadow:0 2px 0 rgba(22,35,43,.25)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(22,35,43,.22)}
@@ -121,13 +122,13 @@ h1 em{font-style:normal;color:var(--ember)}
   background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
   padding:26px 26px 20px;box-shadow:0 10px 34px rgba(22,35,43,.07);
 }
-.chart-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px}
+.chart-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px;flex-wrap:wrap}
 .chart-title{font-family:var(--font-mono);font-size:12.5px;color:var(--steel);letter-spacing:.06em}
 .chart-badge{
   font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--ember);
   background:var(--ember-soft);border-radius:999px;padding:3px 11px;white-space:nowrap;
 }
-.chart-note{font-family:var(--font-mono);font-size:11.5px;color:var(--steel);margin-top:10px;text-align:right}
+.chart-note{font-family:var(--font-mono);font-size:11.5px;color:var(--steel);margin-top:10px;line-height:1.5}
 #etChart{width:100%;height:auto;display:block}
 #etChart .grid-l{stroke:var(--line);stroke-width:1;stroke-dasharray:2 5}
 #etChart .curve{
@@ -136,13 +137,17 @@ h1 em{font-style:normal;color:var(--ember)}
 }
 @keyframes draw{to{stroke-dashoffset:0}}
 #etChart .pt{fill:var(--panel);stroke:var(--ink);stroke-width:2}
-#etChart .pt-last{fill:var(--ember);stroke:var(--ember)}
+#etChart .pt-hot{fill:var(--ember);stroke:var(--ember)}
+#etChart .pt-last{fill:var(--ok);stroke:var(--ok)}
 #etChart .lbl{font-family:var(--font-mono);font-size:11px;fill:var(--steel)}
 #etChart .val{font-family:var(--font-mono);font-size:11.5px;font-weight:700;fill:var(--ink)}
-#etChart .val-last{fill:var(--ember)}
+#etChart .val-hot{fill:var(--ember)}
+#etChart .val-last{fill:var(--ok)}
+#etChart .note{font-family:var(--font-mono);font-size:10.5px;fill:var(--ember)}
 
 /* ---------- SECTIONS ---------- */
 section{padding:76px 0}
+@media(max-width:700px){section{padding:54px 0}}
 .sec-head{margin-bottom:44px}
 .sec-eyebrow{
   font-family:var(--font-mono);font-size:12.5px;color:var(--ember);font-weight:700;
@@ -150,32 +155,35 @@ section{padding:76px 0}
 }
 h2{
   font-family:var(--font-display);font-size:clamp(28px,3.6vw,40px);
-  font-weight:700;letter-spacing:-.01em;line-height:1.12;
+  font-weight:700;letter-spacing:-.01em;line-height:1.12;text-wrap:balance;
 }
 .sec-lead{color:var(--steel);font-size:18px;max-width:38em;margin-top:14px}
 
-/* pillars */
-.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-@media(max-width:860px){.pillars{grid-template-columns:1fr}}
-.pillar{
-  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
-  padding:28px 26px;position:relative;
+/* „na oko” → „zmierzone” */
+.pairs{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:860px){.pairs{grid-template-columns:1fr}}
+.pair{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+.pair-top{padding:22px 24px 18px;border-bottom:1px dashed var(--line)}
+.pair-bottom{padding:18px 24px 24px;background:linear-gradient(180deg,#FBFCFB,var(--panel));flex-grow:1}
+.pair-k{
+  font-family:var(--font-mono);font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;
+  font-weight:700;margin-bottom:8px;
 }
-.pillar::before{
-  content:"";position:absolute;top:0;left:26px;width:44px;height:3px;
-  background:var(--ember);border-radius:0 0 3px 3px;
-}
-.pillar h3{font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:12px;line-height:1.3}
-.pillar p{color:var(--steel);font-size:15.5px}
+.pair-top .pair-k{color:var(--ember)}
+.pair-bottom .pair-k{color:var(--ok)}
+.pair h3{font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.3;margin-bottom:2px}
+.pair p{font-size:15.5px;color:var(--text)}
+.pair-area{font-family:var(--font-mono);font-size:12px;color:var(--steel);padding:12px 24px 0;letter-spacing:.06em;text-transform:uppercase}
 
 /* ---------- CASE STUDIES ---------- */
 .case{
   background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
-  padding:clamp(28px,4vw,48px);margin-bottom:28px;
+  padding:clamp(24px,4vw,48px);margin-bottom:28px;
 }
 .case-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-bottom:8px}
-.case h3{font-family:var(--font-display);font-size:clamp(24px,3vw,32px);font-weight:800;letter-spacing:-.01em}
-.case-tag{font-size:17px;color:var(--steel);margin-bottom:28px}
+.case h3{font-family:var(--font-display);font-size:clamp(24px,3vw,32px);font-weight:800;letter-spacing:-.01em;line-height:1.15}
+.case-name{font-family:var(--font-mono);font-size:12.5px;color:var(--steel);letter-spacing:.06em;margin-top:6px}
+.case-tag{font-size:17px;color:var(--steel);margin:14px 0 28px;max-width:44em}
 .live-link{
   font-family:var(--font-mono);font-size:13.5px;font-weight:500;
   display:inline-flex;align-items:center;gap:8px;text-decoration:none;
@@ -184,78 +192,110 @@ h2{
 }
 .live-link:hover{border-color:var(--ember);background:var(--ember-soft)}
 .live-dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(31,122,77,.15)}
+.live-hint{font-family:var(--font-mono);font-size:11.5px;color:var(--steel);margin-top:6px;text-align:right}
+.badge-wip{
+  font-family:var(--font-mono);font-size:12.5px;font-weight:700;color:var(--steel);
+  border:1.5px dashed var(--line);border-radius:999px;padding:7px 14px;white-space:nowrap;
+}
 .case-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px}
-@media(max-width:820px){.case-grid{grid-template-columns:1fr}}
+@media(max-width:820px){.case-grid{grid-template-columns:1fr;gap:8px}}
 .case h4{
   font-family:var(--font-mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;
   color:var(--steel);margin-bottom:10px;
 }
-.case p{font-size:15.5px;color:#2E3E48;margin-bottom:22px}
+.case p{font-size:15.5px;color:var(--text);margin-bottom:22px}
 .case ul{list-style:none;margin-bottom:22px}
-.case ul li{
-  font-size:15.5px;color:#2E3E48;padding-left:22px;position:relative;margin-bottom:9px;
-}
-.case ul li::before{
-  content:"—";position:absolute;left:0;color:var(--ember);font-family:var(--font-mono);
-}
+.case ul li{font-size:15.5px;color:var(--text);padding-left:22px;position:relative;margin-bottom:9px}
+.case ul li::before{content:"—";position:absolute;left:0;color:var(--ember);font-family:var(--font-mono)}
 .stack-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
 .chip{
   font-family:var(--font-mono);font-size:12px;color:var(--steel);
   border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--bg);
 }
 /* stat cards */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:6px 0 26px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:6px 0 34px}
 @media(max-width:860px){.stats{grid-template-columns:repeat(2,1fr)}}
-.stat{
-  background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px 16px 15px;
-}
+@media(max-width:420px){.stats{grid-template-columns:1fr}}
+.stat{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px 16px 15px}
 .stat .num{
   font-family:var(--font-mono);font-weight:700;font-size:clamp(20px,2.3vw,26px);
-  letter-spacing:-.02em;line-height:1.1;
+  letter-spacing:-.02em;line-height:1.1;white-space:nowrap;
 }
 .stat .num.hot{color:var(--ember)}
-.stat .unit{font-size:.62em;font-weight:500;color:var(--steel);margin-left:2px}
+.stat .num.good{color:var(--ok)}
+.stat .unit{font-size:.62em;font-weight:500;color:var(--steel);margin-left:3px}
 .stat .cap{font-size:12.5px;color:var(--steel);margin-top:7px;line-height:1.45}
-.efekt-extra{font-size:14.5px;color:var(--steel)}
-.efekt-extra strong{color:var(--ink)}
 
-/* ---------- WARSZTAT ---------- */
-.workshop{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-@media(max-width:820px){.workshop{grid-template-columns:1fr}}
-.ws-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:30px 28px}
-.ws-card h3{font-family:var(--font-display);font-size:21px;font-weight:700;margin-bottom:18px}
-.tech-list{list-style:none}
-.tech-list li{
-  display:flex;gap:14px;padding:11px 0;border-bottom:1px dashed var(--line);
-  font-size:15px;align-items:baseline;
+/* story steps */
+.story{list-style:none;counter-reset:krok;margin:0 0 8px}
+.story li{
+  counter-increment:krok;position:relative;padding:0 0 22px 52px;
+  font-size:15.5px;color:var(--text);
 }
-.tech-list li:last-child{border-bottom:none}
-.tech-list .k{
-  font-family:var(--font-mono);font-size:12px;color:var(--steel);min-width:118px;
-  letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;padding-top:2px;
-}
-.ai-step{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start}
-.ai-step .marker{
+.story li::before{
+  content:counter(krok,decimal-leading-zero);position:absolute;left:0;top:1px;
   font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--ember);
-  background:var(--ember-soft);border-radius:7px;padding:4px 9px;flex-shrink:0;margin-top:2px;
+  background:var(--ember-soft);border-radius:7px;padding:4px 9px;
 }
-.ai-step p{font-size:15px;color:#2E3E48}
-.ai-step p strong{color:var(--ink)}
-.ws-quote{
-  margin-top:20px;padding:16px 18px;background:var(--bg);border-left:3px solid var(--ember);
+.story li::after{content:"";position:absolute;left:17px;top:34px;bottom:4px;width:1.5px;background:var(--line)}
+.story li:last-child::after{display:none}
+.story strong{color:var(--ink);font-weight:600}
+.before{margin:0 0 22px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg)}
+.before img{width:100%}
+.before figcaption{font-family:var(--font-mono);font-size:11.5px;color:var(--steel);padding:10px 14px;border-top:1px solid var(--line);line-height:1.5}
+.aside{
+  margin-top:8px;padding:16px 18px;background:var(--bg);border-left:3px solid var(--ember);
   border-radius:0 10px 10px 0;font-size:15px;color:var(--steel);
 }
-.ws-quote strong{color:var(--ink)}
+.aside strong{color:var(--ink)}
+.aside a{color:var(--ink);font-weight:600}
 
-/* ---------- DLA KOGO ---------- */
+/* ---------- JAK PRACUJĘ ---------- */
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:860px){.pillars{grid-template-columns:1fr}}
+.pillar{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:28px 26px;position:relative}
+.pillar::before{content:"";position:absolute;top:0;left:26px;width:44px;height:3px;background:var(--ember);border-radius:0 0 3px 3px}
+.pillar h3{font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:12px;line-height:1.3}
+.pillar p{color:var(--text);font-size:15.5px}
+.pillar p + p{margin-top:10px}
+
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px}
+@media(max-width:980px){.steps{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.steps{grid-template-columns:1fr}}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:24px 22px}
+.step .marker{
+  display:inline-block;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--ember);
+  background:var(--ember-soft);border-radius:7px;padding:4px 9px;margin-bottom:12px;
+}
+.step h3{font-family:var(--font-display);font-size:18px;font-weight:700;margin-bottom:8px;line-height:1.3}
+.step p{font-size:15px;color:var(--text)}
+.sub-head{font-family:var(--font-display);font-size:22px;font-weight:700;margin-top:52px}
+
+/* ---------- O MNIE ---------- */
+.about{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:start}
+@media(max-width:860px){.about{grid-template-columns:1fr}}
+.about-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:32px 30px}
+.about-card h3{font-family:var(--font-display);font-size:21px;font-weight:700;margin-bottom:16px}
+.about-card p{font-size:16px;color:var(--text);margin-bottom:14px}
+.about-card p:last-child{margin-bottom:0}
+.about-card .punch{color:var(--ink);font-weight:600}
+.path-list{list-style:none}
+.path-list li{display:flex;gap:14px;padding:11px 0;border-bottom:1px dashed var(--line);font-size:15px;align-items:baseline;color:var(--text)}
+.path-list li:last-child{border-bottom:none}
+.path-list .k{
+  font-family:var(--font-mono);font-size:12px;color:var(--steel);min-width:92px;
+  letter-spacing:.04em;flex-shrink:0;
+}
+
+/* ---------- KONTAKT ---------- */
 .paths{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 @media(max-width:820px){.paths{grid-template-columns:1fr}}
 .path{
   background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
   padding:32px 30px;display:flex;flex-direction:column;gap:14px;
 }
-.path h3{font-family:var(--font-display);font-size:22px;font-weight:700}
-.path p{color:#2E3E48;font-size:15.5px;flex-grow:1}
+.path h3{font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1.25}
+.path p{color:var(--text);font-size:15.5px;flex-grow:1}
 .path .btn{align-self:flex-start}
 
 /* ---------- FOOTER ---------- */
@@ -265,7 +305,7 @@ footer{border-top:1px solid var(--line);padding:44px 0 54px;background:var(--pan
 .foot-id .nm{font-weight:700}
 .foot-id .sep{color:var(--line);margin:0 8px}
 .foot-links{display:flex;gap:22px;flex-wrap:wrap}
-.foot-links a{font-size:15px;color:var(--steel);text-decoration:none}
+.foot-links a{font-size:15px;color:var(--steel);text-decoration:none;overflow-wrap:anywhere}
 .foot-links a:hover{color:var(--ember)}
 .foot-meta{font-family:var(--font-mono);font-size:12.5px;color:var(--steel)}
 
@@ -281,10 +321,10 @@ footer{border-top:1px solid var(--line);padding:44px 0 54px;background:var(--pan
   <div class="nav-inner">
     <a class="brand" href="#top"><span class="brand-dot" aria-hidden="true"></span>solutor.pl</a>
     <div class="nav-links">
-      <a href="#projekty">Projekty</a>
-      <a href="#warsztat">Warsztat</a>
-      <a href="#wspolpraca">Współpraca</a>
-      <a class="nav-cta" href="mailto:adamkaczmarek303@gmail.com">Napisz do mnie</a>
+      <a href="#przyklady">Przykłady</a>
+      <a href="#jak-pracuje">Jak pracuję</a>
+      <a href="#o-mnie">O mnie</a>
+      <a class="nav-cta" href="#kontakt">Napisz do mnie</a>
     </div>
   </div>
 </nav>
@@ -294,45 +334,46 @@ footer{border-top:1px solid var(--line);padding:44px 0 54px;background:var(--pan
   <div class="wrap hero-grid">
     <div>
       <p class="eyebrow">Adam Kaczmarek · Solutor.pl</p>
-      <h1>Zamieniam realne problemy w&nbsp;<em>działające</em> produkty cyfrowe.</h1>
-      <p class="hero-sub">Projektuję, buduję i wdrażam aplikacje od pomysłu do produkcji —
-      łącząc <strong>myślenie produktowe</strong> z nowoczesnym, wspomaganym przez AI
-      procesem wytwórczym.</p>
+      <h1>Znajduję miejsca, gdzie firma działa <em>na&nbsp;oko</em>, i&nbsp;zamieniam je w&nbsp;pomiar i&nbsp;narzędzie do decyzji.</h1>
+      <p class="hero-sub">Idę zobaczyć, jak proces wygląda naprawdę. Mierzę go, buduję narzędzie,
+      które pilnuje go na co dzień, i&nbsp;<strong>potem je utrzymuję</strong>.</p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="#projekty">Zobacz projekty <span class="arr">↓</span></a>
-        <a class="btn btn-ghost" href="mailto:adamkaczmarek303@gmail.com">Skontaktuj się</a>
+        <a class="btn btn-primary" href="#przyklady">Zobacz przykłady <span class="arr">↓</span></a>
+        <a class="btn btn-ghost" href="#kontakt">Opisz mi swój proces</a>
       </div>
     </div>
 
-    <figure class="chart-card" aria-label="Wykres: energochłonność termiczna budynku spadła o 29 procent w pięciu sezonach">
+    <figure class="chart-card" aria-label="Wykres: zużycie ciepła budynku na jednostkę mrozu w pięciu sezonach. Po zmianie nastaw w sezonie 2022/23 wzrosło o 28 procent, dziś jest o 5 procent niższe niż przed zmianą.">
       <div class="chart-head">
-        <span class="chart-title">ENERGOCHŁONNOŚĆ BUDYNKU · GJ/stopniodzień</span>
-        <span class="chart-badge">▼ 29%</span>
+        <span class="chart-title">CIEPŁO NA JEDNOSTKĘ MROZU · budynek, 8 lokali</span>
+        <span class="chart-badge">▼ 26% od szczytu</span>
       </div>
       <svg id="etChart" viewBox="0 0 440 230" role="img">
         <line class="grid-l" x1="30" y1="40"  x2="430" y2="40"/>
         <line class="grid-l" x1="30" y1="90"  x2="430" y2="90"/>
         <line class="grid-l" x1="30" y1="140" x2="430" y2="140"/>
         <line class="grid-l" x1="30" y1="190" x2="430" y2="190"/>
-        <!-- ET: .1362 .1818 .1618 .1430 .1293 → y = 40 + (0.1818-v)/(0.1818-0.1293)*150 -->
-        <polyline class="curve" points="50,170 145,40 240,97 335,151 420,190"/>
-        <circle class="pt" cx="50"  cy="170" r="5"/>
-        <circle class="pt" cx="145" cy="40"  r="5"/>
-        <circle class="pt" cx="240" cy="97"  r="5"/>
-        <circle class="pt" cx="335" cy="151" r="5"/>
+        <!-- ET (GJ na stopniodzień): 0,1358 0,1738 0,1618 0,1423 0,1290 → y = 40 + (0,1738 − v) / 0,0448 × 150 -->
+        <polyline class="curve" points="50,167 145,40 240,80 335,146 420,190"/>
+        <circle class="pt" cx="50"  cy="167" r="5"/>
+        <circle class="pt pt-hot" cx="145" cy="40"  r="6"/>
+        <circle class="pt" cx="240" cy="80"  r="5"/>
+        <circle class="pt" cx="335" cy="146" r="5"/>
         <circle class="pt pt-last" cx="420" cy="190" r="6.5"/>
-        <text class="val" x="50"  y="158" text-anchor="middle">0.1362</text>
-        <text class="val" x="145" y="28"  text-anchor="middle">0.1818</text>
-        <text class="val" x="240" y="85"  text-anchor="middle">0.1618</text>
-        <text class="val" x="335" y="139" text-anchor="middle">0.1430</text>
-        <text class="val val-last" x="412" y="178" text-anchor="end">0.1293</text>
+        <text class="val" x="50"  y="155" text-anchor="middle">0,1358</text>
+        <text class="val val-hot" x="145" y="26"  text-anchor="middle">0,1738</text>
+        <text class="note" x="176" y="26">zmiana nastaw</text>
+        <text class="val" x="240" y="68"  text-anchor="middle">0,1618</text>
+        <text class="val" x="335" y="134" text-anchor="middle">0,1423</text>
+        <text class="val val-last" x="412" y="178" text-anchor="end">0,1290</text>
         <text class="lbl" x="50"  y="215" text-anchor="middle">21/22</text>
         <text class="lbl" x="145" y="215" text-anchor="middle">22/23</text>
         <text class="lbl" x="240" y="215" text-anchor="middle">23/24</text>
         <text class="lbl" x="335" y="215" text-anchor="middle">24/25</text>
         <text class="lbl" x="420" y="215" text-anchor="middle">25/26</text>
       </svg>
-      <figcaption class="chart-note">rzeczywiste dane · 5 sezonów · 104 506 pomiarów</figcaption>
+      <figcaption class="chart-note">GJ na stopniodzień · rzeczywiste dane · 5 sezonów · 104&nbsp;506 pomiarów.
+      Ostatni sezon był najzimniejszy z pięciu.</figcaption>
     </figure>
   </div>
 </header>
@@ -344,32 +385,47 @@ footer{border-top:1px solid var(--line);padding:44px 0 54px;background:var(--pan
   </svg>
 </div>
 
-<!-- ================= JAK PRACUJĘ ================= -->
-<section id="proces">
+<!-- ================= NA OKO → ZMIERZONE ================= -->
+<section id="na-oko">
   <div class="wrap">
     <div class="sec-head reveal">
-      <p class="sec-eyebrow">Jak pracuję</p>
-      <h2>Od problemu do wdrożenia</h2>
+      <p class="sec-eyebrow">O co chodzi</p>
+      <h2>Większość strat nie bierze się ze złej woli, tylko z&nbsp;braku pomiaru</h2>
+      <p class="sec-lead">Trzy miejsca, w&nbsp;których to zobaczyłem i&nbsp;coś z&nbsp;tym zrobiłem.</p>
     </div>
-    <div class="pillars">
-      <article class="pillar reveal">
-        <h3>Zaczynam od problemu, nie od technologii</h3>
-        <p>Każdy z moich projektów powstał, bo coś realnie nie działało: chaos w domowej
-        apteczce osoby przewlekle chorej, brak danych o pracy węzła cieplnego budynku.
-        Najpierw rozumiem problem i użytkownika, potem dobieram narzędzia.</p>
+    <div class="pairs">
+      <article class="pair reveal">
+        <p class="pair-area">Ogrzewanie budynku</p>
+        <div class="pair-top">
+          <p class="pair-k">Na oko</p>
+          <p>Woda w&nbsp;grzejnikach średnio 50&nbsp;°C, bo ktoś zgłosił, że jest zimno.</p>
+        </div>
+        <div class="pair-bottom">
+          <p class="pair-k">Zmierzone</p>
+          <p>Wystarcza 41–43&nbsp;°C. W&nbsp;mieszkaniach jest cieplej niż wtedy, a&nbsp;rachunek niższy.</p>
+        </div>
       </article>
-      <article class="pillar reveal">
-        <h3>Dowożę działający produkt, nie prototyp</h3>
-        <p>Wdrożenie na produkcję, własna domena, aplikacja instalowalna na telefonie,
-        monitoring, telemetria, onboarding użytkownika. Projekt jest skończony wtedy,
-        gdy ktoś go używa — nie wtedy, gdy kod się kompiluje.</p>
+      <article class="pair reveal">
+        <p class="pair-area">Rozliczenia wspólnoty</p>
+        <div class="pair-top">
+          <p class="pair-k">Na oko</p>
+          <p>Sprawozdanie za jeden rok i&nbsp;uchwała przyjęta w&nbsp;kwadrans.</p>
+        </div>
+        <div class="pair-bottom">
+          <p class="pair-k">Zmierzone</p>
+          <p>Koszty rok do roku: co doszło, co zniknęło, co podrożało i&nbsp;skąd wzięła się dopłata.</p>
+        </div>
       </article>
-      <article class="pillar reveal">
-        <h3>AI jako zespół, ja jako architekt</h3>
-        <p>Pracuję w zdyscyplinowanym procesie z modelami AI: jeden projektuje
-        i recenzuje architekturę, drugi generuje kod, a każda zmiana przechodzi przez
-        weryfikację przed wdrożeniem. Efekt: tempo małego zespołu przy jednoosobowych
-        kosztach.</p>
+      <article class="pair reveal">
+        <p class="pair-area">Domowa apteczka</p>
+        <div class="pair-top">
+          <p class="pair-k">Na oko</p>
+          <p>Zapas leków w&nbsp;pamięci. Recepta traci ważność, zanim ktoś to zauważy.</p>
+        </div>
+        <div class="pair-bottom">
+          <p class="pair-k">Zmierzone</p>
+          <p>Zapas każdego leku odliczany dzień po dniu, z&nbsp;przypomnieniem przed końcem.</p>
+        </div>
       </article>
     </div>
   </div>
@@ -382,111 +438,155 @@ footer{border-top:1px solid var(--line);padding:44px 0 54px;background:var(--pan
   </svg>
 </div>
 
-<!-- ================= PROJEKTY ================= -->
-<section id="projekty">
+<!-- ================= PRZYKŁADY ================= -->
+<section id="przyklady">
   <div class="wrap">
     <div class="sec-head reveal">
-      <p class="sec-eyebrow">Projekty</p>
-      <h2>Projekty, które żyją na produkcji</h2>
-      <p class="sec-lead">Nie makiety i nie repozytoria-wydmuszki. Oba rozwiązania działają
-      publicznie — możesz je otworzyć teraz.</p>
+      <p class="sec-eyebrow">Przykłady</p>
+      <h2>Trzy narzędzia, trzy różne dziedziny</h2>
+      <p class="sec-lead">Dwa działają publicznie i&nbsp;możesz je otworzyć teraz. Trzecie jest w&nbsp;budowie.</p>
     </div>
 
-    <!-- CASE 1: DASHBOARD -->
+    <!-- CASE 1: OGRZEWANIE -->
     <article class="case reveal">
       <div class="case-top">
-        <h3>Data Driven Heat Control</h3>
-        <a class="live-link" href="https://ddhc.solutor.pl" target="_blank" rel="noopener">
-          <span class="live-dot" aria-hidden="true"></span> zobacz na żywo
-        </a>
+        <div>
+          <h3>Ogrzewanie budynku: od tabelki w&nbsp;Excelu do narzędzia, które pilnuje węzła</h3>
+          <p class="case-name">Data Driven Heat Control</p>
+        </div>
+        <div>
+          <a class="live-link" href="https://ddhc.solutor.pl" target="_blank" rel="noopener">
+            <span class="live-dot" aria-hidden="true"></span> zobacz na żywo
+          </a>
+          <p class="live-hint">podgląd dla gości: kod 0000</p>
+        </div>
       </div>
-      <p class="case-tag">Monitoring i analityka węzła cieplnego budynku wielorodzinnego.</p>
+      <p class="case-tag">Budynek wielorodzinny, 8 lokali, ciepło z&nbsp;sieci miejskiej. Po jednym sezonie
+      właściciele dostali wysokie dopłaty i&nbsp;nikt nie umiał powiedzieć, dlaczego.</p>
 
       <div class="stats">
-        <div class="stat"><div class="num">2090<span class="unit">SDG</span></div>
-          <div class="cap">najzimniejszy sezon w 5-letniej historii pomiarów (2025/26)</div></div>
-        <div class="stat"><div class="num">1,16<span class="unit">GJ/24h</span></div>
-          <div class="cap">…a mimo to najniższe dobowe zużycie ciepła w historii</div></div>
-        <div class="stat"><div class="num hot">−29<span class="unit">%</span></div>
-          <div class="cap">spadek energochłonności budynku od szczytu w 2022/23</div></div>
-        <div class="stat"><div class="num hot">~14 000<span class="unit">zł</span></div>
-          <div class="cap">unikniętego kosztu ciepła w trzech kolejnych sezonach</div></div>
+        <div class="stat"><div class="num hot">+28<span class="unit">%</span></div>
+          <div class="cap">więcej ciepła na tę samą pogodę w&nbsp;sezonie 2022/23, przy tej samej temperaturze w&nbsp;mieszkaniach</div></div>
+        <div class="stat"><div class="num hot">~1&nbsp;300<span class="unit">zł</span></div>
+          <div class="cap">średnio na lokal kosztowała ta jedna zmiana nastaw (w&nbsp;dzisiejszych cenach ciepła)</div></div>
+        <div class="stat"><div class="num good">22,2<span class="unit">°C</span></div>
+          <div class="cap">dziś w&nbsp;mieszkaniach. Przed zmianą nastaw było 21,4&nbsp;°C</div></div>
+        <div class="stat"><div class="num good">−5<span class="unit">%</span></div>
+          <div class="cap">ciepła na tę samą pogodę względem sezonu sprzed zmiany, w&nbsp;najzimniejszym sezonie z&nbsp;pięciu</div></div>
       </div>
 
       <div class="case-grid">
         <div>
-          <h4>Problem</h4>
-          <p>Wspólnota mieszkaniowa płaci za ciepło i serwis węzła, ale nie ma żadnych danych,
-          by ocenić, czy instalacja pracuje optymalnie — ani argumentów w rozmowie z dostawcą
-          ciepła i firmą serwisową.</p>
-          <h4>Rozwiązanie</h4>
-          <p>Dashboard analityczny zasilany automatycznie zbieranymi pomiarami co 15 minut
-          (ponad 100&nbsp;000 obserwacji z 5 sezonów). Porównuje sezony z normalizacją pogodową
-          (stopniodni grzewcze), wykrywa anomalie względem sezonu wzorcowego i wylicza autorskie
-          wskaźniki: Energochłonność Termiczną oraz PC&nbsp;Indeks — gotowość instalacji do
-          zastąpienia pompą ciepła, z progiem opłacalności wyliczonym z realnych taryf.</p>
+          <h4>Jak to było</h4>
+          <ol class="story">
+            <li><strong>Pytanie.</strong> Dopłaty przyszły razem z&nbsp;podwyżką cen ciepła. Ile z&nbsp;nich to
+            cena, a&nbsp;ile praca instalacji? Ze sprawozdania nie dało się tego odczytać.</li>
+            <li><strong>Pomiar.</strong> Miałem już w&nbsp;mieszkaniu termometr z&nbsp;czterema czujnikami, który
+            zapisywał temperatury co 15&nbsp;minut. Zestawiłem je z&nbsp;fakturami i&nbsp;pogodą.</li>
+            <li><strong>Rozmowa.</strong> Na zebraniu rocznym pokazałem wynik: po zmianie nastaw budynek
+            zużywał o&nbsp;28% więcej ciepła, a&nbsp;w&nbsp;mieszkaniach nie było ani trochę cieplej.
+            Właściciele zgodzili się, żebym to ja pilnował ustawienia krzywej grzewczej.</li>
+            <li><strong>Narzędzie.</strong> Excel zastąpiła aplikacja. Sama pobiera pomiary co godzinę,
+            porównuje sezony z&nbsp;poprawką na pogodę i&nbsp;pokazuje każde odejście od wzorca.</li>
+            <li><strong>Wynik.</strong> Zasilanie wróciło z&nbsp;50 do 41–43&nbsp;°C. W&nbsp;mieszkaniach jest
+            cieplej niż kiedykolwiek, a&nbsp;budynek zużywa mniej niż przed zmianą.</li>
+          </ol>
         </div>
         <div>
-          <h4>Najciekawsze wyzwania techniczne</h4>
-          <ul>
-            <li>Automatyczny scraper z inteligentnym pobieraniem tylko brakujących danych</li>
-            <li>Algorytm detekcji granic sezonu grzewczego z surowych pomiarów</li>
-            <li>Normalizacja zużycia przez warunki pogodowe — uczciwe porównania rok do roku</li>
-            <li>Zgodność pracy węzła z krzywą wzorcową: wzrost z 19,9% do ~85% po interwencjach popartych danymi</li>
-            <li>Alerty e-mail przy spadku temperatury, harmonogram zadań w tle</li>
-          </ul>
-          <h4>Stack</h4>
+          <figure class="before">
+            <img src="img/excel-analiza.png" width="652" height="263" loading="lazy"
+                 alt="Tabela w Excelu porównująca cztery sezony grzewcze: temperatury, zużycie energii w GJ i cenę ciepła. Sezon 2022/23 wyróżniony na czerwono.">
+            <figcaption>Od tego się zaczęło: tabela w&nbsp;Excelu. Sezon 2022/23 na czerwono.</figcaption>
+          </figure>
+          <h4>Co dalej</h4>
+          <p>Te same dane odpowiadają już na dwa kolejne pytania wspólnoty: czy zamówiona moc cieplna
+          nie jest za wysoka i&nbsp;czy budynek nadaje się pod pompę ciepła.</p>
+          <h4>Czym zbudowane</h4>
           <div class="stack-row">
             <span class="chip">Python</span><span class="chip">Dash / Plotly</span>
-            <span class="chip">pandas</span><span class="chip">Selenium</span>
-            <span class="chip">APScheduler</span><span class="chip">Render.com</span>
+            <span class="chip">pandas</span><span class="chip">Docker</span>
+            <span class="chip">własny serwer</span>
           </div>
         </div>
       </div>
+      <p class="aside"><strong>Zarządzasz budynkiem albo jesteś w&nbsp;zarządzie wspólnoty?</strong>
+      W&nbsp;ten sam sposób mogę sprawdzić Wasz węzeł cieplny. <a href="#kontakt">Napisz do mnie</a>.</p>
     </article>
 
     <!-- CASE 2: MEDORGANIZER -->
     <article class="case reveal">
       <div class="case-top">
-        <h3>MedOrganizer Pro</h3>
+        <div>
+          <h3>Domowa apteczka: leki, recepty i&nbsp;terminy w&nbsp;jednym miejscu</h3>
+          <p class="case-name">MedOrganizer Pro</p>
+        </div>
         <a class="live-link" href="https://medorg.pl" target="_blank" rel="noopener">
           <span class="live-dot" aria-hidden="true"></span> medorg.pl
         </a>
       </div>
-      <p class="case-tag">Cyfrowa apteczka dla osób przewlekle chorych i ich opiekunów.</p>
+      <p class="case-tag">Osoba przyjmująca na stałe kilka leków ciągle balansuje między „zapas się kończy”
+      a&nbsp;„recepta traci ważność”. Kartka i&nbsp;pamięć zawodzą, a&nbsp;skutkiem jest przerwa w&nbsp;leczeniu.</p>
 
       <div class="case-grid">
         <div>
-          <h4>Problem</h4>
-          <p>Osoby przyjmujące kilka leków stale balansują między „zapas się kończy"
-          a „recepta traci ważność". Papierowe notatki i pamięć zawodzą — a skutkiem
-          jest przerwa w leczeniu.</p>
-          <h4>Rozwiązanie</h4>
-          <p>Aplikacja webowa (PWA), która czyta e-recepty z PDF, automatycznie śledzi zużycie
-          leków w czasie, przypomina o wykupie i wizycie u lekarza, synchronizuje dane między
-          urządzeniami przez Google Drive i generuje „kartę apteczną" QR z listą zakupów
-          dla farmaceuty.</p>
-          <h4>Efekt</h4>
-          <p class="efekt-extra">Kompletny produkt zbudowany i wdrożony <strong>end-to-end
-          w pojedynkę</strong>: własna domena, instalowalna aplikacja PWA, logowanie Google
-          OAuth, synchronizacja w chmurze, pipeline telemetrii i system onboardingu.
-          Od pierwszej linii kodu do produkcji — jeden autor, pełna odpowiedzialność
-          za każdą warstwę.</p>
+          <h4>Co robi</h4>
+          <ul>
+            <li>Czyta e-recepty z&nbsp;plików PDF, bez przepisywania</li>
+            <li>Odlicza zapas każdego leku dzień po dniu według dawkowania</li>
+            <li>Przypomina o&nbsp;wykupie i&nbsp;o&nbsp;wizycie po nowe recepty</li>
+            <li>Przygotowuje listę zakupów do apteki i&nbsp;listę recept do zamówienia u&nbsp;lekarza</li>
+            <li>Działa w&nbsp;przeglądarce i&nbsp;jako aplikacja na telefonie</li>
+          </ul>
+          <h4>Stan</h4>
+          <p>Działa publicznie pod własnym adresem. Kopia danych na Dysku Google jest na razie dostępna
+          dla zaproszonych osób.</p>
         </div>
         <div>
-          <h4>Najciekawsze wyzwania techniczne</h4>
+          <h4>Jak dbam o&nbsp;dane o&nbsp;zdrowiu</h4>
           <ul>
-            <li>Parser e-recept PDF odporny na różne formaty dokumentów</li>
-            <li>Synchronizacja wielourządzeniowa z rozwiązywaniem konfliktów (CRDT/LWW)</li>
-            <li>Model logistyki leków: predykcja wyczerpania zapasu na podstawie dawkowania</li>
-            <li>Onboarding kontekstowy prowadzący użytkownika krok po kroku</li>
+            <li>Dane zostają w&nbsp;przeglądarce użytkownika. Na serwerze nie ma bazy danych</li>
+            <li>Plik recepty jest czytany w&nbsp;pamięci i&nbsp;od razu usuwany</li>
+            <li>Bez zewnętrznych czcionek, skryptów i&nbsp;reklam</li>
+            <li>Sam przeprowadziłem testy bezpieczeństwa aplikacji i&nbsp;naprawiłem to, co znalazły</li>
+            <li>Serwer w&nbsp;Polsce, osobne środowisko testowe, alarmy na telefon</li>
+            <li>Usunąłem gotową funkcję (kod QR z&nbsp;listą leków), gdy okazało się, że może ujawnić dane</li>
           </ul>
-          <h4>Stack</h4>
+          <h4>Czym zbudowane</h4>
           <div class="stack-row">
             <span class="chip">Python</span><span class="chip">Flet (PWA)</span>
             <span class="chip">Google Drive API</span><span class="chip">OAuth 2.0</span>
-            <span class="chip">PyMuPDF</span><span class="chip">Render.com</span>
+            <span class="chip">Docker</span><span class="chip">własny serwer</span>
           </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- CASE 3: ROZLICZENIA (W BUDOWIE) -->
+    <article class="case reveal">
+      <div class="case-top">
+        <div>
+          <h3>Rozliczenia wspólnoty: jedna kartka na zebranie roczne</h3>
+          <p class="case-name">nazwa robocza: LokalAsystent</p>
+        </div>
+        <span class="badge-wip">w budowie · używam sam</span>
+      </div>
+      <p class="case-tag">Właściciel lokalu dostaje raz w&nbsp;roku sprawozdanie za jeden rok i&nbsp;kwotę
+      „nadpłata” albo „niedopłata”. Bez porównania z&nbsp;poprzednimi latami trudno zobaczyć, co się zmieniło
+      i&nbsp;dlaczego.</p>
+      <div class="case-grid">
+        <div>
+          <h4>Co już robi</h4>
+          <ul>
+            <li>Zestawia trzy liczby dla każdego okresu: ile powinno wyjść z&nbsp;wyliczenia, ile naliczono
+            i&nbsp;ile faktycznie zapłacono</li>
+            <li>Wczytuje wyciąg z&nbsp;banku i&nbsp;sam rozpoznaje przelewy po tytułach</li>
+            <li>Pokazuje koszty wspólnoty rok do roku: nowe pozycje, brakujące pozycje, skoki</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Do czego zmierza</h4>
+          <p>Do jednej kartki, z&nbsp;którą właściciel idzie na zebranie: co się zmieniło, skąd wzięła się
+          dopłata i&nbsp;o&nbsp;co warto zapytać przed głosowaniem.</p>
         </div>
       </div>
     </article>
@@ -500,43 +600,55 @@ footer{border-top:1px solid var(--line);padding:44px 0 54px;background:var(--pan
   </svg>
 </div>
 
-<!-- ================= WARSZTAT ================= -->
-<section id="warsztat">
+<!-- ================= JAK PRACUJĘ ================= -->
+<section id="jak-pracuje">
   <div class="wrap">
     <div class="sec-head reveal">
-      <p class="sec-eyebrow">Warsztat</p>
-      <h2>Czym i jak pracuję</h2>
+      <p class="sec-eyebrow">Jak pracuję</p>
+      <h2>Najpierw patrzę, potem buduję, potem pilnuję</h2>
     </div>
-    <div class="workshop">
-      <div class="ws-card reveal">
-        <h3>Technologie</h3>
-        <ul class="tech-list">
-          <li><span class="k">Backend / dane</span><span>Python, pandas, NumPy</span></li>
-          <li><span class="k">Aplikacje</span><span>Dash / Plotly, Flet (PWA)</span></li>
-          <li><span class="k">Integracje</span><span>Google API (Drive, OAuth, Sheets), Selenium, REST</span></li>
-          <li><span class="k">Wdrożenia</span><span>Render.com, Docker, DNS / domeny, GitHub</span></li>
-          <li><span class="k">Dokumenty</span><span>parsowanie PDF (PyMuPDF, pdfplumber), generowanie QR</span></li>
-        </ul>
+    <div class="pillars">
+      <article class="pillar reveal">
+        <h3>Idę zobaczyć, jak to się naprawdę robi</h3>
+        <p>Opis procesu i&nbsp;sam proces to często dwie różne rzeczy. Zaczynam od miejsca, w&nbsp;którym
+        praca się odbywa, i&nbsp;od danych, które już są: faktur, arkuszy, odczytów.</p>
+      </article>
+      <article class="pillar reveal">
+        <h3>Buduję z&nbsp;AI i&nbsp;mówię o&nbsp;tym otwarcie</h3>
+        <p>Kod powstaje we współpracy z&nbsp;modelami AI. Dzięki temu działający prototyp pojawia się
+        w&nbsp;dni, nie w&nbsp;miesiące, a&nbsp;koszt jest kosztem jednej osoby.</p>
+        <p>Do mnie należą decyzje: co budujemy, co jest bezpieczne i&nbsp;co trafia do użytkowników.
+        Każdą zmianę sprawdzam, zanim tam trafi.</p>
+      </article>
+      <article class="pillar reveal">
+        <h3>Utrzymuję to, co zbudowałem</h3>
+        <p>Narzędzia działają na moich serwerach w&nbsp;Polsce. Codzienna szyfrowana kopia zapasowa
+        z&nbsp;próbą odtworzenia, alarm na telefon, gdy coś przestaje działać, i&nbsp;własne
+        testy bezpieczeństwa.</p>
+      </article>
+    </div>
+
+    <h3 class="sub-head reveal">Od czego zaczynamy</h3>
+    <div class="steps">
+      <div class="step reveal">
+        <span class="marker">01</span>
+        <h3>Pokazujesz mi proces</h3>
+        <p>Ten, który Cię męczy: przepisywanie, arkusz, który rozumie jedna osoba, decyzje „na wyczucie”.</p>
       </div>
-      <div class="ws-card reveal">
-        <h3>Proces z AI</h3>
-        <div class="ai-step">
-          <span class="marker">01</span>
-          <p><strong>Architektura i code review.</strong> Jeden model projektuje rozwiązania,
-          audytuje kod i weryfikuje każdą zmianę.</p>
-        </div>
-        <div class="ai-step">
-          <span class="marker">02</span>
-          <p><strong>Generowanie kodu.</strong> Drugi model implementuje według zatwierdzonej
-          specyfikacji.</p>
-        </div>
-        <div class="ai-step">
-          <span class="marker">03</span>
-          <p><strong>Zasada żelazna.</strong> Żaden wygenerowany kod nie trafia do projektu
-          bez przeglądu.</p>
-        </div>
-        <div class="ws-quote">Ten proces to nie skrót — <strong>to metoda</strong>. Daje mi
-        przewagę szybkości przy zachowaniu kontroli nad jakością i architekturą.</div>
+      <div class="step reveal">
+        <span class="marker">02</span>
+        <h3>Prototyp w&nbsp;tydzień</h3>
+        <p>Działający, na Twoich danych. Widzisz efekt, zanim zdecydujesz, co dalej.</p>
+      </div>
+      <div class="step reveal">
+        <span class="marker">03</span>
+        <h3>Wdrożenie</h3>
+        <p>Narzędzie trafia do codziennej pracy, na komputer albo telefon, razem z&nbsp;przeszkoleniem ludzi.</p>
+      </div>
+      <div class="step reveal">
+        <span class="marker">04</span>
+        <h3>Opieka</h3>
+        <p>Kopie zapasowe, aktualizacje i&nbsp;poprawki. Nie zostajesz z&nbsp;czymś, czego nikt nie umie naprawić.</p>
       </div>
     </div>
   </div>
@@ -549,26 +661,65 @@ footer{border-top:1px solid var(--line);padding:44px 0 54px;background:var(--pan
   </svg>
 </div>
 
-<!-- ================= WSPÓŁPRACA ================= -->
-<section id="wspolpraca">
+<!-- ================= O MNIE ================= -->
+<section id="o-mnie">
   <div class="wrap">
     <div class="sec-head reveal">
-      <p class="sec-eyebrow">Współpraca</p>
-      <h2>W czym mogę pomóc</h2>
+      <p class="sec-eyebrow">O mnie</p>
+      <h2>Skąd się to wzięło</h2>
+    </div>
+    <div class="about">
+      <div class="about-card reveal">
+        <h3>Historia o&nbsp;łopacie</h3>
+        <p>Mój tato był szefem finansów w&nbsp;dużej fabryce maszyn. Kiedyś zauważył w&nbsp;zestawieniu
+        wysokie straty z&nbsp;reklamacji odlewów. Zamiast pytać w&nbsp;biurze, poszedł na odlewnię
+        i&nbsp;poprosił, żeby mu pokazano, jak powstaje odlew.</p>
+        <p>Pracownik nabrał składnik na czubek łopaty i&nbsp;wsypał go do mieszanki. Potem tą samą łopatą
+        nabrał kolejny.</p>
+        <p class="punch">Słyszałem tę historię wiele razy. Od tamtej pory widzę tę łopatę w&nbsp;różnych
+        miejscach: w&nbsp;węźle cieplnym, w&nbsp;rozliczeniach, w&nbsp;domowej apteczce.</p>
+      </div>
+      <div class="about-card reveal">
+        <h3>Moja droga</h3>
+        <ul class="path-list">
+          <li><span class="k">od 2024</span><span>Narzędzia, które widzisz na tej stronie. Legnica, pracuję zdalnie i&nbsp;na miejscu w&nbsp;regionie.</span></li>
+          <li><span class="k">2022–2026</span><span>Amazon: moje usprawnienie procesu firma przyjęła i&nbsp;wdrożyła, wyróżnienie „Innowator”.</span></li>
+          <li><span class="k">2001–2022</span><span>Badania ilościowe rynków finansowych: stawianie hipotez i&nbsp;sprawdzanie ich na danych.</span></li>
+          <li><span class="k">2002–2009</span><span>Własna księgarnia językowa z&nbsp;autorskim systemem zamówień.</span></li>
+          <li><span class="k">1997–2001</span><span>Wiceprezes zarządu firmy leasingowej: finansowanie, współpraca z&nbsp;13 bankami.</span></li>
+          <li><span class="k">1994–1997</span><span>Administracja sieci komputerowej i&nbsp;szkolenia użytkowników.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="axis" aria-hidden="true">
+  <svg viewBox="0 0 1072 34" preserveAspectRatio="none">
+    <line x1="0" y1="17" x2="1072" y2="17"/>
+    <g class="ticks"></g>
+  </svg>
+</div>
+
+<!-- ================= KONTAKT ================= -->
+<section id="kontakt">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="sec-eyebrow">Kontakt</p>
+      <h2>Masz u&nbsp;siebie taką łopatę?</h2>
     </div>
     <div class="paths">
       <div class="path reveal">
-        <h3>Dla firm — zlecenie lub współpraca</h3>
-        <p>Buduję narzędzia wewnętrzne, dashboardy analityczne, automatyzacje i aplikacje
-        webowe — od rozmowy o problemie do działającego wdrożenia. Najlepiej sprawdzam się
-        tam, gdzie problem jest realny, a zespołu IT brak albo ma pilniejsze rzeczy.</p>
-        <a class="btn btn-primary" href="mailto:adamkaczmarek303@gmail.com?subject=Wsp%C3%B3%C5%82praca%20%E2%80%94%20Solutor.pl">Opisz mi swój problem</a>
+        <h3>Dla firm</h3>
+        <p>Opisz mi w&nbsp;kilku zdaniach proces, który działa na oko albo zjada czas: ręczne raporty,
+        przepisywanie między arkuszami, rozliczenia, których nikt nie sprawdza. Odpowiem, czy da się
+        to zmierzyć i&nbsp;co mógłbym pokazać w&nbsp;tydzień.</p>
+        <a class="btn btn-primary" href="mailto:adamkaczmarek303@gmail.com?subject=Proces%20do%20sprawdzenia%20%E2%80%94%20Solutor.pl">Opisz mi swój proces</a>
       </div>
       <div class="path reveal">
-        <h3>Dla pracodawców — rekrutacja</h3>
-        <p>Szukasz osoby na styku produktu i technologii — kogoś, kto rozumie kod na tyle,
-        by go recenzować i architektować, a jednocześnie myśli wdrożeniem, użytkownikiem
-        i efektem biznesowym? Porozmawiajmy — CV wysyłam na życzenie.</p>
+        <h3>Dla pracodawców</h3>
+        <p>Szukasz kogoś, kto usprawnia procesy i&nbsp;doprowadza pomysły do działających narzędzi:
+        automatyzacja, wdrożenia, narzędzia wewnętrzne? Porozmawiajmy. CV wysyłam od ręki.</p>
         <a class="btn btn-ghost" href="mailto:adamkaczmarek303@gmail.com?subject=Rekrutacja%20%E2%80%94%20Adam%20Kaczmarek">Poproś o CV</a>
       </div>
     </div>

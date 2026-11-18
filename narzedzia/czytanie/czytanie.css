@@ -1,0 +1,331 @@
+/* Trener czytania — tylko to, czego nie ma w ../wspolne.css */
+[hidden] { display: none !important; }
+.karta-szeroka { max-width: 760px; }
+.odstep-gora { margin-top: 14px; }
+.odstep-dol { margin: 0 0 12px; }
+
+/* Tryb gry: na czas ćwiczenia znika wszystko poza planszą i wynikiem (na telefonie mieści się na jednym ekranie) */
+body.w-grze { padding-top: 8px; }
+body.w-grze .karta { padding-top: 12px; }
+body.w-grze .poza-gra { display: none !important; }
+body:not(.w-grze) .tylko-w-grze { display: none !important; }
+
+/* Zakładki ćwiczeń */
+.zakladki { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 0 0 22px; }
+.zakladki button {
+  font: 600 15px var(--font-body);
+  padding: 8px 4px;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+}
+.zakladki button:hover { border-color: var(--steel); }
+.zakladki button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+.opis { margin: 0 0 14px; color: var(--steel); font-size: 15px; }
+.etykieta { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--steel); }
+
+/* Pasek celu: czego szukać + Przerwij */
+.pasek-celu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  background: var(--ok-soft);
+  border: 2px solid var(--ok);
+  border-radius: 12px;
+  padding: 6px 12px;
+  margin-bottom: 8px;
+  min-height: 54px;
+}
+.cel-blok { display: flex; align-items: center; gap: 4px 10px; flex-wrap: wrap; min-width: 0; flex: 1 1 auto; }
+.pasek-celu .przycisk { flex: 0 0 auto; }
+.cel { font-size: clamp(22px, 6.5vw, 30px); font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.2; }
+.cel-slowo { font-size: clamp(19px, 5.5vw, 26px); overflow-wrap: anywhere; }
+.cel-pod { font-size: 13px; color: var(--steel); }
+.kropki { display: inline-flex; gap: 5px; flex-wrap: wrap; }
+.kropki span { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--ok); }
+.kropki span.pelna { background: var(--ok); }
+
+/* Wskaźniki */
+.wskazniki { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; text-align: center; }
+.wskazniki.cztery { grid-template-columns: repeat(4, 1fr); }
+.wskazniki > div { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 5px 4px; min-width: 0; }
+.wskazniki .etykieta { display: block; font-size: 10.5px; }
+.wskazniki strong {
+  display: block;
+  font-size: clamp(17px, 5vw, 24px);
+  font-weight: 800;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wskazniki .pod { display: block; font-size: 12px; color: var(--steel); line-height: 1.3; }
+
+.pasek-czasu { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; margin-bottom: 12px; }
+.pasek-czasu > div { height: 100%; width: 100%; background: var(--ok); border-radius: 999px; transition: width .15s linear; }
+.pasek-czasu > div.postep { width: 0; background: var(--steel); }
+.pasek-czasu > div.malo { background: var(--ember); }
+
+.ustawienia .pola { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+.przelaczniki { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 12px; }
+.ustawienia .drobny { margin-top: 12px; }
+.link-przycisk { background: none; border: 0; padding: 0; font: inherit; color: var(--ember); text-decoration: underline; cursor: pointer; }
+
+.wynik {
+  background: var(--ok-soft);
+  border: 2px solid var(--ok);
+  border-radius: 12px;
+  padding: 10px 14px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+
+/* Plansza (Schulte, wyszukiwanie) */
+.plansza-ramka {
+  position: relative;
+  width: min(100%, 560px);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto 16px;
+  background: var(--panel);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 5px;
+  transition: border-color .25s, box-shadow .25s;
+}
+/* W trakcie gry plansza ma się zmieścić pod wynikami (wysokość ekranu minus pasek celu i wskaźniki) */
+body.w-grze .plansza-ramka {
+  width: min(100%, 560px, max(240px, calc(100vh - 200px)));
+  width: min(100%, 560px, max(240px, calc(100svh - 200px)));
+}
+.plansza-ramka.wygrana { border-color: var(--ok); box-shadow: 0 0 0 4px var(--ok-soft); }
+.plansza { display: grid; width: 100%; height: 100%; gap: 4px; }
+.pole-planszy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.pole-planszy:hover { border-color: var(--steel); }
+.pole-planszy.trafione { background: var(--ok-soft); color: #A9D3BC; border-color: #CFE7D9; cursor: default; }
+.pole-planszy.trafiony { background: var(--ok); color: #fff; border-color: var(--ok); cursor: default; }
+.pole-planszy.blysk-dobry { background: #CDEBD9; border-color: var(--ok); }
+.pole-planszy.blysk-zly { background: var(--ember-soft); border-color: var(--ember); color: var(--ember); animation: potrzasniecie .25s ease; }
+.pole-planszy.podpowiedz { background: #FDF1DC; border: 2px solid var(--warn); color: #8A5A12; animation: puls 1s infinite alternate; }
+
+.punkt-srodek {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--ember);
+  border: 2px solid #fff;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Nakładka przed startem i po końcu */
+.nakladka {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px;
+  text-align: center;
+  background: rgba(245, 247, 246, .97);
+  border-radius: 10px;
+  overflow: auto;
+}
+.nakladka p { margin: 0; max-width: 34ch; font-size: 15px; color: var(--text); }
+.nakladka .nakladka-tytul { font-size: 20px; font-weight: 800; color: var(--ink); }
+.nakladka .przycisk { flex: 0 0 auto; min-width: 170px; }
+
+/* Napis „+5 s” itp. na chwilę u góry planszy */
+.kotwica { position: relative; }
+.odznaka {
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  z-index: 6;
+  max-width: 94%;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--ok);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: odlot 1.2s ease-out forwards;
+}
+.odznaka.kara { background: var(--ember); }
+.odznaka.premia { background: var(--ink); }
+
+/* Ciemna scena: RSVP i widzenie peryferyjne */
+.scena {
+  position: relative;
+  background: var(--ink);
+  color: #F5F7F6;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.rsvp-scena { display: flex; align-items: center; min-height: clamp(140px, 30vw, 190px); padding: 34px 8px; cursor: pointer; touch-action: manipulation; }
+.rsvp-kreska { position: absolute; left: 50%; width: 2px; height: 18px; background: var(--ember); transform: translateX(-50%); }
+.rsvp-kreska.gora { top: 12px; }
+.rsvp-kreska.dol { bottom: 12px; }
+.rsvp-slowo { display: flex; align-items: baseline; width: 100%; font-size: 40px; font-weight: 700; line-height: 1.25; }
+.rsvp-lewa { flex: 1 1 0; text-align: right; white-space: pre; }
+.rsvp-orp { color: #F2784B; }
+.rsvp-prawa { flex: 1 1 0; text-align: left; white-space: pre; }
+.sterowanie { margin-bottom: 14px; }
+.sterowanie .przycisk { flex: 1 1 0; padding-left: 8px; padding-right: 8px; }
+.sterowanie .glowny { flex-grow: 1.4; }
+textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  font: 400 16px/1.5 var(--font-body);
+  resize: vertical;
+}
+textarea:focus-visible { outline: 3px solid var(--ember); outline-offset: 2px; }
+
+.peryf-scena { display: flex; align-items: center; justify-content: center; min-height: clamp(140px, 32vw, 190px); }
+.peryf-linia { position: absolute; top: 50%; left: 50%; height: 2px; background: rgba(245, 247, 246, .18); transform: translate(-50%, -50%); transition: width .3s ease; }
+.peryf-punkt { width: 16px; height: 16px; border-radius: 50%; background: var(--ember); border: 3px solid #fff; z-index: 2; transition: transform .2s ease, background .2s ease; }
+.peryf-punkt.ladowanie { transform: scale(1.4); background: var(--warn); }
+.peryf-slowo {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(17px, 4.4vw, 26px);
+  font-weight: 800;
+  white-space: nowrap;
+  color: #9FD3F0;
+}
+.peryf-slowo.zakryte { color: #5B6F7A; font-weight: 600; }
+.wybory { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.wybor {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  min-height: 50px;
+  padding: 10px 14px;
+  font: 700 16px var(--font-body);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.wybor:hover:not(:disabled) { border-color: var(--steel); }
+.wybor:disabled { cursor: default; opacity: .6; }
+.wybor .kropka { color: var(--steel); }
+.wybor.dobry { background: var(--ok-soft); border-color: var(--ok); opacity: 1; }
+.wybor.zly { background: var(--ember-soft); border-color: var(--ember); opacity: 1; }
+
+/* Pojęcia */
+.start-blok { text-align: center; }
+.start-blok p { margin: 0 0 12px; }
+.start-blok .przycisk { min-width: 170px; flex: 0 0 auto; }
+.tekst-scena {
+  position: relative;
+  background: var(--panel);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  font-size: 17px;
+  line-height: 1.95;
+  color: var(--text);
+  max-height: 360px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+body.w-grze .tekst-scena {
+  max-height: max(220px, calc(100vh - 220px));
+  max-height: max(220px, calc(100svh - 220px));
+}
+.slowo { padding: 2px 2px; border-radius: 4px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.slowo.klucz { background: var(--bg); border-bottom: 2px dashed var(--steel); }
+.slowo.znalezione { background: var(--ok-soft); color: var(--ok); border-bottom: 2px solid var(--ok); font-weight: 700; cursor: default; }
+.slowo.zle { background: var(--ember-soft); }
+.slowo.podpowiedz { background: #FDF1DC; outline: 2px solid var(--warn); }
+
+/* Historia wyników */
+.naglowek-sekcji { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.naglowek-sekcji h3 { margin: 0; }
+.historia { list-style: none; margin: 0 0 14px; padding: 0; border: 1px solid var(--line); border-radius: 10px; max-height: 260px; overflow-y: auto; }
+.historia li { display: flex; justify-content: space-between; align-items: center; gap: 4px 12px; flex-wrap: wrap; padding: 8px 12px; border-bottom: 1px solid var(--line); font-size: 14px; }
+.historia li:last-child { border-bottom: 0; }
+.historia .meta { color: var(--steel); font-size: 13px; }
+.historia .wartosc { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.historia .pusto { justify-content: center; color: var(--steel); }
+.znaczek { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 6px; background: var(--ok-soft); color: var(--ok); font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.porada { margin: 0 0 8px; padding: 10px 12px; font-size: 14px; color: var(--text); background: var(--bg); border-left: 4px solid var(--warn); border-radius: 6px; }
+
+@keyframes potrzasniecie { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+@keyframes puls { from { box-shadow: 0 0 0 0 rgba(183, 121, 31, .3); } to { box-shadow: 0 0 0 5px rgba(183, 121, 31, .35); } }
+@keyframes odlot {
+  0% { opacity: 0; transform: translate(-50%, 8px); }
+  15% { opacity: 1; transform: translate(-50%, 0); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -14px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pole-planszy.blysk-zly, .pole-planszy.podpowiedz, .odznaka { animation: none; }
+  .pasek-czasu > div, .peryf-linia, .peryf-punkt { transition: none; }
+}
+
+@media (max-width: 560px) {
+  .zakladki { grid-template-columns: repeat(3, 1fr); margin-bottom: 18px; }
+  .zakladki button { font-size: 14px; }
+  .wskazniki.cztery strong { font-size: clamp(15px, 4.6vw, 22px); }
+  .wskazniki .pod { font-size: 11px; }
+  .wybory { grid-template-columns: 1fr; }
+  .wybor { min-height: 46px; }
+  .tekst-scena { font-size: 16px; padding: 10px 12px; }
+}

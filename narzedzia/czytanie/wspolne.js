@@ -1,0 +1,241 @@
+/* Trener czytania — części wspólne: losowanie, zapis wyników, historia, tryb gry, dopasowanie czcionek.
+   Dane tylko w localStorage tej przeglądarki (klucz solutor.czytanie.v1). Treści użytkownika wstawiane wyłącznie
+   przez textContent — nigdy jako HTML. */
+'use strict';
+
+const T = (() => {
+  const KLUCZ = 'solutor.czytanie.v1';
+  const MAX_HISTORII = 40;
+  const MAX_TEKSTU = 20000;
+  const WARIANTY = ['litery', 'liczby', 'slowa'];
+
+  const $ = (id) => document.getElementById(id);
+  function el(tag, klasa, tekst) {
+    const e = document.createElement(tag);
+    if (klasa) e.className = klasa;
+    if (tekst !== undefined) e.textContent = tekst;
+    return e;
+  }
+
+  // ---------- losowanie (bez przekrzywienia „modulo”) ----------
+  function losowa(max) {
+    if (max <= 1) return 0;
+    const granica = Math.floor(0x100000000 / max) * max;
+    const t = new Uint32Array(1);
+    do { crypto.getRandomValues(t); } while (t[0] >= granica);
+    return t[0] % max;
+  }
+  function tasuj(lista) {
+    const k = lista.slice();
+    for (let i = k.length - 1; i > 0; i--) {
+      const j = losowa(i + 1);
+      [k[i], k[j]] = [k[j], k[i]];
+    }
+    return k;
+  }
+  const wybierz = (lista) => lista[losowa(lista.length)];
+
+  // ---------- formaty ----------
+  const ulamek = (x, miejsc = 1) => x.toFixed(miejsc).replace('.', ',');
+  const kiedyTekst = (ts) => new Date(ts).toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  function odmiana(n, jeden, kilka, wiele) {
+    if (n === 1) return jeden;
+    const d = n % 10, s = n % 100;
+    return d >= 2 && d <= 4 && (s < 12 || s > 14) ? kilka : wiele;
+  }
+
+  // ---------- stan i jego sprawdzanie ----------
+  function domyslny() {
+    const skaner = {};
+    for (const w of WARIANTY) skaner[w] = { rekord: 0, plansze: 0, historia: [] };
+    return {
+      schulte: { rekordy: {}, historia: [] },
+      skaner,
+      rsvp: { rekord: 0, historia: [] },
+      peryferyjne: { rozpietosc: 0, wynik: 0, historia: [] },
+      pojecia: { rekord: 0, poziom: 0, historia: [] },
+      tekst: { wybor: '0', wlasny: '' },
+    };
+  }
+  const liczba = (x, min, max) => (typeof x === 'number' && Number.isFinite(x) && x >= min && x <= max ? x : null);
+  const calk = (x, min, max) => { const v = liczba(x, min, max); return v !== null && Number.isInteger(v) ? v : null; };
+  const kiedyOk = (x) => calk(x, 1.5e12, 4.1e12);
+  const obiekt = (x) => (x && typeof x === 'object' && !Array.isArray(x) ? x : {});
+  function lista(x, czysc) {
+    if (!Array.isArray(x)) return [];
+    return x.slice(0, MAX_HISTORII).map((w) => (w && typeof w === 'object' ? czysc(w) : null)).filter(Boolean);
+  }
+  const wszystkie = (o) => (Object.values(o).every((v) => v !== null) ? o : null);
+
+  function oczysc(o) {
+    if (!o || typeof o !== 'object') return null;
+    const s = domyslny();
+
+    const sc = obiekt(o.schulte);
+    for (const [k, v] of Object.entries(obiekt(sc.rekordy))) {
+      if (/^(?:[3-9]|10)_(?:liczby|litery)$/.test(k) && liczba(v, 0.1, 36000) !== null) s.schulte.rekordy[k] = v;
+    }
+    s.schulte.historia = lista(sc.historia, (w) => wszystkie({
+      kiedy: kiedyOk(w.kiedy), n: calk(w.n, 3, 10), znaki: w.znaki === 'liczby' || w.znaki === 'litery' ? w.znaki : null,
+      czas: liczba(w.czas, 0.1, 36000), bledy: calk(w.bledy, 0, 1e6), rekord: w.rekord === true,
+    }));
+
+    const sk = obiekt(o.skaner);
+    for (const wariant of WARIANTY) {
+      const z = obiekt(sk[wariant]);
+      s.skaner[wariant] = {
+        rekord: calk(z.rekord, 0, 1e9) || 0,
+        plansze: calk(z.plansze, 0, 1e6) || 0,
+        historia: lista(z.historia, (w) => wszystkie({
+          kiedy: kiedyOk(w.kiedy), wynik: calk(w.wynik, 0, 1e9), plansze: calk(w.plansze, 0, 1e6), rekord: w.rekord === true,
+        })),
+      };
+    }
+
+    const r = obiekt(o.rsvp);
+    s.rsvp.rekord = calk(r.rekord, 0, 5000) || 0;
+    s.rsvp.historia = lista(r.historia, (w) => wszystkie({
+      kiedy: kiedyOk(w.kiedy), slowa: calk(w.slowa, 1, 1e6), tempo: calk(w.tempo, 1, 5000), rekord: w.rekord === true,
+    }));
+
+    const p = obiekt(o.peryferyjne);
+    s.peryferyjne.rozpietosc = calk(p.rozpietosc, 0, 10000) || 0;
+    s.peryferyjne.wynik = calk(p.wynik, 0, 1e9) || 0;
+    s.peryferyjne.historia = lista(p.historia, (w) => wszystkie({
+      kiedy: kiedyOk(w.kiedy), bodzce: w.bodzce === 'slowa' || w.bodzce === 'liczby' ? w.bodzce : null,
+      rozpietosc: calk(w.rozpietosc, 0, 10000), wynik: calk(w.wynik, 0, 1e9), rekord: w.rekord === true,
+    }));
+
+    const j = obiekt(o.pojecia);
+    s.pojecia.rekord = calk(j.rekord, 0, 1e9) || 0;
+    s.pojecia.poziom = calk(j.poziom, 0, 4) || 0;
+    s.pojecia.historia = lista(j.historia, (w) => wszystkie({
+      kiedy: kiedyOk(w.kiedy), wynik: calk(w.wynik, 0, 1e9), poziom: calk(w.poziom, 1, 4), ukonczone: calk(w.ukonczone, 0, 1e6), rekord: w.rekord === true,
+    }));
+
+    const t = obiekt(o.tekst);
+    if (typeof t.wybor === 'string' && /^(?:[0-9]|wlasny)$/.test(t.wybor)) s.tekst.wybor = t.wybor;
+    if (typeof t.wlasny === 'string') s.tekst.wlasny = t.wlasny.slice(0, MAX_TEKSTU);
+    return s;
+  }
+
+  let stan = domyslny();
+  function wczytaj() {
+    try {
+      const s = localStorage.getItem(KLUCZ);
+      if (s) { const o = oczysc(JSON.parse(s)); if (o) stan = o; }
+    } catch (e) { /* tryb prywatny albo uszkodzone dane — zaczynamy od zera */ }
+  }
+  function zapisz() {
+    try {
+      localStorage.setItem(KLUCZ, JSON.stringify(stan));
+      return true;
+    } catch (e) {
+      komunikat('Nie udało się zapisać wyników w tej przeglądarce (brak miejsca albo tryb prywatny).', true);
+      return false;
+    }
+  }
+  function usunZapis() { try { localStorage.removeItem(KLUCZ); } catch (e) { /* nic */ } }
+  function dopisz(historia, wpis) {
+    historia.unshift(wpis);
+    if (historia.length > MAX_HISTORII) historia.length = MAX_HISTORII;
+  }
+  function liczbaWynikow(s) {
+    let n = s.schulte.historia.length + s.rsvp.historia.length + s.peryferyjne.historia.length + s.pojecia.historia.length;
+    for (const w of WARIANTY) n += s.skaner[w].historia.length;
+    return n;
+  }
+
+  // ---------- historia na ekranie ----------
+  function pokazHistorie(ul, wpisy, opis) {
+    ul.replaceChildren();
+    if (!wpisy.length) { ul.append(el('li', 'pusto', 'Jeszcze nie ma wyników.')); return; }
+    for (const w of wpisy) {
+      const { tytul, wartosc } = opis(w);
+      const li = el('li');
+      const lewa = el('span');
+      lewa.append(el('strong', '', tytul), ' ', el('span', 'meta', kiedyTekst(w.kiedy)));
+      if (w.rekord) lewa.append(el('span', 'znaczek', 'rekord'));
+      li.append(lewa, el('span', 'wartosc', wartosc));
+      ul.append(li);
+    }
+  }
+
+  // ---------- komunikaty ----------
+  const zegaryKomunikatow = {};
+  function komunikat(tekst, blad = false, id = 'komunikat') {
+    const k = $(id);
+    if (!k) return;
+    k.textContent = tekst;
+    k.classList.toggle('blad', blad);
+    clearTimeout(zegaryKomunikatow[id]);
+    zegaryKomunikatow[id] = setTimeout(() => { k.textContent = ''; }, 7000);
+  }
+  function odznaka(kontener, tekst, rodzaj = '') {
+    kontener.querySelectorAll('.odznaka').forEach((e) => e.remove());
+    const o = el('div', `odznaka ${rodzaj}`.trim(), tekst);
+    kontener.append(o);
+    setTimeout(() => o.remove(), 1300);
+  }
+  function migniecie(e, klasa, ms) {
+    e.classList.add(klasa);
+    setTimeout(() => e.classList.remove(klasa), ms);
+  }
+
+  // ---------- tryb gry: na czas ćwiczenia chowamy wszystko poza planszą ----------
+  function trybGry(wlacz, element) {
+    document.body.classList.toggle('w-grze', wlacz);
+    if (!element) return;
+    requestAnimationFrame(() => {
+      if (wlacz) window.scrollTo(0, Math.max(0, element.getBoundingClientRect().top + window.scrollY - 8));
+      else element.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  // ---------- plansze: czcionka dopasowana do rozmiaru pola ----------
+  // Najdłuższy napis ma zająć do 82% szerokości pola, a litera — do 55% jego wysokości
+  function dopasujCzcionke(plansza) {
+    const n = Number(plansza.dataset.n) || 5;
+    const wzgl = Number(plansza.dataset.wzgl) || 0.6;   // szerokość najdłuższego napisu / rozmiar czcionki
+    const szer = plansza.clientWidth;
+    if (!szer) return;
+    const odstep = n >= 8 ? 3 : 4;
+    const pole = (szer - odstep * (n - 1)) / n;
+    plansza.style.gap = `${odstep}px`;
+    plansza.style.fontSize = `${Math.max(8, Math.floor(Math.min(pole * 0.55, (pole * 0.82) / wzgl)))}px`;
+  }
+  const obserwator = 'ResizeObserver' in window
+    ? new ResizeObserver((wpisy) => wpisy.forEach((w) => dopasujCzcionke(w.target)))
+    : null;
+  if (!obserwator) window.addEventListener('resize', () => document.querySelectorAll('.plansza').forEach(dopasujCzcionke));
+  function ustawPlansze(plansza, n, wartosci) {
+    plansza.dataset.n = n;
+    plansza.dataset.wzgl = Math.max(...[...new Set(wartosci)].map((v) => szerokosc(v, 100) / 100)).toFixed(3);
+    plansza.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+    plansza.style.gridTemplateRows = `repeat(${n}, 1fr)`;
+    plansza.replaceChildren(...wartosci.map((v) => {
+      const b = el('button', 'pole-planszy', v);
+      b.type = 'button';
+      b.dataset.v = v;
+      return b;
+    }));
+    dopasujCzcionke(plansza);
+    if (obserwator) obserwator.observe(plansza);
+  }
+
+  // Szerokość napisu w pikselach (do dopasowania RSVP i odstępu w widzeniu peryferyjnym)
+  const miarka = document.createElement('canvas').getContext('2d');
+  function szerokosc(tekst, px, waga = 700) {
+    miarka.font = `${waga} ${px}px ${getComputedStyle(document.body).fontFamily}`;
+    return miarka.measureText(tekst).width;
+  }
+
+  return {
+    KLUCZ, MAX_TEKSTU, WARIANTY, $, el, losowa, tasuj, wybierz, ulamek, kiedyTekst, odmiana,
+    domyslny, oczysc, wczytaj, zapisz, usunZapis, dopisz, liczbaWynikow,
+    get stan() { return stan; },
+    ustawStan(nowy) { stan = nowy; },
+    pokazHistorie, komunikat, odznaka, migniecie, trybGry, ustawPlansze, szerokosc,
+    moduly: {},
+  };
+})();

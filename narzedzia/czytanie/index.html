@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<title>Trener czytania — Solutor</title>
+<meta name="description" content="Ćwiczenia wzroku i uwagi przy czytaniu: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie (RSVP), widzenie peryferyjne, wyszukiwanie pojęć w tekście. Wyniki tylko w Twojej przeglądarce.">
+<link rel="stylesheet" href="../wspolne.css">
+<link rel="stylesheet" href="czytanie.css">
+</head>
+<body>
+
+<main class="karta karta-szeroka">
+  <div class="poza-gra">
+    <nav class="okruszki" aria-label="Ścieżka"><a href="../../">Solutor.pl</a> › <a href="../">Narzędzia</a></nav>
+    <h1>Trener czytania</h1>
+    <p class="podtytul">Ćwiczenia wzroku i uwagi: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie, widzenie peryferyjne i wyszukiwanie pojęć w tekście.</p>
+    <nav class="zakladki" aria-label="Ćwiczenia">
+      <button type="button" data-modul="schulte">Tablica</button>
+      <button type="button" data-modul="litery">Litery</button>
+      <button type="button" data-modul="liczby">Liczby</button>
+      <button type="button" data-modul="slowa">Słowa</button>
+      <button type="button" data-modul="rsvp">RSVP</button>
+      <button type="button" data-modul="peryferyjne">Peryferyjne</button>
+      <button type="button" data-modul="pojecia">Pojęcia</button>
+    </nav>
+  </div>
+
+  <!-- ============ Tablica Schultego ============ -->
+  <section id="m-schulte" class="modul" hidden aria-labelledby="s-tytul">
+    <div class="poza-gra">
+      <h2 id="s-tytul">Tablica Schultego</h2>
+      <p class="opis">Klikaj znaki po kolei: 1, 2, 3… albo A, B, C… Patrz na środek tablicy i szukaj kątem oka.</p>
+    </div>
+    <div class="pasek-celu">
+      <div class="cel-blok"><span class="etykieta">Szukaj</span> <strong id="s-cel" class="cel">1</strong> <span id="s-postep" class="cel-pod">0 z 25</span></div>
+      <button type="button" class="przycisk maly tylko-w-grze" data-przerwij="schulte">Przerwij</button>
+    </div>
+    <div class="wskazniki">
+      <div><span class="etykieta">Czas</span><strong id="s-czas">0,0 s</strong></div>
+      <div><span class="etykieta">Pomyłki</span><strong id="s-bledy">0</strong></div>
+      <div><span class="etykieta">Rekord</span><strong id="s-rekord">—</strong><span id="s-rekord-pod" class="pod">5×5</span></div>
+    </div>
+    <div class="ramka ustawienia poza-gra">
+      <div class="pola">
+        <label class="pole" for="s-rozmiar">Rozmiar
+          <select id="s-rozmiar">
+            <option value="3">3×3 (9 pól)</option>
+            <option value="4">4×4 (16 pól)</option>
+            <option value="5" selected>5×5 (25 pól, klasyczna)</option>
+            <option value="6">6×6 (36 pól)</option>
+            <option value="7">7×7 (49 pól)</option>
+            <option value="8">8×8 (64 pola)</option>
+            <option value="9">9×9 (81 pól)</option>
+            <option value="10">10×10 (100 pól)</option>
+          </select>
+        </label>
+        <label class="pole" for="s-znaki">Znaki
+          <select id="s-znaki">
+            <option value="liczby" selected>Liczby (1, 2, 3…)</option>
+            <option value="litery">Litery (A, B, C…)</option>
+          </select>
+        </label>
+      </div>
+      <div class="przelaczniki">
+        <label class="pole-wyboru"><input type="checkbox" id="s-wygaszaj" checked> Wygaszaj trafione</label>
+        <label class="pole-wyboru"><input type="checkbox" id="s-punkt" checked> Punkt w środku</label>
+      </div>
+    </div>
+    <div id="s-ramka" class="plansza-ramka">
+      <div id="s-plansza" class="plansza"></div>
+      <div id="s-punkt-srodek" class="punkt-srodek"></div>
+      <div id="s-nakladka" class="nakladka">
+        <p id="s-nakl-tytul" class="nakladka-tytul"></p>
+        <p id="s-nakl-tekst"></p>
+        <button type="button" id="s-start" class="przycisk glowny">Start</button>
+      </div>
+    </div>
+    <div class="poza-gra">
+      <div class="naglowek-sekcji"><h3>Ostatnie wyniki</h3><button type="button" id="s-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
+      <ul id="s-historia" class="historia"></ul>
+      <p class="porada">Patrz na czerwony punkt w środku i szukaj kolejnych znaków kątem oka, bez przesuwania wzroku. Na początek wystarczy 5×5.</p>
+    </div>
+  </section>
+
+  <!-- ============ Wyszukiwanie liter, liczb i słów ============ -->
+  <section id="m-skaner" class="modul" hidden aria-labelledby="k-tytul">
+    <div class="poza-gra">
+      <h2 id="k-tytul">Wyszukiwanie liter</h2>
+      <p id="k-opis" class="opis"></p>
+    </div>
+    <div class="pasek-celu">
+      <div class="cel-blok"><span id="k-etykieta" class="etykieta">Znajdź</span> <strong id="k-cel" class="cel">—</strong> <span id="k-kropki" class="kropki" aria-hidden="true"></span></div>
+      <button type="button" class="przycisk maly tylko-w-grze" data-przerwij="skaner">Przerwij</button>
+    </div>
+    <div class="wskazniki">
+      <div><span class="etykieta">Czas</span><strong id="k-czas">60,0 s</strong><span id="k-bonus" class="pod">bonus +0/30 s</span></div>
+      <div><span class="etykieta">Punkty</span><strong id="k-wynik">0</strong><span id="k-seria" class="pod">seria ×1</span></div>
+      <div><span class="etykieta">Rekord</span><strong id="k-rekord">0</strong><span id="k-rekord-pod" class="pod">plansz: 0</span></div>
+    </div>
+    <div class="pasek-czasu" aria-hidden="true"><div id="k-pasek"></div></div>
+    <div class="ramka ustawienia poza-gra">
+      <div class="pola">
+        <label class="pole" for="k-rozmiar">Plansza
+          <select id="k-rozmiar">
+            <option value="5">5×5 (25 pól)</option>
+            <option value="6">6×6 (36 pól)</option>
+            <option value="7" selected>7×7 (49 pól)</option>
+            <option value="8">8×8 (64 pola)</option>
+            <option value="10">10×10 (100 pól)</option>
+          </select>
+        </label>
+        <label class="pole" for="k-celow">Celów na planszy
+          <select id="k-celow">
+            <option value="3">3</option>
+            <option value="5" selected>5</option>
+            <option value="7">7</option>
+          </select>
+        </label>
+      </div>
+      <div class="przelaczniki">
+        <label class="pole-wyboru"><input type="checkbox" id="k-podpowiedz" checked> Podpowiedź po 10 s bez trafienia</label>
+      </div>
+    </div>
+    <div id="k-ramka" class="plansza-ramka">
+      <div id="k-plansza" class="plansza"></div>
+      <div id="k-nakladka" class="nakladka">
+        <p id="k-nakl-tytul" class="nakladka-tytul"></p>
+        <p id="k-nakl-tekst"></p>
+        <button type="button" id="k-start" class="przycisk glowny">Start</button>
+      </div>
+    </div>
+    <div class="poza-gra">
+      <div class="naglowek-sekcji"><h3>Ostatnie wyniki</h3><button type="button" id="k-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
+      <ul id="k-historia" class="historia"></ul>
+      <p id="k-porada" class="porada"></p>
+    </div>
+  </section>
+
+  <!-- ============ RSVP ============ -->
+  <section id="m-rsvp" class="modul" hidden aria-labelledby="r-tytul">
+    <div class="poza-gra">
+      <h2 id="r-tytul">Czytanie słowo po słowie (RSVP)</h2>
+      <p class="opis">Tekst pokazuje się po jednym słowie (albo po kilka) w tym samym miejscu ekranu, więc oczy nie skaczą po linijce.</p>
+    </div>
+    <div class="wskazniki cztery">
+      <div><span class="etykieta">Tempo</span><strong id="r-tempo">350</strong><span id="r-tempo-pod" class="pod">słów/min</span></div>
+      <div><span class="etykieta">Postęp</span><strong id="r-postep">0%</strong><span id="r-postep-pod" class="pod">0 z 0</span></div>
+      <div><span class="etykieta">Zostało</span><strong id="r-zostalo">0 s</strong><span class="pod">przy tym tempie</span></div>
+      <div><span class="etykieta">Rekord</span><strong id="r-rekord">0</strong><span class="pod">słów/min</span></div>
+    </div>
+    <div class="pasek-czasu" aria-hidden="true"><div id="r-pasek" class="postep"></div></div>
+    <div class="ramka ustawienia poza-gra">
+      <div class="pola">
+        <label class="pole" for="r-tempo-wybor">Tempo na start
+          <select id="r-tempo-wybor">
+            <option value="200">200 słów/min</option>
+            <option value="250">250 słów/min</option>
+            <option value="300">300 słów/min</option>
+            <option value="350" selected>350 słów/min</option>
+            <option value="450">450 słów/min</option>
+            <option value="550">550 słów/min</option>
+            <option value="700">700 słów/min</option>
+            <option value="900">900 słów/min</option>
+          </select>
+        </label>
+        <label class="pole" for="r-porcja">Naraz
+          <select id="r-porcja">
+            <option value="1" selected>1 słowo</option>
+            <option value="2">2 słowa</option>
+            <option value="3">3 słowa</option>
+          </select>
+        </label>
+        <label class="pole" for="r-wybor-tekstu">Tekst
+          <select id="r-wybor-tekstu">
+            <option value="wlasny">Własny tekst</option>
+          </select>
+        </label>
+      </div>
+      <div class="przelaczniki">
+        <label class="pole-wyboru"><input type="checkbox" id="r-przyspieszaj" checked> Przyspieszaj o 25 słów/min co 10 s</label>
+      </div>
+    </div>
+    <p id="r-wynik" class="wynik" role="status" hidden></p>
+    <div id="r-scena" class="scena rsvp-scena" title="Dotknij, żeby zatrzymać albo wznowić">
+      <div class="rsvp-kreska gora"></div>
+      <div class="rsvp-kreska dol"></div>
+      <div id="r-slowo" class="rsvp-slowo" aria-live="off"><span id="r-lewa" class="rsvp-lewa"></span><span id="r-orp" class="rsvp-orp"></span><span id="r-prawa" class="rsvp-prawa"></span></div>
+    </div>
+    <div class="akcje sterowanie">
+      <button type="button" id="r-wstecz" class="przycisk">-10 słów</button>
+      <button type="button" id="r-graj" class="przycisk glowny">Start</button>
+      <button type="button" id="r-od-nowa" class="przycisk">Od nowa</button>
+    </div>
+    <div class="poza-gra">
+      <div id="r-wlasny-blok" class="ramka odstep-gora" hidden>
+        <label class="pole" for="r-tekst">Własny tekst
+          <textarea id="r-tekst" maxlength="20000" placeholder="Wklej tu artykuł albo rozdział, który chcesz przeczytać." spellcheck="false"></textarea>
+        </label>
+        <div class="akcje odstep-gora">
+          <button type="button" id="r-wklej" class="przycisk maly">Wklej ze schowka</button>
+          <button type="button" id="r-usun-tekst" class="przycisk maly ostrozny">Usuń tekst</button>
+        </div>
+        <p id="r-komunikat" class="komunikat" role="status"></p>
+        <p class="drobny">Tekst zostaje tylko w tej przeglądarce (do 20 000 znaków). Ćwiczenie „Pojęcia” korzysta z tego samego tekstu.</p>
+      </div>
+      <div class="naglowek-sekcji odstep-gora"><h3>Przeczytane teksty</h3><button type="button" id="r-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
+      <ul id="r-historia" class="historia"></ul>
+      <p class="porada">Patrz na czerwoną literę między kreskami. Przy tej metodzie nie da się wrócić wzrokiem do poprzedniego słowa, więc przy wysokim tempie zrozumienie zwykle spada. Po skończeniu spróbuj w dwóch zdaniach powiedzieć, o czym był tekst.</p>
+    </div>
+  </section>
+
+  <!-- ============ Widzenie peryferyjne ============ -->
+  <section id="m-peryferyjne" class="modul" hidden aria-labelledby="p-tytul">
+    <div class="poza-gra">
+      <h2 id="p-tytul">Widzenie peryferyjne</h2>
+      <p class="opis">Po bokach punktu na ułamek sekundy pokażą się dwa słowa. Wskaż, jaka to była para. Z każdą dobrą odpowiedzią słowa oddalają się od środka.</p>
+    </div>
+    <div class="pasek-celu">
+      <div class="cel-blok"><span class="etykieta">Runda</span> <strong id="p-runda" class="cel">0 z 12</strong> <span id="p-seria" class="cel-pod">seria: 0</span></div>
+      <button type="button" class="przycisk maly tylko-w-grze" data-przerwij="peryferyjne">Przerwij</button>
+    </div>
+    <div class="wskazniki">
+      <div><span class="etykieta">Odstęp</span><strong id="p-rozp">140 px</strong><span class="pod">między słowami teraz</span></div>
+      <div><span class="etykieta">Punkty</span><strong id="p-wynik">0</strong><span class="pod">za odstęp i serię</span></div>
+      <div><span class="etykieta">Rekord</span><strong id="p-rekord">0 px</strong><span id="p-rekord-pod" class="pod">punktów: 0</span></div>
+    </div>
+    <div class="ramka ustawienia poza-gra">
+      <div class="pola">
+        <label class="pole" for="p-czas">Czas błysku
+          <select id="p-czas">
+            <option value="350">350 ms (na początek)</option>
+            <option value="240" selected>240 ms</option>
+            <option value="150">150 ms (trudno)</option>
+          </select>
+        </label>
+        <label class="pole" for="p-bodzce">Co pokazywać
+          <select id="p-bodzce">
+            <option value="slowa" selected>Słowa</option>
+            <option value="liczby">Liczby trzycyfrowe</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <p id="p-wynik-koniec" class="wynik" role="status" hidden></p>
+    <div id="p-scena" class="scena peryf-scena">
+      <div id="p-linia" class="peryf-linia"></div>
+      <div id="p-lewa" class="peryf-slowo zakryte">••••</div>
+      <div id="p-punkt" class="peryf-punkt"></div>
+      <div id="p-prawa" class="peryf-slowo zakryte">••••</div>
+    </div>
+    <div id="p-wybory" class="wybory" hidden></div>
+    <div class="akcje odstep-dol">
+      <button type="button" id="p-start" class="przycisk glowny">Start (12 rund)</button>
+      <button type="button" id="p-powtorz" class="przycisk tylko-w-grze" disabled>Pokaż jeszcze raz</button>
+    </div>
+    <div class="poza-gra">
+      <div class="naglowek-sekcji"><h3>Ostatnie wyniki</h3><button type="button" id="p-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
+      <ul id="p-historia" class="historia"></ul>
+      <p class="porada">Patrz na punkt w środku. Błysk jest tak krótki, że nie zdążysz przesunąć wzroku, więc oba słowa trzeba zobaczyć naraz. Odstęp zależy od szerokości ekranu: rekordy z telefonu i komputera nie są porównywalne.</p>
+    </div>
+  </section>
+
+  <!-- ============ Pojęcia ============ -->
+  <section id="m-pojecia" class="modul" hidden aria-labelledby="j-tytul">
+    <div class="poza-gra">
+      <h2 id="j-tytul">Wyszukiwanie pojęć</h2>
+      <p class="opis">Z tekstu wybieram kilka ważnych słów. Znajdź je i klikaj w kolejności, w jakiej występują. Każdy poziom to dalszy i dłuższy fragment.</p>
+    </div>
+    <div class="pasek-celu">
+      <div class="cel-blok"><span class="etykieta">Szukaj</span> <strong id="j-cel" class="cel cel-slowo">—</strong> <span id="j-postep" class="cel-pod"></span></div>
+      <button type="button" class="przycisk maly tylko-w-grze" data-przerwij="pojecia">Przerwij</button>
+    </div>
+    <div class="wskazniki">
+      <div><span class="etykieta">Czas</span><strong id="j-czas">60,0 s</strong><span id="j-bonus" class="pod">bonus +0/30 s</span></div>
+      <div><span class="etykieta">Punkty</span><strong id="j-wynik">0</strong><span id="j-poziom" class="pod">poziom 1 z 4</span></div>
+      <div><span class="etykieta">Rekord</span><strong id="j-rekord">0</strong><span id="j-rekord-pod" class="pod">najwyższy poziom: 0</span></div>
+    </div>
+    <div class="pasek-czasu" aria-hidden="true"><div id="j-pasek"></div></div>
+    <div class="ramka ustawienia poza-gra">
+      <div class="pola">
+        <label class="pole" for="j-start-poziom">Zacznij od
+          <select id="j-start-poziom">
+            <option value="1">poziomu 1 (ok. 35 słów, 4 pojęcia)</option>
+            <option value="2">poziomu 2 (ok. 65 słów, 5 pojęć)</option>
+            <option value="3">poziomu 3 (ok. 100 słów, 6 pojęć)</option>
+            <option value="4">poziomu 4 (ok. 140 słów, 7 pojęć)</option>
+          </select>
+        </label>
+      </div>
+      <div class="przelaczniki">
+        <label class="pole-wyboru"><input type="checkbox" id="j-zaznacz" checked> Podkreślaj szukane słowa</label>
+        <label class="pole-wyboru"><input type="checkbox" id="j-podpowiedz" checked> Podpowiedź po 10 s bez trafienia</label>
+      </div>
+      <p class="drobny"><span id="j-tekst-info"></span> <button type="button" id="j-zmien-tekst" class="link-przycisk">Zmień tekst</button></p>
+    </div>
+    <p id="j-wynik-koniec" class="wynik" role="status" hidden></p>
+    <div id="j-start-blok" class="ramka ramka-biala start-blok">
+      <p id="j-start-tekst">Masz 60 sekund. Pomyłka zabiera 1 s, a poziom ukończony w 10 s dodaje 5 s.</p>
+      <button type="button" id="j-start" class="przycisk glowny">Start</button>
+    </div>
+    <div class="kotwica">
+      <div id="j-scena" class="tekst-scena" hidden></div>
+    </div>
+    <div class="poza-gra">
+      <div class="naglowek-sekcji"><h3>Ostatnie wyniki</h3><button type="button" id="j-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
+      <ul id="j-historia" class="historia"></ul>
+      <p class="porada">To ćwiczenie przeglądania tekstu w poszukiwaniu konkretnych słów, tak jak przy szukaniu odpowiedzi w podręczniku albo umowie. Najlepiej działa na tekście, który i tak masz przeczytać: wklej go w ćwiczeniu RSVP.</p>
+    </div>
+  </section>
+
+  <section class="ramka poza-gra odstep-gora" aria-labelledby="kopia-tytul">
+    <h3 id="kopia-tytul">Twoje wyniki</h3>
+    <p class="drobny odstep-dol">Wyniki są tylko w tej przeglądarce. Żeby przenieść je na inne urządzenie albo zachować na zapas, zapisz kopię do pliku (razem z własnym tekstem).</p>
+    <div class="akcje">
+      <button type="button" id="zapisz-plik" class="przycisk maly">Zapisz kopię do pliku</button>
+      <button type="button" id="wczytaj-plik" class="przycisk maly">Wczytaj kopię z pliku</button>
+      <button type="button" id="wyczysc-wszystko" class="przycisk maly ostrozny">Usuń wszystkie dane</button>
+      <input type="file" id="plik" accept=".json,application/json" hidden>
+    </div>
+    <p id="komunikat" class="komunikat" role="status"></p>
+  </section>
+
+  <footer class="stopka-narzedzia poza-gra">
+    Ćwiczenia mierzą postęp w samych ćwiczeniach. Badania nie potwierdzają, że trening wzroku wielokrotnie przyspiesza czytanie bez utraty zrozumienia, więc przy szybkim czytaniu sprawdzaj, co zostało w głowie.
+    Działa w Twojej przeglądarce: nic nie jest wysyłane na serwer, nie ma kont ani ciasteczek. Kod jest jawny: <a href="https://github.com/adkacz/solutor-www/tree/main/narzedzia/czytanie">GitHub</a>.
+  </footer>
+</main>
+
+<script src="wspolne.js"></script>
+<script src="schulte.js"></script>
+<script src="skaner.js"></script>
+<script src="rsvp.js"></script>
+<script src="peryferyjne.js"></script>
+<script src="pojecia.js"></script>
+<script src="start.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+/* Karnet — tylko to, czego nie ma w ../wspolne.css */
+.nazwa-karnetu { padding: 12px 16px; }
+.tylko-druk { display: none; }
+.odstep-gora { margin-top: 12px; }
+.odstep-dol { margin: 0 0 12px; }
+
+.saldo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  background: var(--ok-soft);
+  border: 2px solid var(--ok);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.saldo.minus { background: var(--ember-soft); border-color: var(--ember); }
+.saldo-etykieta { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--steel); }
+.saldo-liczba { font-size: clamp(28px, 8vw, 36px); font-weight: 800; color: var(--ink); line-height: 1.2; margin: 2px 0; }
+.saldo-pod { font-size: 13px; color: var(--steel); }
+
+.naglowek-sekcji { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.naglowek-sekcji h3 { margin: 0; }
+.naglowek-sekcji .drobny { margin: 0; }
+
+.kafelki { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 20px; }
+.kafelek {
+  font: inherit;
+  border-radius: 10px;
+  padding: 10px 4px;
+  text-align: center;
+  border: 2px solid var(--ok);
+  background: var(--panel);
+  color: var(--ink);
+  min-height: 64px;
+}
+button.kafelek { cursor: pointer; }
+button.kafelek:hover { background: var(--ok-soft); }
+.kafelek .nr { display: block; font-family: var(--font-mono); font-size: 12px; color: var(--steel); }
+.kafelek .stan { display: block; font-size: 13px; font-weight: 700; color: var(--ok); }
+.kafelek.zuzyty { border: 2px dashed var(--line); background: var(--bg); }
+.kafelek.zuzyty .stan { color: var(--steel); font-weight: 600; }
+.pusto {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 18px;
+  color: var(--steel);
+  font-size: 14px;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+}
+
+.historia { list-style: none; margin: 0 0 16px; padding: 0; border: 1px solid var(--line); border-radius: 10px; max-height: 340px; overflow-y: auto; }
+.historia li { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 14px; }
+.historia li:last-child { border-bottom: 0; }
+.historia li.wplata { background: var(--bg); }
+.historia .opis { display: flex; flex-direction: column; min-width: 0; }
+.historia .tytul { font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
+.historia .meta { font-size: 12.5px; color: var(--steel); }
+.historia .pusto { border: 0; }
+
+@media (max-width: 560px) {
+  .kafelki { grid-template-columns: repeat(4, 1fr); }
+  .saldo { grid-template-columns: 1fr 1fr; padding: 12px 8px; }
+}
+@media (max-width: 360px) {
+  .kafelki { grid-template-columns: repeat(3, 1fr); }
+}
+@media print {
+  .tylko-druk { display: block; }
+  .historia { max-height: none; overflow: visible; }
+  .kafelek, .saldo { break-inside: avoid; }
+}

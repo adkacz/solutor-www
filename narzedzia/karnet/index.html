@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<title>Karnet — licznik przedpłat — Solutor</title>
+<meta name="description" content="Prosty licznik przedpłaconego karnetu: obiady w szkole, basen, zajęcia. Wpłaty, odhaczanie, ile zostało i za ile. Dane tylko w Twojej przeglądarce.">
+<link rel="stylesheet" href="../wspolne.css">
+<link rel="stylesheet" href="karnet.css">
+</head>
+<body>
+
+<main class="karta">
+  <nav class="okruszki bez-druku" aria-label="Ścieżka"><a href="../../">Solutor.pl</a> › <a href="../">Narzędzia</a></nav>
+  <h1>Karnet</h1>
+  <p class="podtytul">Licznik przedpłat: obiady w szkole, basen, zajęcia, sprzątanie. Wpłacasz za kilka razy z góry, odhaczasz każde wykorzystanie i widzisz, ile zostało i za ile.</p>
+
+  <div class="ramka ramka-biala nazwa-karnetu bez-druku">
+    <label class="pole" for="nazwa">Na co jest ten karnet?
+      <input type="text" id="nazwa" maxlength="60" placeholder="np. Obiady w szkole" autocomplete="off">
+    </label>
+  </div>
+  <h2 id="nazwa-druk" class="tylko-druk"></h2>
+
+  <section class="saldo" aria-label="Stan karnetu">
+    <div class="saldo-blok">
+      <div class="saldo-etykieta">Zostało</div>
+      <div id="zostalo" class="saldo-liczba">0</div>
+      <div id="zostalo-pod" class="saldo-pod">brak wpłat</div>
+    </div>
+    <div class="saldo-blok">
+      <div class="saldo-etykieta">Wartość pozostałych</div>
+      <div id="wartosc" class="saldo-liczba">0 zł</div>
+      <div id="wartosc-pod" class="saldo-pod">&nbsp;</div>
+    </div>
+  </section>
+
+  <div class="naglowek-sekcji">
+    <h3>Bieżąca pula</h3>
+    <span id="pula-opis" class="drobny"></span>
+  </div>
+  <div id="kafelki" class="kafelki" aria-live="polite"></div>
+
+  <section class="ramka bez-druku" aria-labelledby="odhacz-tytul">
+    <h3 id="odhacz-tytul">Odhacz wykorzystanie</h3>
+    <div class="pola">
+      <label class="pole" for="odhacz-data">Data
+        <input type="date" id="odhacz-data">
+      </label>
+      <label class="pole" for="odhacz-notatka">Notatka (opcjonalnie)
+        <input type="text" id="odhacz-notatka" maxlength="80" placeholder="np. zupa + drugie" autocomplete="off">
+      </label>
+    </div>
+    <div class="akcje odstep-gora">
+      <button id="odhacz" class="przycisk glowny" type="button">Odhacz 1</button>
+    </div>
+  </section>
+
+  <section class="ramka bez-druku" aria-labelledby="wplata-tytul">
+    <h3 id="wplata-tytul">Nowa wpłata</h3>
+    <div class="pola">
+      <label class="pole" for="wplata-kwota">Kwota (zł)
+        <input type="number" id="wplata-kwota" min="0.01" max="100000" step="0.01" inputmode="decimal" placeholder="np. 250">
+      </label>
+      <label class="pole" for="wplata-ile">Ile razy
+        <input type="number" id="wplata-ile" min="1" max="500" step="1" inputmode="numeric" placeholder="np. 10">
+      </label>
+      <label class="pole" for="wplata-data">Data wpłaty
+        <input type="date" id="wplata-data">
+      </label>
+    </div>
+    <div class="akcje odstep-gora">
+      <button id="wplac" class="przycisk" type="button">Dodaj wpłatę</button>
+    </div>
+  </section>
+
+  <div class="naglowek-sekcji">
+    <h3>Historia</h3>
+    <span id="historia-liczba" class="drobny"></span>
+  </div>
+  <ul id="historia" class="historia"></ul>
+
+  <section class="ramka bez-druku" aria-labelledby="przenies-tytul">
+    <h3 id="przenies-tytul">Przenieś na inne urządzenie albo zachowaj kopię</h3>
+    <p class="drobny odstep-dol">Dane są tylko w tej przeglądarce. Żeby mieć karnet na drugim telefonie: na tym kliknij „Wyślij stan” (np. do siebie na Messengerze albo w notatce), na drugim skopiuj całą wiadomość i kliknij „Wczytaj stan”.</p>
+    <div class="akcje">
+      <button id="wyslij" class="przycisk" type="button">Wyślij stan</button>
+      <button id="wczytaj" class="przycisk" type="button">Wczytaj stan</button>
+    </div>
+    <div class="akcje odstep-gora">
+      <button id="zapisz-plik" class="przycisk maly" type="button">Zapisz kopię do pliku</button>
+      <button id="wczytaj-plik" class="przycisk maly" type="button">Wczytaj kopię z pliku</button>
+      <button id="drukuj" class="przycisk maly" type="button">Drukuj</button>
+      <button id="wyczysc" class="przycisk maly ostrozny" type="button">Wyczyść karnet</button>
+      <input type="file" id="plik" accept=".json,application/json" hidden>
+    </div>
+    <p id="komunikat" class="komunikat" role="status"></p>
+  </section>
+
+  <footer class="stopka-narzedzia bez-druku">
+    Działa w Twojej przeglądarce: nic nie jest wysyłane na serwer, nie ma kont ani ciasteczek. Wyczyszczenie danych przeglądarki usuwa też karnet, więc czasem zapisz kopię do pliku. Kod jest jawny: <a href="https://github.com/adkacz/solutor-www/tree/main/narzedzia/karnet">GitHub</a>.
+  </footer>
+</main>
+
+<script src="karnet.js"></script>
+</body>
+</html>

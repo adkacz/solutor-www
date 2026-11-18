@@ -1,0 +1,132 @@
+/* Wspólny styl narzędzi Solutora (solutor.pl/narzedzia/).
+   Kolory jak na solutor.pl, czcionki systemowe — nic z obcych serwerów.
+   Każde narzędzie: <link rel="stylesheet" href="../wspolne.css"> + ewentualnie własny plik ze szczegółami. */
+:root {
+  --bg: #F5F7F6;
+  --panel: #FFFFFF;
+  --ink: #16232B;
+  --text: #2E3E48;
+  --steel: #4A6572;
+  --line: #D9E0DE;
+  --ember: #D64A1F;
+  --ember-soft: #FBEAE3;
+  --ok: #1F7A4D;
+  --ok-soft: #E6F3EC;
+  --warn: #B7791F;
+  --radius: 14px;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 24px 16px 48px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+}
+.mono { font-family: var(--font-mono); }
+
+/* Karta narzędzia */
+.karta {
+  max-width: 680px;
+  margin: 0 auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 28px;
+}
+/* Okruszki u góry: Solutor.pl › Narzędzia */
+.okruszki { font-family: var(--font-mono); font-size: 13px; color: var(--steel); }
+.okruszki a { color: var(--steel); text-decoration: none; }
+.okruszki a:hover { color: var(--ember); }
+h1 { margin: 10px 0 6px; font-size: clamp(24px, 5vw, 32px); line-height: 1.2; color: var(--ink); }
+h2 { margin: 0 0 8px; font-size: 19px; color: var(--ink); }
+h3 { margin: 0 0 10px; font-size: 16px; color: var(--ink); }
+.podtytul { margin: 0 0 20px; color: var(--steel); }
+.drobny { font-size: 13px; color: var(--steel); margin: 8px 0 0; }
+
+/* Ramka (sekcja w karcie) i ramka wyróżniona */
+.ramka {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.ramka-biala { background: var(--panel); }
+
+/* Przyciski */
+.akcje { display: flex; gap: 10px; flex-wrap: wrap; }
+.przycisk {
+  flex: 1 1 auto;
+  padding: 12px 16px;
+  font: 600 16px var(--font-body);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+  min-height: 46px;
+}
+.przycisk:hover { border-color: var(--steel); }
+.przycisk.glowny { background: var(--ink); color: #fff; border-color: var(--ink); }
+.przycisk.glowny:hover { background: #24394A; }
+.przycisk.zrobione { background: var(--ok); color: #fff; border-color: var(--ok); }
+.przycisk.maly { flex: 0 0 auto; padding: 6px 12px; font-size: 14px; min-height: 0; }
+.przycisk.ostrozny { color: var(--ember); }
+.przycisk.ostrozny:hover { border-color: var(--ember); background: var(--ember-soft); }
+.przycisk:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible {
+  outline: 3px solid var(--ember);
+  outline-offset: 2px;
+}
+
+/* Pola formularzy */
+.pola { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; align-items: end; }
+.pole { display: flex; flex-direction: column; gap: 4px; font-size: 14px; font-weight: 600; color: var(--ink); }
+.pole-wyboru { display: flex; flex-direction: row; align-items: center; gap: 8px; font-size: 14px; font-weight: 400; cursor: pointer; }
+input[type="text"], input[type="number"], input[type="date"], select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  font: 400 16px var(--font-body);   /* 16px: telefon nie powiększa strony przy wpisywaniu */
+  min-height: 44px;
+}
+input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--ok); flex: none; }
+
+/* Komunikat na chwilę (np. „Skopiowano”) */
+.komunikat { min-height: 1.4em; font-size: 14px; font-weight: 600; color: var(--ok); margin: 8px 0 0; }
+.komunikat.blad { color: var(--ember); }
+
+/* Spis narzędzi (narzedzia/index.html) */
+.spis { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.spis a { display: block; padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: var(--text); background: var(--panel); }
+.spis a:hover { border-color: var(--ember); background: var(--ember-soft); }
+.spis strong { display: block; font-size: 18px; color: var(--ink); margin-bottom: 2px; }
+.spis span { font-size: 15px; color: var(--steel); }
+
+/* Stopka narzędzia */
+.stopka-narzedzia {
+  border-top: 1px solid var(--line);
+  margin-top: 22px;
+  padding-top: 14px;
+  font-size: 13px;
+  color: var(--steel);
+}
+.stopka-narzedzia a { color: var(--ember); }
+
+@media (max-width: 560px) {
+  body { padding: 16px 12px 40px; }
+  .karta { padding: 20px 16px; }
+}
+@media print {
+  body { background: #fff; padding: 0; color: #000; }
+  .karta { border: 0; padding: 0; max-width: none; }
+  .bez-druku { display: none !important; }
+}

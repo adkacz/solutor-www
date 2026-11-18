@@ -6,12 +6,13 @@
 <meta name="referrer" content="no-referrer">
 <title>Generator haseł ze słów — Solutor</title>
 <meta name="description" content="Hasło główne do menedżera haseł z losowych polskich słów: łatwe do zapamiętania, z uczciwie policzoną siłą. Losowanie w Twojej przeglądarce, nic nie jest wysyłane. Karta ratunkowa do wydruku.">
+<link rel="stylesheet" href="../wspolne.css">
 <link rel="stylesheet" href="styl.css">
 </head>
 <body>
 
 <main class="karta">
-  <a class="powrot" href="../../">‹ Solutor.pl</a>
+  <nav class="okruszki" aria-label="Ścieżka"><a href="../../">Solutor.pl</a> › <a href="../">Narzędzia</a></nav>
   <h1>Generator haseł ze słów</h1>
   <p class="podtytul">Hasło główne do menedżera haseł z losowych polskich słów: łatwe do zapamiętania i&nbsp;przepisania, trudne do odgadnięcia. Słowa bez polskich znaków, więc wpiszesz je na każdej klawiaturze.</p>
 
@@ -19,7 +20,7 @@
     <output id="haslo" class="haslo" aria-live="polite">Losuję...</output>
   </div>
 
-  <div class="akcje">
+  <div class="akcje odstep">
     <button id="losuj" class="przycisk glowny" type="button">Wylosuj nowe słowa</button>
     <button id="kopiuj" class="przycisk" type="button">Kopiuj</button>
     <button id="ukryj" class="przycisk" type="button" aria-pressed="false">Ukryj</button>
@@ -45,7 +46,7 @@
     <p id="podpowiedz" class="podpowiedz"></p>
   </section>
 
-  <section class="opcje" aria-label="Ustawienia">
+  <section class="opcje ramka" aria-label="Ustawienia">
     <label>Liczba słów
       <select id="liczba">
         <option value="4">4 słowa</option>

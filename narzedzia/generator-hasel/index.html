@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<title>Generator haseł ze słów — Solutor</title>
+<meta name="description" content="Hasło główne do menedżera haseł z losowych polskich słów: łatwe do zapamiętania, z uczciwie policzoną siłą. Losowanie w Twojej przeglądarce, nic nie jest wysyłane. Karta ratunkowa do wydruku.">
+<link rel="stylesheet" href="styl.css">
+</head>
+<body>
+
+<main class="karta">
+  <a class="powrot" href="../../">‹ Solutor.pl</a>
+  <h1>Generator haseł ze słów</h1>
+  <p class="podtytul">Hasło główne do menedżera haseł z losowych polskich słów: łatwe do zapamiętania i&nbsp;przepisania, trudne do odgadnięcia. Słowa bez polskich znaków, więc wpiszesz je na każdej klawiaturze.</p>
+
+  <div class="haslo-wiersz">
+    <output id="haslo" class="haslo" aria-live="polite">Losuję...</output>
+  </div>
+
+  <div class="akcje">
+    <button id="losuj" class="przycisk glowny" type="button">Wylosuj nowe słowa</button>
+    <button id="kopiuj" class="przycisk" type="button">Kopiuj</button>
+    <button id="ukryj" class="przycisk" type="button" aria-pressed="false">Ukryj</button>
+  </div>
+
+  <section class="sila" aria-label="Siła hasła">
+    <div class="sila-naglowek">
+      <span id="ocena">Siła: —</span>
+      <span id="bity" class="mono">— bitów</span>
+    </div>
+    <div class="pasek"><div id="pasek" class="pasek-wypelnienie"></div></div>
+    <table class="czasy">
+      <caption>Średni czas odgadnięcia, gdy atakujący zna tę listę słów i&nbsp;sposób losowania</caption>
+      <tr>
+        <th scope="row">Ktoś ukradł zaszyfrowany sejf menedżera haseł i&nbsp;ma 100 mocnych kart graficznych <span class="przypis">(ok. 1&nbsp;mln prób/s, ustawienia domyślne Bitwardena)</span></th>
+        <td id="czas-sejf" class="mono">—</td>
+      </tr>
+      <tr>
+        <th scope="row">To samo hasło wyciekło z bazy serwisu, który zapisał je szybkim skrótem <span class="przypis">(ok. 100&nbsp;mld prób/s)</span></th>
+        <td id="czas-szybki" class="mono">—</td>
+      </tr>
+    </table>
+    <p id="podpowiedz" class="podpowiedz"></p>
+  </section>
+
+  <section class="opcje" aria-label="Ustawienia">
+    <label>Liczba słów
+      <select id="liczba">
+        <option value="4">4 słowa</option>
+        <option value="5">5 słów</option>
+        <option value="6" selected>6 słów (zalecane)</option>
+        <option value="7">7 słów</option>
+        <option value="8">8 słów</option>
+      </select>
+    </label>
+    <label>Wielkie litery
+      <select id="wielkie">
+        <option value="brak">bez wielkich liter</option>
+        <option value="kazde" selected>na początku każdego słowa</option>
+        <option value="losowo">na początku losowych słów</option>
+      </select>
+    </label>
+    <label>Separator
+      <select id="separator">
+        <option value="-" selected>myślnik ( - )</option>
+        <option value=".">kropka ( . )</option>
+        <option value="_">podkreślnik ( _ )</option>
+        <option value=" ">spacja</option>
+      </select>
+    </label>
+    <label class="pole-wyboru">
+      <input type="checkbox" id="cyfra" checked>
+      Losowa cyfra przy losowym słowie
+    </label>
+  </section>
+
+  <section class="druk">
+    <button id="drukuj" class="przycisk druk-przycisk" type="button">Drukuj kartę ratunkową</button>
+    <label class="pole-wyboru">
+      <input type="checkbox" id="pusta-karta">
+      Karta bez hasła (wpiszę je ręcznie)
+    </label>
+    <p class="drobny">Drukarki sieciowe i&nbsp;usługi drukowania w&nbsp;chmurze mogą zachować kopię wydruku. Jeśli nie masz pewności, wydrukuj kartę bez hasła i&nbsp;wpisz je długopisem.</p>
+  </section>
+
+  <section class="wyjasnienie">
+    <h2>Jak tego używać</h2>
+    <ul>
+      <li><strong>Do czego:</strong> jedno hasło, które trzeba pamiętać: hasło główne do menedżera haseł (np. Bitwarden, KeePassXC) albo do komputera. Hasła do sklepów, banków i&nbsp;poczty niech generuje sam menedżer: losowe i&nbsp;inne dla każdego serwisu.</li>
+      <li><strong>Nie poprawiaj słów na własne</strong> i&nbsp;nie dopisuj nic „od siebie”. Siła bierze się wyłącznie z&nbsp;losowania. Słowo wybrane przez człowieka jest dużo łatwiejsze do odgadnięcia.</li>
+      <li><strong>Wielkie litery na początku każdego słowa</strong> nie dodają siły, bo to stała zasada i&nbsp;atakujący też ją zna. Pomagają tylko tam, gdzie serwis wymaga wielkiej litery. Siłę dodaje dopiero losowy wybór słów z&nbsp;wielką literą albo kolejne słowo.</li>
+      <li><strong>Po skopiowaniu</strong> skopiuj potem coś innego. Historia schowka w&nbsp;Windows (Win+V) i&nbsp;synchronizacja schowka między urządzeniami potrafią zapamiętać hasło.</li>
+      <li><strong>Prywatność:</strong> słowa losuje Twoja przeglądarka (<code>crypto.getRandomValues</code>). Strona nie wysyła niczego i&nbsp;nie używa ciasteczek: możesz odłączyć internet i&nbsp;losować dalej. Kod jest jawny: <a href="https://github.com/adkacz/solutor-www/tree/main/narzedzia/generator-hasel">GitHub</a>.</li>
+    </ul>
+    <p class="drobny">Czasy są przybliżone i&nbsp;pokazują rząd wielkości. Siła liczona jest uczciwie: z&nbsp;założeniem, że atakujący zna listę <span id="liczba-slow">924</span> słów i&nbsp;cały sposób losowania (jest jawny w&nbsp;kodzie tej strony).</p>
+  </section>
+</main>
+
+<section class="karta-ratunkowa" aria-hidden="true">
+  <h2>Karta ratunkowa</h2>
+  <p class="kr-pod">Hasło główne do menedżera haseł</p>
+
+  <div class="kr-zasady">
+    <strong>Zasady:</strong>
+    1. Schowaj kartę w&nbsp;bezpiecznym miejscu w&nbsp;domu, np. w&nbsp;teczce z&nbsp;ważnymi dokumentami.
+    2. Nie rób jej zdjęcia i&nbsp;nie wysyłaj nikomu przez internet.
+    3. Przy zmianie hasła głównego zniszcz starą kartę.
+  </div>
+
+  <div class="kr-pole">
+    <span class="kr-etykieta">1. Menedżer haseł (nazwa, adres strony):</span>
+    <div class="kr-linia"></div>
+  </div>
+  <div class="kr-pole">
+    <span class="kr-etykieta">2. Adres e-mail lub login do menedżera:</span>
+    <div class="kr-linia"></div>
+  </div>
+  <div class="kr-pole">
+    <span class="kr-etykieta">3. Hasło główne:</span>
+    <div id="kr-haslo" class="kr-haslo"></div>
+    <span class="kr-drobny">Separator i&nbsp;wielkie litery mają znaczenie. Wydrukowane: <span id="kr-data"></span></span>
+  </div>
+  <div class="kr-pole">
+    <span class="kr-etykieta">4. Kod odzyskiwania logowania dwuetapowego (jeśli menedżer go podał):</span>
+    <div class="kr-linia"></div>
+  </div>
+
+  <div class="kr-kroki">
+    <strong>Gdy zgubisz telefon albo kupisz nowy komputer:</strong><br>
+    • zainstaluj ten sam menedżer haseł albo wejdź na jego stronę,<br>
+    • zaloguj się adresem z&nbsp;punktu 2 i&nbsp;hasłem z&nbsp;punktu 3,<br>
+    • jeśli nie masz drugiego składnika logowania (telefonu, klucza), użyj kodu z&nbsp;punktu 4.<br>
+    Po zalogowaniu wrócą wszystkie hasła zapisane w&nbsp;menedżerze.
+  </div>
+</section>
+
+<script src="generator.js"></script>
+</body>
+</html>

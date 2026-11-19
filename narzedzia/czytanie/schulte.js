@@ -10,8 +10,12 @@
   const ramka = $('s-ramka');
   const nakladka = $('s-nakladka');
 
-  // Próg „świetnie” w sekundach na pole — szacunki na start, do dostrojenia po pierwszych seriach
-  const PROG = { 3: 0.45, 4: 0.55, 5: 0.65, 6: 0.75, 7: 0.85, 8: 0.95, 9: 1.05, 10: 1.15 };
+  // Próg domyślny w sekundach na pole. Rośnie z rozmiarem (więcej pól = dłuższe szukanie każdego), dobrany
+  // do pierwszych wyników z telefonu (19.11.2026: 3×3 ok. 0,48, 4×4 ok. 0,65, 5×5 ok. 0,9–1,0 s/pole).
+  const PROG = { 3: 0.50, 4: 0.65, 5: 0.80, 6: 0.95, 7: 1.10, 8: 1.25, 9: 1.40, 10: 1.55 };
+  // Próg osobisty: po 5 planszach na danym rozmiarze = mediana ostatnich 10 temp minus 5%,
+  // ale nie łatwiej niż 130% i nie trudniej niż 70% progu domyślnego
+  const WLASNY_PO = 5, WLASNY_ZAPAS = 0.95, WLASNY_MIN = 0.7, WLASNY_MAX = 1.3;
   const ZA_WOLNO = 1.6;          // tempo wolniejsze niż 1,6 × próg = plansza „za trudna”
   const MAX_BLEDOW_AWANS = 1;
   const BLEDY_SPADEK = 4;
@@ -28,6 +32,29 @@
   const rozmiar = (n) => `${n}×${n}`;
   const sPole = (t) => `${T.ulamek(t, 2)} s/pole`;
   const minSek = (ms) => { const c = Math.max(0, Math.ceil(ms / 1000)); return `${Math.floor(c / 60)}:${String(c % 60).padStart(2, '0')}`; };
+
+  function progDla(n, znaki = g.znaki) {
+    const t = ustawienia().tempa[`${n}_${znaki}`] || [];
+    if (t.length < WLASNY_PO) return { prog: PROG[n], wlasny: false };
+    const p = [...t].sort((a, b) => a - b);
+    const mediana = p.length % 2 ? p[(p.length - 1) / 2] : (p[p.length / 2 - 1] + p[p.length / 2]) / 2;
+    const prog = Math.min(PROG[n] * WLASNY_MAX, Math.max(PROG[n] * WLASNY_MIN, mediana * WLASNY_ZAPAS));
+    return { prog: Math.round(prog * 1000) / 1000, wlasny: true };
+  }
+  const opisProgu = (o) => `${T.ulamek(o.prog, 2)}${o.wlasny ? ' (Twój)' : ''}`;
+  function zapamietajTempo(n, znaki, tempo) {
+    const k = `${n}_${znaki}`;
+    const t = ustawienia().tempa[k] || [];
+    t.push(Math.round(tempo * 1000) / 1000);
+    ustawienia().tempa[k] = t.slice(-T.MAX_TEMP);
+  }
+  // Lista progów pod ustawieniami Flow (do wglądu i strojenia)
+  function pokazProgi() {
+    const u = ustawienia();
+    const czesci = [];
+    for (let n = MIN_N; n <= u.sufit; n++) czesci.push(`${rozmiar(n)} ${opisProgu(progDla(n))}`);
+    $('s-progi').textContent = `Progi (s/pole, ${g.znaki}): ${czesci.join(' · ')}.`;
+  }
 
   // 0 › A, 25 › Z, 26 › AA … (przy 10×10 ostatnia to CV)
   function litera(i) {
@@ -74,9 +101,9 @@
     }
 
     if (seria) {
-      $('s-trzeci').textContent = 'Poprzednia';
+      $('s-trzeci').textContent = 'Tempo na pole';
       $('s-rekord').textContent = s.ostatnia ? `${T.ulamek(s.ostatnia.tempo, 2)} s` : '—';
-      $('s-rekord-pod').textContent = `na pole, próg ${T.ulamek(PROG[g.n], 2)}`;
+      $('s-rekord-pod').textContent = `próg ${opisProgu(progDla(g.n))}`;
     } else {
       const r = T.stan.schulte.rekordy[klucz()];
       $('s-trzeci').textContent = 'Rekord';
@@ -125,9 +152,11 @@
     $('s-czas').textContent = '0,0 s';
     if (trybSerii()) {
       const sufit = ustawienia().sufit;
+      const o = progDla(Math.min(g.n, sufit));
       pokazNakladke('Flow',
-        `${opisLimitu()} od ${rozmiar(Math.min(g.n, sufit))}, najwyżej do ${rozmiar(sufit)}. Awans: dwie plansze z rzędu szybciej niż ${sPole(PROG[Math.min(g.n, sufit)])}.`,
+        `${opisLimitu()} od ${rozmiar(Math.min(g.n, sufit))}, najwyżej do ${rozmiar(sufit)}. Awans: dwie plansze z rzędu szybciej niż ${sPole(o.prog)}${o.wlasny ? ' (Twój próg)' : ''}.`,
         'Start Flow');
+      pokazProgi();
     } else {
       pokazNakladke(`Tablica ${rozmiar(g.n)}`,
         `Klikaj po kolei od ${g.kolejka[0]} do ${g.kolejka[g.kolejka.length - 1]}. Czas liczy się od kliknięcia Start.`, 'Start');
@@ -186,8 +215,11 @@
     if (rekord) z.rekordy[klucz()] = czas;
     $('s-czas').textContent = `${T.ulamek(czas, 2)} s`;
     T.migniecie(ramka, 'wygrana', 600);
+    // próg liczony przed dopisaniem tej planszy — ocenia ją Twoje dotychczasowe tempo
+    const prog = progDla(g.n);
+    zapamietajTempo(g.n, g.znaki, czas / (g.n * g.n));
 
-    if (s.aktywna) { poPlanszySerii(czas, rekord && Boolean(poprzedni)); return; }   // w serii tylko pobity rekord
+    if (s.aktywna) { poPlanszySerii(czas, prog, rekord && Boolean(poprzedni)); return; }   // w serii tylko pobity rekord
 
     T.dopisz(z.historia, { kiedy: Date.now(), n: g.n, znaki: g.znaki, czas, bledy: g.bledy, rekord });
     T.zapisz();
@@ -199,10 +231,10 @@
   }
 
   // Decyzja po planszy w serii: awans, spadek albo ten sam poziom
-  function poPlanszySerii(czas, rekord) {
+  function poPlanszySerii(czas, progInfo, rekord) {
     const n = g.n;
     const tempo = czas / (n * n);
-    const prog = PROG[n];
+    const prog = progInfo.prog;
     const szybko = tempo <= prog && g.bledy <= MAX_BLEDOW_AWANS;
     const wolno = tempo > ZA_WOLNO * prog || g.bledy >= BLEDY_SPADEK;
     const wpis = { n, czas, tempo, bledy: g.bledy, wzgl: prog / tempo, zmiana: 0 };
@@ -210,6 +242,7 @@
     s.ostatnia = wpis;
     s.dobre = szybko ? s.dobre + 1 : 0;
     s.slabe = wolno ? s.slabe + 1 : 0;
+    T.zapisz();   // tempo i rekord zostają, nawet gdy ktoś zamknie kartę w połowie Flow
 
     let tytul;
     if (s.dobre >= POD_RZAD) {
@@ -227,7 +260,7 @@
     } else {
       tytul = 'Dobrze, ten sam poziom';
     }
-    const opis = `${rozmiar(n)}: ${sPole(tempo)} (próg ${T.ulamek(prog, 2)})${g.bledy ? `, pomyłki: ${g.bledy}` : ''}.${rekord ? ' Rekord tej tablicy!' : ''}`;
+    const opis = `${rozmiar(n)}: ${sPole(tempo)} (próg ${T.ulamek(prog, 2)}${progInfo.wlasny ? ', Twój' : ''})${g.bledy ? `, pomyłki: ${g.bledy}` : ''}.${rekord ? ' Rekord tej tablicy!' : ''}`;
 
     const koniec = s.plansze.length >= s.limitPlansz || (s.limitMs && performance.now() - s.start >= s.limitMs);
     if (koniec) { koniecSerii(); return; }
@@ -271,6 +304,7 @@
     $('s-podsumowanie').hidden = false;
     $('s-rozmiar').value = String(s.n);
     czytajUstawienia();
+    pokazProgi();
     pokazNakladke('Flow zakończony', 'Podsumowanie jest nad tablicą.', 'Jeszcze raz');
     T.trybGry(false, $('s-podsumowanie'));
     pokaz();
@@ -352,9 +386,10 @@
   $('s-wyczysc').addEventListener('click', () => {
     const z = T.stan.schulte;
     if (trybSerii()) {
-      if (!z.seria.historia.length) return;
-      if (!confirm('Usunąć historię sesji Flow? Rekordy tablic zostają.')) return;
+      if (!z.seria.historia.length && !Object.keys(z.seria.tempa).length) return;
+      if (!confirm('Usunąć historię sesji Flow i Twoje progi (wrócą domyślne)? Rekordy tablic zostają.')) return;
       z.seria.historia = [];
+      z.seria.tempa = {};
     } else {
       if (!z.historia.length && !Object.keys(z.rekordy).length) return;
       if (!confirm('Usunąć wyniki i rekordy tablicy Schultego?')) return;
@@ -362,7 +397,7 @@
       z.historia = [];
     }
     T.zapisz();
-    pokaz();
+    przygotuj();   // odświeża też progi i opis na planszy
     historia();
   });
 

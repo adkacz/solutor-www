@@ -34,17 +34,24 @@
       <p class="opis">Klikaj znaki po kolei: 1, 2, 3… albo A, B, C… Patrz na środek tablicy i szukaj kątem oka.</p>
     </div>
     <div class="pasek-celu">
-      <div class="cel-blok"><span class="etykieta">Szukaj</span> <strong id="s-cel" class="cel">1</strong> <span id="s-postep" class="cel-pod">0 z 25</span></div>
-      <button type="button" class="przycisk maly tylko-w-grze" data-przerwij="schulte">Przerwij</button>
+      <div class="cel-blok"><span class="etykieta">Szukaj</span> <strong id="s-cel" class="cel">1</strong> <span id="s-postep" class="cel-pod">0 z 25</span>
+        <span id="s-seria-pasek" class="seria-pasek" hidden><span id="s-poziom" class="cel-pod"></span> <span id="s-awans" class="kropki" title="Szybkie plansze do awansu"></span></span></div>
+      <button type="button" id="s-przerwij" class="przycisk maly tylko-w-grze" data-przerwij="schulte">Przerwij</button>
     </div>
     <div class="wskazniki">
-      <div><span class="etykieta">Czas</span><strong id="s-czas">0,0 s</strong></div>
+      <div><span class="etykieta">Czas</span><strong id="s-czas">0,0 s</strong><span id="s-czas-pod" class="pod">&nbsp;</span></div>
       <div><span class="etykieta">Pomyłki</span><strong id="s-bledy">0</strong></div>
-      <div><span class="etykieta">Rekord</span><strong id="s-rekord">—</strong><span id="s-rekord-pod" class="pod">5×5</span></div>
+      <div><span id="s-trzeci" class="etykieta">Rekord</span><strong id="s-rekord">—</strong><span id="s-rekord-pod" class="pod">5×5</span></div>
     </div>
     <div class="ramka ustawienia poza-gra">
       <div class="pola">
-        <label class="pole" for="s-rozmiar">Rozmiar
+        <label class="pole" for="s-tryb">Tryb
+          <select id="s-tryb">
+            <option value="jedna" selected>Jedna plansza</option>
+            <option value="seria">Seria: poziom dobiera się sam</option>
+          </select>
+        </label>
+        <label class="pole" for="s-rozmiar"><span id="s-rozmiar-etykieta">Rozmiar</span>
           <select id="s-rozmiar">
             <option value="3">3×3 (9 pól)</option>
             <option value="4">4×4 (16 pól)</option>
@@ -62,11 +69,37 @@
             <option value="litery">Litery (A, B, C…)</option>
           </select>
         </label>
+        <label class="pole tylko-seria" for="s-dlugosc">Długość serii
+          <select id="s-dlugosc">
+            <option value="5">5 plansz</option>
+            <option value="10" selected>10 plansz</option>
+            <option value="15">15 plansz</option>
+            <option value="3m">3 minuty</option>
+            <option value="5m">5 minut</option>
+          </select>
+        </label>
+        <label class="pole tylko-seria" for="s-sufit">Najwyżej do
+          <select id="s-sufit">
+            <option value="4">4×4</option>
+            <option value="5">5×5</option>
+            <option value="6">6×6</option>
+            <option value="7" selected>7×7</option>
+            <option value="8">8×8</option>
+            <option value="9">9×9</option>
+            <option value="10">10×10</option>
+          </select>
+        </label>
       </div>
       <div class="przelaczniki">
         <label class="pole-wyboru"><input type="checkbox" id="s-wygaszaj" checked> Wygaszaj trafione</label>
         <label class="pole-wyboru"><input type="checkbox" id="s-punkt" checked> Punkt w środku</label>
       </div>
+      <p class="drobny tylko-seria">Po każdej planszy następna startuje sama. Dwie plansze z rzędu szybciej niż próg poziomu (najwyżej 1 pomyłka) to awans, dwie dużo wolniejsze albo z 4 pomyłkami to spadek.</p>
+    </div>
+    <div id="s-podsumowanie" class="wynik podsumowanie" role="status" hidden>
+      <p id="s-pods-tekst"></p>
+      <svg id="s-wykres" class="wykres" viewBox="0 0 300 100" role="img" aria-label="Tempo kolejnych plansz względem progu"></svg>
+      <p class="drobny">Słupek to tempo planszy względem progu jej poziomu: nad kreską szybciej niż próg. Pod słupkiem rozmiar tablicy.</p>
     </div>
     <div id="s-ramka" class="plansza-ramka">
       <div id="s-plansza" class="plansza"></div>
@@ -78,9 +111,9 @@
       </div>
     </div>
     <div class="poza-gra">
-      <div class="naglowek-sekcji"><h3>Ostatnie wyniki</h3><button type="button" id="s-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
+      <div class="naglowek-sekcji"><h3 id="s-hist-tytul">Ostatnie wyniki</h3><button type="button" id="s-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
       <ul id="s-historia" class="historia"></ul>
-      <p class="porada">Patrz na czerwony punkt w środku i szukaj kolejnych znaków kątem oka, bez przesuwania wzroku. Na początek wystarczy 5×5.</p>
+      <p class="porada">Patrz na czerwony punkt w środku i szukaj kolejnych znaków kątem oka, bez przesuwania wzroku. Na początek wystarczy 5×5. Seria to kilka minut ćwiczenia bez klikania między planszami; progi poziomów to szacunki na start i mogą się jeszcze zmienić.</p>
     </div>
   </section>
 

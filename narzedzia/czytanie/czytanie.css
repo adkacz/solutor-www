@@ -329,3 +329,15 @@ body.w-grze .tekst-scena {
   .wybor { min-height: 46px; }
   .tekst-scena { font-size: 16px; padding: 10px 12px; }
 }
+
+/* Tablica Schultego: seria */
+.seria-pasek { display: inline-flex; align-items: center; gap: 8px; }
+.podsumowanie { text-align: left; font-weight: 400; }
+.podsumowanie p { margin: 0 0 8px; }
+.podsumowanie #s-pods-tekst { font-weight: 600; }
+.wykres { display: block; width: 100%; height: auto; max-height: 140px; margin: 4px 0 6px; }
+.wykres .slupek { fill: var(--steel); }
+.wykres .slupek.dobry { fill: var(--ok); }
+.wykres .slupek.slaby { fill: var(--ember); }
+.wykres .prog { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 4 3; }
+.wykres text { fill: var(--steel); font-size: 9px; font-family: var(--font-body); }

@@ -6,8 +6,8 @@
 <meta name="referrer" content="no-referrer">
 <title>Trener czytania — Solutor</title>
 <meta name="description" content="Ćwiczenia wzroku i uwagi przy czytaniu: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie (RSVP), widzenie peryferyjne, wyszukiwanie pojęć w tekście. Wyniki tylko w Twojej przeglądarce.">
-<link rel="stylesheet" href="../wspolne.css?v=9">
-<link rel="stylesheet" href="czytanie.css?v=9">
+<link rel="stylesheet" href="../wspolne.css?v=10">
+<link rel="stylesheet" href="czytanie.css?v=10">
 </head>
 <body>
 
@@ -24,6 +24,7 @@
       <button type="button" data-modul="rsvp">RSVP</button>
       <button type="button" data-modul="peryferyjne">Peryferyjne</button>
       <button type="button" data-modul="pojecia">Pojęcia</button>
+      <button type="button" data-modul="podobne">Podobne</button>
     </nav>
   </div>
 
@@ -380,6 +381,50 @@
     </div>
   </section>
 
+  <!-- ============ Podobne zestawy ============ -->
+  <section id="m-podobne" class="modul" hidden aria-labelledby="d-tytul">
+    <div class="poza-gra">
+      <h2 id="d-tytul">Podobne zestawy</h2>
+      <p class="opis">Na chwilę pokażą się dwa zestawy obok siebie. Takie same czy różne? Różnice są małe: przestawione znaki (23 i 32), podobna cyfra albo litera, ogonek (rak i rąk). Po trzech dobrych odpowiedziach z rzędu zestawy są dłuższe, a pokaz krótszy.</p>
+    </div>
+    <div class="pasek-celu">
+      <div class="cel-blok"><span class="etykieta">Runda</span> <strong id="d-runda" class="cel">0 z 20</strong> <span id="d-seria" class="cel-pod">seria: 0</span></div>
+      <button type="button" class="przycisk maly tylko-w-grze" data-przerwij="podobne">Przerwij</button>
+    </div>
+    <div class="wskazniki">
+      <div><span class="etykieta">Poziom</span><strong id="d-poziom">1</strong><span id="d-poziom-pod" class="pod">pokaz 2,0 s</span></div>
+      <div><span class="etykieta">Punkty</span><strong id="d-wynik">0</strong><span id="d-wynik-pod" class="pod">dobrze: 0</span></div>
+      <div><span class="etykieta">Rekord</span><strong id="d-rekord">0</strong><span id="d-rekord-pod" class="pod">poziom: 0</span></div>
+    </div>
+    <div class="ramka ustawienia poza-gra">
+      <div class="pola">
+        <label class="pole" for="d-rodzaj">Co porównywać
+          <select id="d-rodzaj">
+            <option value="cyfry" selected>Cyfry (23 i 32)</option>
+            <option value="slowa">Słowa (rak i rąk)</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <p id="d-wynik-koniec" class="wynik" role="status" hidden></p>
+    <div id="d-scena" class="scena podobne-scena">
+      <div id="d-lewy" class="zestaw zakryte">••••</div>
+      <div id="d-prawy" class="zestaw zakryte">••••</div>
+    </div>
+    <div id="d-odpowiedzi" class="wybory dwa" hidden>
+      <button type="button" id="d-same" class="wybor">Takie same</button>
+      <button type="button" id="d-rozne" class="wybor">Różne</button>
+    </div>
+    <div class="akcje odstep-dol">
+      <button type="button" id="d-start" class="przycisk glowny">Start (20 rund)</button>
+    </div>
+    <div class="poza-gra">
+      <div class="naglowek-sekcji"><h3>Ostatnie wyniki</h3><button type="button" id="d-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
+      <ul id="d-historia" class="historia"></ul>
+      <p class="porada">Przy szybkim czytaniu wzrok łapie ogólny kształt słowa, a resztę dopowiada głowa — dlatego przestawione cyfry i zgubione ogonki łatwo przeoczyć, np. przy przepisywaniu numeru konta albo telefonu. To ćwiczenie uczy na chwilę spojrzeć na szczegóły. Po każdej różnej parze różnica jest zaznaczona. Na komputerze możesz odpowiadać strzałkami: w lewo „takie same”, w prawo „różne”.</p>
+    </div>
+  </section>
+
   <section class="ramka poza-gra odstep-gora" aria-labelledby="kopia-tytul">
     <h3 id="kopia-tytul">Twoje wyniki</h3>
     <p class="drobny odstep-dol">Wyniki są tylko w tej przeglądarce. Żeby przenieść je na inne urządzenie albo zachować na zapas, zapisz kopię do pliku (razem z własnym tekstem).</p>
@@ -398,12 +443,13 @@
   </footer>
 </main>
 
-<script src="wspolne.js?v=9"></script>
-<script src="schulte.js?v=9"></script>
-<script src="skaner.js?v=9"></script>
-<script src="rsvp.js?v=9"></script>
-<script src="peryferyjne.js?v=9"></script>
-<script src="pojecia.js?v=9"></script>
-<script src="start.js?v=9"></script>
+<script src="wspolne.js?v=10"></script>
+<script src="schulte.js?v=10"></script>
+<script src="skaner.js?v=10"></script>
+<script src="rsvp.js?v=10"></script>
+<script src="peryferyjne.js?v=10"></script>
+<script src="pojecia.js?v=10"></script>
+<script src="podobne.js?v=10"></script>
+<script src="start.js?v=10"></script>
 </body>
 </html>

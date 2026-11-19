@@ -12,6 +12,7 @@
     rsvp: ['m-rsvp', 'rsvp'],
     peryferyjne: ['m-peryferyjne', 'peryferyjne'],
     pojecia: ['m-pojecia', 'pojecia'],
+    podobne: ['m-podobne', 'podobne'],
   };
   const SEKCJE = [...new Set(Object.values(CWICZENIA).map((c) => c[0]))];
   let biezace = null;

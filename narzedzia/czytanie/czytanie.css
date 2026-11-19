@@ -297,6 +297,14 @@ textarea:focus-visible { outline: 3px solid var(--ember); outline-offset: 2px; }
 .wybor.dobry { background: var(--ok-soft); border-color: var(--ok); opacity: 1; }
 .wybor.zly { background: var(--ember-soft); border-color: var(--ember); opacity: 1; }
 
+/* Podobne zestawy: dwa zestawy obok siebie na ciemnej scenie, różnica zaznaczona po odpowiedzi */
+.podobne-scena { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: center; min-height: clamp(110px, 26vw, 150px); padding: 18px 10px; }
+.zestaw { text-align: center; font-size: clamp(20px, 5.4vw, 30px); font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: .02em; white-space: nowrap; overflow: hidden; padding: 10px 4px; border-radius: 10px; background: rgba(255, 255, 255, .06); }
+.zestaw.zakryte { color: #5B6F7A; font-weight: 600; }
+.zestaw .roznica { color: var(--ink); background: #F2C36B; border-radius: 3px; }
+.wybory.dwa { grid-template-columns: 1fr 1fr; }
+.wybory.dwa .wybor { justify-content: center; }
+
 /* Pojęcia */
 .start-blok { text-align: center; }
 .start-blok p { margin: 0 0 12px; }
@@ -356,6 +364,7 @@ body.w-grze .tekst-scena {
   .wskazniki.cztery strong { font-size: clamp(15px, 4.6vw, 22px); }
   .wskazniki .pod { font-size: 11px; }
   .wybory { grid-template-columns: 1fr; }
+  .wybory.dwa { grid-template-columns: 1fr 1fr; }
   .wybor { min-height: 46px; }
   .tekst-scena { font-size: 16px; padding: 10px 12px; }
 }

@@ -45,11 +45,14 @@ const T = (() => {
   }
 
   // ---------- stan i jego sprawdzanie ----------
+  // Seria w tablicy Schultego: ustawienia, poziom, od którego zacznie się następna seria, i historia serii
+  const DLUGOSCI_SERII = ['5', '10', '15', '3m', '5m'];
+  const domyslnaSeria = () => ({ tryb: 'jedna', poziom: 5, dlugosc: '10', sufit: 7, historia: [] });
   function domyslny() {
     const skaner = {};
     for (const w of WARIANTY) skaner[w] = { rekord: 0, plansze: 0, historia: [] };
     return {
-      schulte: { rekordy: {}, historia: [] },
+      schulte: { rekordy: {}, historia: [], seria: domyslnaSeria() },
       skaner,
       rsvp: { rekord: 0, historia: [] },
       peryferyjne: { rozpietosc: 0, wynik: 0, historia: [] },
@@ -78,6 +81,16 @@ const T = (() => {
     s.schulte.historia = lista(sc.historia, (w) => wszystkie({
       kiedy: kiedyOk(w.kiedy), n: calk(w.n, 3, 10), znaki: w.znaki === 'liczby' || w.znaki === 'litery' ? w.znaki : null,
       czas: liczba(w.czas, 0.1, 36000), bledy: calk(w.bledy, 0, 1e6), rekord: w.rekord === true,
+    }));
+    const se = obiekt(sc.seria);
+    s.schulte.seria.tryb = se.tryb === 'seria' ? 'seria' : 'jedna';
+    s.schulte.seria.poziom = calk(se.poziom, 3, 10) || 5;
+    s.schulte.seria.dlugosc = DLUGOSCI_SERII.includes(se.dlugosc) ? se.dlugosc : '10';
+    s.schulte.seria.sufit = calk(se.sufit, 4, 10) || 7;
+    s.schulte.seria.historia = lista(se.historia, (w) => wszystkie({
+      kiedy: kiedyOk(w.kiedy), plansze: calk(w.plansze, 1, 1000), od: calk(w.od, 3, 10), najwyzszy: calk(w.najwyzszy, 3, 10),
+      wzgl: liczba(w.wzgl, 0.01, 100), awanse: calk(w.awanse, 0, 1000), spadki: calk(w.spadki, 0, 1000),
+      znaki: w.znaki === 'liczby' || w.znaki === 'litery' ? w.znaki : null, rekord: false,
     }));
 
     const sk = obiekt(o.skaner);
@@ -141,7 +154,7 @@ const T = (() => {
     if (historia.length > MAX_HISTORII) historia.length = MAX_HISTORII;
   }
   function liczbaWynikow(s) {
-    let n = s.schulte.historia.length + s.rsvp.historia.length + s.peryferyjne.historia.length + s.pojecia.historia.length;
+    let n = s.schulte.historia.length + s.schulte.seria.historia.length + s.rsvp.historia.length + s.peryferyjne.historia.length + s.pojecia.historia.length;
     for (const w of WARIANTY) n += s.skaner[w].historia.length;
     return n;
   }

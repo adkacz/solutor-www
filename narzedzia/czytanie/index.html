@@ -6,8 +6,8 @@
 <meta name="referrer" content="no-referrer">
 <title>Trener czytania — Solutor</title>
 <meta name="description" content="Ćwiczenia wzroku i uwagi przy czytaniu: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie (RSVP), widzenie peryferyjne, wyszukiwanie pojęć w tekście. Wyniki tylko w Twojej przeglądarce.">
-<link rel="stylesheet" href="../wspolne.css?v=6">
-<link rel="stylesheet" href="czytanie.css?v=6">
+<link rel="stylesheet" href="../wspolne.css?v=7">
+<link rel="stylesheet" href="czytanie.css?v=7">
 </head>
 <body>
 
@@ -86,6 +86,19 @@
             <option value="pole">Ćwiartka, potem pole</option>
           </select>
         </label>
+        <label class="pole" for="s-tempo-tryb">Tempo
+          <select id="s-tempo-tryb">
+            <option value="brak" selected>Nie pokazuj</option>
+            <option value="pasek">Pasek nad tablicą</option>
+            <option value="kolor">Kolor tablicy</option>
+          </select>
+        </label>
+        <label class="pole" for="s-paleta" id="s-paleta-pole" hidden>Kolory tempa
+          <select id="s-paleta">
+            <option value="delikatna" selected>Delikatne</option>
+            <option value="wyrazna">Wyraźne</option>
+          </select>
+        </label>
         <label class="pole" for="s-metronom">Metronom
           <select id="s-metronom">
             <option value="brak" selected>Wyłączony</option>
@@ -108,7 +121,10 @@
       <div class="przelaczniki">
         <label class="pole-wyboru"><input type="checkbox" id="s-wygaszaj" checked> Wygaszaj trafione</label>
         <label class="pole-wyboru"><input type="checkbox" id="s-punkt" checked> Punkt w środku</label>
-        <label class="pole-wyboru"><input type="checkbox" id="s-pasek"> Pasek tempa</label>
+      </div>
+      <div id="s-probka" hidden>
+        <div class="probka-tempa" aria-hidden="true"><span class="przed">7<small>szybciej</small></span><span>7<small>w tempie</small></span><span class="wolniej">7<small>wolniej</small></span></div>
+        <p class="drobny">Tak wygląda tablica w trakcie ćwiczenia. Jeśli trzy pola słabo się różnią, wybierz „Wyraźne”. Kolory różnią się barwą i jasnością, więc odróżnia je większość osób, które inaczej widzą kolory.</p>
       </div>
       <p class="drobny tylko-seria">Po każdej planszy następna startuje sama. Dwie plansze z rzędu szybciej niż próg poziomu (najwyżej 1 pomyłka) to awans, dwie dużo wolniejsze albo z 4 pomyłkami to spadek. Po 5 planszach na danym rozmiarze próg dopasowuje się do Twojego tempa. Przy podpowiedziach awans daje plansza z najwyżej jedną podpowiedzią, a tempo planszy z podpowiedzią nie zmienia progu.</p>
       <p class="drobny tylko-seria" id="s-progi"></p>
@@ -120,6 +136,8 @@
     </div>
     <div id="s-ramka" class="plansza-ramka">
       <div id="s-plansza" class="plansza"></div>
+      <div class="tlo-tempa przed" aria-hidden="true"></div>
+      <div class="tlo-tempa wolniej" aria-hidden="true"></div>
       <div id="s-punkt-srodek" class="punkt-srodek"></div>
       <div id="s-nakladka" class="nakladka">
         <p id="s-nakl-tytul" class="nakladka-tytul"></p>
@@ -130,7 +148,7 @@
     <div class="poza-gra">
       <div class="naglowek-sekcji"><h3 id="s-hist-tytul">Ostatnie wyniki</h3><button type="button" id="s-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
       <ul id="s-historia" class="historia"></ul>
-      <p class="porada">Patrz na czerwony punkt w środku i szukaj kolejnych znaków kątem oka, bez przesuwania wzroku. Na początek wystarczy 5×5. Flow to kilka minut ćwiczenia bez klikania między planszami; na początku progi są domyślne, a po kilku planszach na danym rozmiarze liczą się z Twoich ostatnich wyników (Twoje zwykłe tempo minus 5%). Podpowiedzi pomagają wyjść z chwili, gdy znaku „nie widać”: gdy jeden znak szukasz kilka razy dłużej niż zwykle, podświetla się ćwiartka tablicy, a jeśli wybierzesz, po chwili samo pole. Plansza z podpowiedzią nie bije rekordu. Pasek tempa nad tablicą: kreska idzie w tempie progu, a pasek rośnie z każdym znalezionym znakiem — zielony przed kreską to tempo na awans. Metronom: „rytm progu” stuka raz na pole w tempie progu, a wyższy, jaśniejszy dźwięk znaczy, że wyprzedzasz rytm; „spokojny rytm” to wolne uderzenia z cichszymi podziałami, niezależne od tempa — spróbuj, czy pomaga Ci się skupić. Na iPhonie dźwięk strony wycisza przełącznik wyciszenia.</p>
+      <p class="porada">Patrz na czerwony punkt w środku i szukaj kolejnych znaków kątem oka, bez przesuwania wzroku. Na początek wystarczy 5×5. Flow to kilka minut ćwiczenia bez klikania między planszami; na początku progi są domyślne, a po kilku planszach na danym rozmiarze liczą się z Twoich ostatnich wyników (Twoje zwykłe tempo minus 5%). Podpowiedzi pomagają wyjść z chwili, gdy znaku „nie widać”: gdy jeden znak szukasz kilka razy dłużej niż zwykle, podświetla się ćwiartka tablicy, a jeśli wybierzesz, po chwili samo pole. Plansza z podpowiedzią nie bije rekordu. Tempo możesz widzieć kolorem tablicy — niebieskawa: wyprzedzasz próg, zwykła: idziesz w tempie, bursztynowa: wolniej — kątem oka, bez odrywania wzroku od środka; albo jako pasek nad tablicą (kreska idzie w tempie progu, niebieski przed kreską to tempo na awans). Metronom: „rytm progu” stuka raz na pole w tempie progu, a wyższy, jaśniejszy dźwięk znaczy, że wyprzedzasz rytm; „spokojny rytm” to wolne uderzenia z cichszymi podziałami, niezależne od tempa — spróbuj, czy pomaga Ci się skupić. Na iPhonie dźwięk strony wycisza przełącznik wyciszenia.</p>
     </div>
   </section>
 
@@ -378,12 +396,12 @@
   </footer>
 </main>
 
-<script src="wspolne.js?v=6"></script>
-<script src="schulte.js?v=6"></script>
-<script src="skaner.js?v=6"></script>
-<script src="rsvp.js?v=6"></script>
-<script src="peryferyjne.js?v=6"></script>
-<script src="pojecia.js?v=6"></script>
-<script src="start.js?v=6"></script>
+<script src="wspolne.js?v=7"></script>
+<script src="schulte.js?v=7"></script>
+<script src="skaner.js?v=7"></script>
+<script src="rsvp.js?v=7"></script>
+<script src="peryferyjne.js?v=7"></script>
+<script src="pojecia.js?v=7"></script>
+<script src="start.js?v=7"></script>
 </body>
 </html>

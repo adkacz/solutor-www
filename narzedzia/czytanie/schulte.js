@@ -105,6 +105,76 @@
     pasek.classList.toggle('za', g.trwa && zrobione < kreska);
   }
 
+  // ---------- metronom ----------
+  // Dźwięk generuje przeglądarka (Web Audio) — bez plików i obcych serwerów. Stuknięcia planowane z wyprzedzeniem
+  // na zegarze dźwięku, więc rytm jest równy, nawet gdy strona ma chwilowo dużo pracy.
+  // „Rytm progu”: jedno stuknięcie na pole w tempie progu; wyższy, jaśniejszy dźwięk, gdy znalezione znaki wyprzedzają rytm.
+  // „Spokojny rytm”: główne uderzenie co 1,5 s i dwa cichsze podziały między nimi — niezależny od tempa planszy.
+  const SPOKOJNY_KROK_S = 0.5, SPOKOJNY_AKCENT = 3;
+  const met = { ctx: null, timer: null, nast: 0, k: 0, krok: 0, rodzaj: 'brak' };
+  function odblokujDzwiek() {
+    // Przeglądarki pozwalają na dźwięk dopiero po kliknięciu — wołane z obsługi kliknięcia
+    if (ustawienia().metronom === 'brak') return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    if (!met.ctx) {
+      try { met.ctx = new AC(); } catch (e) { met.ctx = null; return; }
+    }
+    if (met.ctx.state === 'suspended') met.ctx.resume().catch(() => {});
+  }
+  function stuk(czas, hz, glosnosc, dlugosc, fala = 'sine') {
+    const c = met.ctx;
+    const osc = c.createOscillator();
+    const gl = c.createGain();
+    osc.type = fala;
+    osc.frequency.value = hz;
+    gl.gain.setValueAtTime(0.0001, czas);
+    gl.gain.exponentialRampToValueAtTime(glosnosc, czas + 0.004);
+    gl.gain.exponentialRampToValueAtTime(0.0001, czas + dlugosc);
+    osc.connect(gl).connect(c.destination);
+    osc.start(czas);
+    osc.stop(czas + dlugosc + 0.02);
+  }
+  const DZWIEKI = {
+    zwykly: (t) => stuk(t, 760, 0.18, 0.05, 'triangle'),
+    przed: (t) => stuk(t, 1320, 0.22, 0.09),
+    glowny: (t) => stuk(t, 440, 0.3, 0.3),
+    podzial: (t) => stuk(t, 440, 0.07, 0.12),
+  };
+  function planujMetronom() {
+    const c = met.ctx;
+    while (met.nast < c.currentTime + 0.12) {
+      met.k++;
+      if (met.rodzaj === 'prog') DZWIEKI[g.i >= met.k ? 'przed' : 'zwykly'](met.nast);
+      else DZWIEKI[(met.k - 1) % SPOKOJNY_AKCENT === 0 ? 'glowny' : 'podzial'](met.nast);
+      met.nast += met.krok;
+    }
+  }
+  function startMetronomu() {
+    zatrzymajMetronom();
+    met.rodzaj = ustawienia().metronom;
+    if (met.rodzaj === 'brak' || !met.ctx || met.ctx.state !== 'running') return;
+    met.krok = met.rodzaj === 'prog' ? g.prog : SPOKOJNY_KROK_S;
+    met.k = 0;
+    // rytm progu: pierwsze stuknięcie po czasie jednego pola; spokojny: od razu główne uderzenie
+    met.nast = met.ctx.currentTime + (met.rodzaj === 'prog' ? met.krok : 0.05);
+    planujMetronom();
+    met.timer = setInterval(planujMetronom, 25);
+  }
+  function zatrzymajMetronom() {
+    clearInterval(met.timer);
+    met.timer = null;
+  }
+  // Próbka po zmianie ustawienia, żeby było słychać, jak brzmi
+  function probkaMetronomu() {
+    odblokujDzwiek();
+    const rodzaj = ustawienia().metronom;
+    if (rodzaj === 'brak' || !met.ctx) return;
+    const t = met.ctx.currentTime + 0.05;
+    if (rodzaj === 'prog') { DZWIEKI.zwykly(t); DZWIEKI.zwykly(t + 0.6); DZWIEKI.przed(t + 1.2); }
+    else { DZWIEKI.glowny(t); DZWIEKI.podzial(t + 0.5); DZWIEKI.podzial(t + 1); DZWIEKI.glowny(t + 1.5); }
+  }
+
   // 0 › A, 25 › Z, 26 › AA … (przy 10×10 ostatnia to CV)
   function litera(i) {
     let w = '';
@@ -183,6 +253,7 @@
     clearInterval(g.zegar);
     g.zegar = null;
     g.trwa = false;
+    zatrzymajMetronom();
   }
   function zatrzymajOdliczanie() {
     clearInterval(s.odliczanie);
@@ -239,6 +310,7 @@
       pokazTempo();
       if (s.aktywna && s.limitMs) $('s-czas-pod').textContent = `zostało ${minSek(s.limitMs - (performance.now() - s.start))}`;
     }, 100);
+    startMetronomu();
     pokaz();
   }
 
@@ -429,6 +501,7 @@
     }
   });
   $('s-start').addEventListener('click', () => {
+    odblokujDzwiek();
     if (s.czeka) startPlanszy();            // „Dalej” w pauzie serii
     else if (trybSerii()) startSerii();
     else startJednej();
@@ -438,6 +511,11 @@
   $('s-znaki').addEventListener('change', przygotuj);
   $('s-dlugosc').addEventListener('change', () => { ustawienia().dlugosc = $('s-dlugosc').value; T.zapisz(); przygotuj(); });
   $('s-podpowiedzi').addEventListener('change', () => { ustawienia().podpowiedzi = $('s-podpowiedzi').value; T.zapisz(); });
+  $('s-metronom').addEventListener('change', () => {
+    ustawienia().metronom = $('s-metronom').value;
+    T.zapisz();
+    probkaMetronomu();
+  });
   $('s-pasek').addEventListener('change', () => {
     ustawienia().pasek = $('s-pasek').checked;
     $('s-tempo').hidden = !ustawienia().pasek;
@@ -478,6 +556,7 @@
       $('s-sufit').value = String(u.sufit);
       $('s-podpowiedzi').value = u.podpowiedzi;
       $('s-pasek').checked = u.pasek;
+      $('s-metronom').value = u.metronom;
       $('s-tempo').hidden = !u.pasek;
       zmienTryb();
     },

@@ -132,6 +132,8 @@ body.w-grze .plansza-ramka {
   -webkit-tap-highlight-color: transparent;
 }
 .pole-planszy:hover { border-color: var(--steel); }
+/* ćwiartka z szukanym znakiem — spokojne tło, bez migania */
+.pole-planszy.obszar { background: #FBF0DA; border-color: #E8C98C; }
 .pole-planszy.trafione { background: var(--ok-soft); color: #A9D3BC; border-color: #CFE7D9; cursor: default; }
 .pole-planszy.trafiony { background: var(--ok); color: #fff; border-color: var(--ok); cursor: default; }
 .pole-planszy.blysk-dobry { background: #CDEBD9; border-color: var(--ok); }

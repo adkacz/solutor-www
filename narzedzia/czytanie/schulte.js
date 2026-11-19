@@ -21,9 +21,15 @@
   const BLEDY_SPADEK = 4;
   const POD_RZAD = 2;            // ile plansz z rzędu daje awans albo spadek
   const PAUZA_S = 3;
+  // Podpowiedź na chwilę „ślepoty”: gdy jeden znak szukasz ok. 3,5 raza dłużej niż próg na pole (najmniej 2,5 s),
+  // podświetla się ćwiartka tablicy; przy „prowadzeniu” po kolejnych 2 × próg (najmniej 1,5 s) samo pole.
+  // Pomoc ma przyjść przy prawdziwym zacięciu, nie przy zwykłym szukaniu — za wczesna uczy czekania na nią.
+  const PODP_RAZY = 3.5, PODP_MIN_S = 2.5, POLE_RAZY = 2, POLE_MIN_S = 1.5;
+  const MAX_PODP_AWANS = 1;      // awans tylko przy najwyżej jednej podpowiedzi na planszę
   const MIN_N = 3;
 
-  const g = { n: 5, znaki: 'liczby', kolejka: [], i: 0, bledy: 0, trwa: false, start: 0, zegar: null };
+  const g = { n: 5, znaki: 'liczby', kolejka: [], i: 0, bledy: 0, trwa: false, start: 0, zegar: null,
+    podp: 0, etap: 0, ostatnie: 0, poMs: 0, poleMs: 0 };
   const s = { aktywna: false, n: 5, sufit: 7, limitPlansz: 10, limitMs: 0, start: 0, plansze: [], dobre: 0, slabe: 0, odliczanie: null, czeka: false, ostatnia: null };
 
   const ustawienia = () => T.stan.schulte.seria;
@@ -54,6 +60,33 @@
     const czesci = [];
     for (let n = MIN_N; n <= u.sufit; n++) czesci.push(`${rozmiar(n)} ${opisProgu(progDla(n))}`);
     $('s-progi').textContent = `Progi (s/pole, ${g.znaki}): ${czesci.join(' · ')}.`;
+  }
+
+  // ---------- podpowiedzi ----------
+  function zgasPodpowiedz() {
+    plansza.querySelectorAll('.obszar, .podpowiedz').forEach((b) => b.classList.remove('obszar', 'podpowiedz'));
+    g.etap = 0;
+    g.ostatnie = performance.now();
+  }
+  // Ćwiartka z polem szukanego znaku: ceil(n/2) wierszy i kolumn (przy nieparzystym n środkowy pas należy do obu)
+  function pokazCwiartke(pola, idx) {
+    const n = g.n, h = Math.ceil(n / 2);
+    const r = Math.floor(idx / n), c = idx % n;
+    const r0 = r < n / 2 ? 0 : n - h, c0 = c < n / 2 ? 0 : n - h;
+    pola.forEach((b, i) => {
+      const ri = Math.floor(i / n), ci = i % n;
+      if (ri >= r0 && ri < r0 + h && ci >= c0 && ci < c0 + h && !b.classList.contains('trafione')) b.classList.add('obszar');
+    });
+  }
+  function sprawdzPodpowiedz() {
+    const rodzaj = ustawienia().podpowiedzi;
+    if (rodzaj === 'brak' || !g.trwa || g.etap >= (rodzaj === 'pole' ? 2 : 1)) return;
+    if (performance.now() - g.ostatnie < (g.etap === 0 ? g.poMs : g.poleMs)) return;
+    const pola = [...plansza.querySelectorAll('.pole-planszy')];
+    const idx = pola.findIndex((b) => b.dataset.v === g.kolejka[g.i]);
+    if (idx < 0) return;
+    if (g.etap === 0) { pokazCwiartke(pola, idx); g.podp++; } else pola[idx].classList.add('podpowiedz');
+    g.etap++;
   }
 
   // 0 › A, 25 › Z, 26 › AA … (przy 10×10 ostatnia to CV)
@@ -118,13 +151,13 @@
       $('s-hist-tytul').textContent = 'Ostatnie sesje Flow';
       T.pokazHistorie(ul, ustawienia().historia, (w) => ({
         tytul: `${w.plansze} ${T.odmiana(w.plansze, 'plansza', 'plansze', 'plansz')}, ${rozmiar(w.od)}${w.najwyzszy !== w.od ? ` › ${rozmiar(w.najwyzszy)}` : ''}`,
-        wartosc: `${Math.round(w.wzgl * 100)}% progu`,
+        wartosc: `${Math.round(w.wzgl * 100)}% progu${w.podp ? `, podpowiedzi: ${w.podp}` : ''}`,
       }));
     } else {
       $('s-hist-tytul').textContent = 'Ostatnie wyniki';
       T.pokazHistorie(ul, T.stan.schulte.historia, (w) => ({
         tytul: `${rozmiar(w.n)} ${w.znaki}`,
-        wartosc: `${T.ulamek(w.czas, 2)} s${w.bledy ? `, pomyłki: ${w.bledy}` : ''}`,
+        wartosc: `${T.ulamek(w.czas, 2)} s${w.bledy ? `, pomyłki: ${w.bledy}` : ''}${w.podp ? `, podpowiedzi: ${w.podp}` : ''}`,
       }));
     }
   }
@@ -175,9 +208,16 @@
     ramka.classList.remove('wygrana');
     g.trwa = true;
     g.start = performance.now();
+    g.podp = 0;
+    g.etap = 0;
+    g.ostatnie = g.start;
+    const prog = progDla(g.n).prog;
+    g.poMs = Math.max(PODP_MIN_S, PODP_RAZY * prog) * 1000;
+    g.poleMs = g.poMs + Math.max(POLE_MIN_S, POLE_RAZY * prog) * 1000;
     clearInterval(g.zegar);
     g.zegar = setInterval(() => {
       $('s-czas').textContent = `${T.ulamek((performance.now() - g.start) / 1000)} s`;
+      sprawdzPodpowiedz();
       if (s.aktywna && s.limitMs) $('s-czas-pod').textContent = `zostało ${minSek(s.limitMs - (performance.now() - s.start))}`;
     }, 100);
     pokaz();
@@ -211,20 +251,20 @@
     zatrzymajPlansze();
     const z = T.stan.schulte;
     const poprzedni = z.rekordy[klucz()];
-    const rekord = !poprzedni || czas < poprzedni;
+    const rekord = !g.podp && (!poprzedni || czas < poprzedni);   // plansza z podpowiedzią nie bije rekordu
     if (rekord) z.rekordy[klucz()] = czas;
     $('s-czas').textContent = `${T.ulamek(czas, 2)} s`;
     T.migniecie(ramka, 'wygrana', 600);
     // próg liczony przed dopisaniem tej planszy — ocenia ją Twoje dotychczasowe tempo
     const prog = progDla(g.n);
-    zapamietajTempo(g.n, g.znaki, czas / (g.n * g.n));
+    if (!g.podp) zapamietajTempo(g.n, g.znaki, czas / (g.n * g.n));   // tempo z podpowiedzią nie zmienia progu
 
     if (s.aktywna) { poPlanszySerii(czas, prog, rekord && Boolean(poprzedni)); return; }   // w serii tylko pobity rekord
 
-    T.dopisz(z.historia, { kiedy: Date.now(), n: g.n, znaki: g.znaki, czas, bledy: g.bledy, rekord });
+    T.dopisz(z.historia, { kiedy: Date.now(), n: g.n, znaki: g.znaki, czas, bledy: g.bledy, rekord, podp: g.podp });
     T.zapisz();
     pokazNakladke(rekord ? 'Nowy rekord!' : 'Gotowe',
-      `${T.ulamek(czas, 2)} s, pomyłki: ${g.bledy}.${!rekord && poprzedni ? ` Rekord: ${T.ulamek(poprzedni, 2)} s.` : ''}`, 'Jeszcze raz');
+      `${T.ulamek(czas, 2)} s, pomyłki: ${g.bledy}${g.podp ? `, podpowiedzi: ${g.podp} (bez rekordu)` : ''}.${!rekord && poprzedni ? ` Rekord: ${T.ulamek(poprzedni, 2)} s.` : ''}`, 'Jeszcze raz');
     T.trybGry(false, ramka);
     pokaz();
     historia();
@@ -235,9 +275,9 @@
     const n = g.n;
     const tempo = czas / (n * n);
     const prog = progInfo.prog;
-    const szybko = tempo <= prog && g.bledy <= MAX_BLEDOW_AWANS;
+    const szybko = tempo <= prog && g.bledy <= MAX_BLEDOW_AWANS && g.podp <= MAX_PODP_AWANS;
     const wolno = tempo > ZA_WOLNO * prog || g.bledy >= BLEDY_SPADEK;
-    const wpis = { n, czas, tempo, bledy: g.bledy, wzgl: prog / tempo, zmiana: 0 };
+    const wpis = { n, czas, tempo, bledy: g.bledy, podp: g.podp, wzgl: prog / tempo, zmiana: 0 };
     s.plansze.push(wpis);
     s.ostatnia = wpis;
     s.dobre = szybko ? s.dobre + 1 : 0;
@@ -260,7 +300,7 @@
     } else {
       tytul = 'Dobrze, ten sam poziom';
     }
-    const opis = `${rozmiar(n)}: ${sPole(tempo)} (próg ${T.ulamek(prog, 2)}${progInfo.wlasny ? ', Twój' : ''})${g.bledy ? `, pomyłki: ${g.bledy}` : ''}.${rekord ? ' Rekord tej tablicy!' : ''}`;
+    const opis = `${rozmiar(n)}: ${sPole(tempo)} (próg ${T.ulamek(prog, 2)}${progInfo.wlasny ? ', Twój' : ''})${g.bledy ? `, pomyłki: ${g.bledy}` : ''}${g.podp ? `, podpowiedzi: ${g.podp}` : ''}.${rekord ? ' Rekord tej tablicy!' : ''}`;
 
     const koniec = s.plansze.length >= s.limitPlansz || (s.limitMs && performance.now() - s.start >= s.limitMs);
     if (koniec) { koniecSerii(); return; }
@@ -294,12 +334,13 @@
     const wzgl = p.reduce((a, x) => a + x.wzgl, 0) / p.length;
     const najwyzszy = Math.max(...p.map((x) => x.n));
     const najlepsza = p.reduce((a, x) => (x.wzgl > a.wzgl ? x : a));
-    T.dopisz(u.historia, { kiedy: Date.now(), plansze: p.length, od: p[0].n, najwyzszy, wzgl: Math.round(wzgl * 1000) / 1000, awanse, spadki, znaki: g.znaki, rekord: false });
+    const podp = p.reduce((a, x) => a + x.podp, 0);
+    T.dopisz(u.historia, { kiedy: Date.now(), plansze: p.length, od: p[0].n, najwyzszy, wzgl: Math.round(wzgl * 1000) / 1000, awanse, spadki, znaki: g.znaki, rekord: false, podp });
     T.zapisz();
 
     $('s-pods-tekst').textContent = `Flow: ${p.length} ${T.odmiana(p.length, 'plansza', 'plansze', 'plansz')}, od ${rozmiar(p[0].n)}, najwyżej ${rozmiar(najwyzszy)} `
       + `(awanse: ${awanse}, spadki: ${spadki}). Średnio ${Math.round(wzgl * 100)}% progu, najlepsza: ${rozmiar(najlepsza.n)}, ${sPole(najlepsza.tempo)}. `
-      + `Następny Flow zacznie od ${rozmiar(s.n)}.`;
+      + `${podp ? `Podpowiedzi: ${podp}. ` : ''}Następny Flow zacznie od ${rozmiar(s.n)}.`;
     wykres(p);
     $('s-podsumowanie').hidden = false;
     $('s-rozmiar').value = String(s.n);
@@ -355,6 +396,7 @@
     const b = ev.target.closest('.pole-planszy');
     if (!b || !g.trwa || b.classList.contains('trafione')) return;
     if (b.dataset.v === g.kolejka[g.i]) {
+      zgasPodpowiedz();
       g.i++;
       if ($('s-wygaszaj').checked) b.classList.add('trafione');
       else T.migniecie(b, 'blysk-dobry', 180);
@@ -375,6 +417,7 @@
   $('s-rozmiar').addEventListener('change', przygotuj);
   $('s-znaki').addEventListener('change', przygotuj);
   $('s-dlugosc').addEventListener('change', () => { ustawienia().dlugosc = $('s-dlugosc').value; T.zapisz(); przygotuj(); });
+  $('s-podpowiedzi').addEventListener('change', () => { ustawienia().podpowiedzi = $('s-podpowiedzi').value; T.zapisz(); });
   $('s-sufit').addEventListener('change', () => {
     const u = ustawienia();
     u.sufit = Number($('s-sufit').value) || 7;
@@ -407,6 +450,7 @@
       $('s-tryb').value = u.tryb;
       $('s-dlugosc').value = u.dlugosc;
       $('s-sufit').value = String(u.sufit);
+      $('s-podpowiedzi').value = u.podpowiedzi;
       zmienTryb();
     },
     wyjdz() { zatrzymajPlansze(); zatrzymajOdliczanie(); s.aktywna = false; s.czeka = false; },

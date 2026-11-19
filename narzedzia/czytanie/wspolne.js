@@ -48,7 +48,9 @@ const T = (() => {
   // Seria w tablicy Schultego: ustawienia, poziom, od którego zacznie się następna seria, i historia serii
   const DLUGOSCI_SERII = ['5', '10', '15', '3m', '5m'];
   // tempa: ostatnie tempa (s/pole) na każdym rozmiarze i rodzaju znaków, np. { "5_liczby": [0.82, 0.9, …] } — z nich próg osobisty
-  const domyslnaSeria = () => ({ tryb: 'jedna', poziom: 5, dlugosc: '10', sufit: 7, historia: [], tempa: {} });
+  // podpowiedzi: 'brak' | 'cwiartka' | 'pole' (najpierw ćwiartka, potem samo pole) — dotyczą obu trybów
+  const domyslnaSeria = () => ({ tryb: 'jedna', poziom: 5, dlugosc: '10', sufit: 7, podpowiedzi: 'brak', historia: [], tempa: {} });
+  const PODPOWIEDZI = ['brak', 'cwiartka', 'pole'];
   const MAX_TEMP = 10;
   function domyslny() {
     const skaner = {};
@@ -83,12 +85,14 @@ const T = (() => {
     s.schulte.historia = lista(sc.historia, (w) => wszystkie({
       kiedy: kiedyOk(w.kiedy), n: calk(w.n, 3, 10), znaki: w.znaki === 'liczby' || w.znaki === 'litery' ? w.znaki : null,
       czas: liczba(w.czas, 0.1, 36000), bledy: calk(w.bledy, 0, 1e6), rekord: w.rekord === true,
+      podp: w.podp === undefined ? 0 : calk(w.podp, 0, 1e6),   // wpisy sprzed 19.11.2026 nie mają podpowiedzi
     }));
     const se = obiekt(sc.seria);
     s.schulte.seria.tryb = se.tryb === 'seria' ? 'seria' : 'jedna';
     s.schulte.seria.poziom = calk(se.poziom, 3, 10) || 5;
     s.schulte.seria.dlugosc = DLUGOSCI_SERII.includes(se.dlugosc) ? se.dlugosc : '10';
     s.schulte.seria.sufit = calk(se.sufit, 4, 10) || 7;
+    s.schulte.seria.podpowiedzi = PODPOWIEDZI.includes(se.podpowiedzi) ? se.podpowiedzi : 'brak';
     for (const [k, v] of Object.entries(obiekt(se.tempa))) {
       if (!/^(?:[3-9]|10)_(?:liczby|litery)$/.test(k) || !Array.isArray(v)) continue;
       const t = v.filter((x) => liczba(x, 0.05, 60) !== null).slice(-MAX_TEMP);
@@ -98,6 +102,7 @@ const T = (() => {
       kiedy: kiedyOk(w.kiedy), plansze: calk(w.plansze, 1, 1000), od: calk(w.od, 3, 10), najwyzszy: calk(w.najwyzszy, 3, 10),
       wzgl: liczba(w.wzgl, 0.01, 100), awanse: calk(w.awanse, 0, 1000), spadki: calk(w.spadki, 0, 1000),
       znaki: w.znaki === 'liczby' || w.znaki === 'litery' ? w.znaki : null, rekord: false,
+      podp: w.podp === undefined ? 0 : calk(w.podp, 0, 1e6),
     }));
 
     const sk = obiekt(o.skaner);

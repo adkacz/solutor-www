@@ -29,7 +29,7 @@
   const MIN_N = 3;
 
   const g = { n: 5, znaki: 'liczby', kolejka: [], i: 0, bledy: 0, trwa: false, start: 0, zegar: null,
-    podp: 0, etap: 0, ostatnie: 0, poMs: 0, poleMs: 0, prog: 0 };
+    podp: 0, etap: 0, ostatnie: 0, poMs: 0, poleMs: 0, prog: 0, stanTempa: '' };
   const s = { aktywna: false, n: 5, sufit: 7, limitPlansz: 10, limitMs: 0, start: 0, plansze: [], dobre: 0, slabe: 0, odliczanie: null, czeka: false, ostatnia: null };
 
   const ustawienia = () => T.stan.schulte.seria;
@@ -89,20 +89,55 @@
     g.etap++;
   }
 
-  // ---------- cichy pasek tempa ----------
-  // Kreska idzie w tempie progu (na końcu = cała plansza w czasie próg × liczba pól), wypełnienie to znalezione znaki.
-  // Wypełnienie przed kreską = tempo na awans. Bez dźwięku i migania — tylko do zerknięcia kątem oka.
+  // ---------- tempo: pasek albo kolor tablicy ----------
+  // Pasek: kreska idzie w tempie progu (na końcu = cała plansza w czasie próg × liczba pól), wypełnienie to znalezione
+  // znaki; przed kreską = tempo na awans. Kolor tablicy: niebieskawa = wyprzedzasz próg, zwykła = w tempie,
+  // bursztynowa = wolniej — widać kątem oka, bez odrywania wzroku od środka (pasek trzeba było „odczytać”).
+  // Niebieski i bursztyn różnią się też jasnością: rozróżnialne przy protanopii, deuteranopii, tritanopii
+  // i w samej szarości (symulacja Machado 2009, ΔE ≥ 9 między każdą parą stanów).
+  const TEMPO_START_POL = 2;     // przez pierwsze ~2 pola tablica zostaje zwykła (za mało danych)
+  const TEMPO_MARGINES = 0.1;    // „w tempie” = ±10% oczekiwanej liczby znaków (najmniej 1 znak)
+  function stanTempa() {
+    const oczekiwane = (performance.now() - g.start) / 1000 / g.prog;
+    if (oczekiwane < TEMPO_START_POL) return '';
+    const przewaga = g.i - oczekiwane;
+    const m = Math.max(1, TEMPO_MARGINES * oczekiwane);
+    // histereza: wejście w stan po przekroczeniu marginesu, wyjście dopiero po powrocie do połowy — bez mrugania
+    if (g.stanTempa === 'przed' && przewaga > m / 2) return 'przed';
+    if (g.stanTempa === 'wolniej' && przewaga < -m / 2) return 'wolniej';
+    if (przewaga > m) return 'przed';
+    if (przewaga < -m) return 'wolniej';
+    return '';
+  }
+  function ustawKolorTempa(stan) {
+    g.stanTempa = stan;
+    ramka.classList.toggle('tempo-przed', stan === 'przed');
+    ramka.classList.toggle('tempo-wolniej', stan === 'wolniej');
+  }
   function pokazTempo() {
+    const tryb = ustawienia().tempo;
+    if (!g.trwa) {
+      if (g.i > 0) return;   // po planszy zostaje ostatni stan
+      ustawKolorTempa('');
+    }
+    if (tryb === 'kolor') { if (g.trwa) ustawKolorTempa(stanTempa()); return; }
+    if (tryb !== 'pasek') return;
     const pasek = $('s-tempo');
-    if (pasek.hidden) return;
     const ile = g.kolejka.length || 1;
-    let kreska = 0;
-    if (g.trwa) kreska = Math.min(1, (performance.now() - g.start) / 1000 / (g.prog * ile));
-    else if (g.i > 0) return;   // po planszy zostaje ostatni stan
+    const kreska = g.trwa ? Math.min(1, (performance.now() - g.start) / 1000 / (g.prog * ile)) : 0;
     const zrobione = g.i / ile;
     pasek.firstElementChild.style.width = `${(zrobione * 100).toFixed(1)}%`;
     pasek.lastElementChild.style.left = `calc(${(kreska * 100).toFixed(1)}% - 1px)`;
     pasek.classList.toggle('za', g.trwa && zrobione < kreska);
+  }
+  // Widoczność pasków, palety i próbki kolorów według ustawienia
+  function zastosujTempo() {
+    const u = ustawienia();
+    $('s-tempo').hidden = u.tempo !== 'pasek';
+    $('s-paleta-pole').hidden = u.tempo !== 'kolor';
+    $('s-probka').hidden = u.tempo !== 'kolor';
+    modul.classList.toggle('paleta-wyrazna', u.paleta === 'wyrazna');
+    if (u.tempo !== 'kolor') ustawKolorTempa('');
   }
 
   // ---------- metronom ----------
@@ -516,11 +551,16 @@
     T.zapisz();
     probkaMetronomu();
   });
-  $('s-pasek').addEventListener('change', () => {
-    ustawienia().pasek = $('s-pasek').checked;
-    $('s-tempo').hidden = !ustawienia().pasek;
+  $('s-tempo-tryb').addEventListener('change', () => {
+    ustawienia().tempo = $('s-tempo-tryb').value;
+    zastosujTempo();
     T.zapisz();
     pokaz();
+  });
+  $('s-paleta').addEventListener('change', () => {
+    ustawienia().paleta = $('s-paleta').value;
+    zastosujTempo();
+    T.zapisz();
   });
   $('s-sufit').addEventListener('change', () => {
     const u = ustawienia();
@@ -555,9 +595,10 @@
       $('s-dlugosc').value = u.dlugosc;
       $('s-sufit').value = String(u.sufit);
       $('s-podpowiedzi').value = u.podpowiedzi;
-      $('s-pasek').checked = u.pasek;
+      $('s-tempo-tryb').value = u.tempo;
+      $('s-paleta').value = u.paleta;
       $('s-metronom').value = u.metronom;
-      $('s-tempo').hidden = !u.pasek;
+      zastosujTempo();
       zmienTryb();
     },
     wyjdz() { zatrzymajPlansze(); zatrzymajOdliczanie(); s.aktywna = false; s.czeka = false; },

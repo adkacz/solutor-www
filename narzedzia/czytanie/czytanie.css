@@ -70,13 +70,27 @@ body:not(.w-grze) .tylko-w-grze { display: none !important; }
 
 /* cichy pasek tempa w tablicy Schultego: wypełnienie = znalezione znaki, kreska = tempo progu */
 .pasek-tempa { position: relative; height: 6px; margin: 0 0 10px; background: var(--line); border-radius: 999px; }
-.pasek-tempa > div:first-child { height: 100%; width: 0; background: var(--ok); opacity: .75; border-radius: 999px; }
-.pasek-tempa.za > div:first-child { background: var(--warn); opacity: .6; }
+/* niebieski / bursztyn zamiast zielony / bursztyn — zielony i bursztyn zlewają się przy deuteranopii */
+.pasek-tempa > div:first-child { height: 100%; width: 0; background: #3F7CC0; opacity: .8; border-radius: 999px; }
+.pasek-tempa.za > div:first-child { background: #D08A2E; opacity: .8; }
 .pasek-tempa > div:last-child { position: absolute; top: -3px; bottom: -3px; left: -1px; width: 2px; background: var(--steel); border-radius: 1px; }
 body.w-grze:has(#s-tempo:not([hidden])) .plansza-ramka {
   width: min(100%, 560px, max(240px, calc(100vh - 216px)));
   width: min(100%, 560px, max(240px, calc(100svh - 216px)));
 }
+/* Tempo kolorem tablicy: warstwa mnożona (multiply) barwi pola, ale ciemne znaki zostają ciemne.
+   Dwie warstwy, każda gaśnie i zapala się płynnie (bez skoków, które działałyby jak alarm). */
+#m-schulte { --t-przed: #D4E6FA; --t-wolniej: #EBC283; }
+#m-schulte.paleta-wyrazna { --t-przed: #B9D5F5; --t-wolniej: #DDA25A; }
+.tlo-tempa { position: absolute; inset: 0; z-index: 2; border-radius: 10px; pointer-events: none; mix-blend-mode: multiply; opacity: 0; transition: opacity 1.2s ease; }
+.tlo-tempa.przed { background: var(--t-przed); }
+.tlo-tempa.wolniej { background: var(--t-wolniej); }
+.plansza-ramka.tempo-przed .tlo-tempa.przed, .plansza-ramka.tempo-wolniej .tlo-tempa.wolniej { opacity: 1; }
+.probka-tempa { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 4px 0 2px; }
+.probka-tempa > span { display: flex; flex-direction: column; align-items: center; padding: 6px 2px; border: 1px solid var(--line); border-radius: 8px; font-weight: 700; font-size: 20px; color: var(--ink); background: var(--bg); background-blend-mode: multiply; }
+.probka-tempa > span small { font-size: 11px; font-weight: 600; color: var(--steel); }
+.probka-tempa > span.przed { background-image: linear-gradient(var(--t-przed), var(--t-przed)); }
+.probka-tempa > span.wolniej { background-image: linear-gradient(var(--t-wolniej), var(--t-wolniej)); }
 .pasek-czasu { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; margin-bottom: 12px; }
 .pasek-czasu > div { height: 100%; width: 100%; background: var(--ok); border-radius: 999px; transition: width .15s linear; }
 .pasek-czasu > div.postep { width: 0; background: var(--steel); }

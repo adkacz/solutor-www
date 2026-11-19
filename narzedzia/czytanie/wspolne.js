@@ -49,11 +49,13 @@ const T = (() => {
   const DLUGOSCI_SERII = ['5', '10', '15', '3m', '5m'];
   // tempa: ostatnie tempa (s/pole) na każdym rozmiarze i rodzaju znaków, np. { "5_liczby": [0.82, 0.9, …] } — z nich próg osobisty
   // podpowiedzi: 'brak' | 'cwiartka' | 'pole' (najpierw ćwiartka, potem samo pole) — dotyczą obu trybów
-  // pasek: cichy pasek tempa pod wskaźnikami (oba tryby)
+  // tempo: jak pokazywać tempo względem progu — 'brak' | 'pasek' (nad tablicą) | 'kolor' (tło tablicy); oba tryby
+  // paleta: 'delikatna' | 'wyrazna' — kolory tła tempa (niebieski/bursztyn różniące się też jasnością)
   // metronom: 'brak' | 'prog' (stuknięcie na pole w tempie progu) | 'spokojny' (wolny rytm z cichszymi podziałami)
-  const domyslnaSeria = () => ({ tryb: 'jedna', poziom: 5, dlugosc: '10', sufit: 7, podpowiedzi: 'brak', pasek: false, metronom: 'brak', historia: [], tempa: {} });
+  const domyslnaSeria = () => ({ tryb: 'jedna', poziom: 5, dlugosc: '10', sufit: 7, podpowiedzi: 'brak', tempo: 'brak', paleta: 'delikatna', metronom: 'brak', historia: [], tempa: {} });
   const PODPOWIEDZI = ['brak', 'cwiartka', 'pole'];
   const METRONOMY = ['brak', 'prog', 'spokojny'];
+  const TEMPA = ['brak', 'pasek', 'kolor'];
   const MAX_TEMP = 10;
   function domyslny() {
     const skaner = {};
@@ -96,7 +98,9 @@ const T = (() => {
     s.schulte.seria.dlugosc = DLUGOSCI_SERII.includes(se.dlugosc) ? se.dlugosc : '10';
     s.schulte.seria.sufit = calk(se.sufit, 4, 10) || 7;
     s.schulte.seria.podpowiedzi = PODPOWIEDZI.includes(se.podpowiedzi) ? se.podpowiedzi : 'brak';
-    s.schulte.seria.pasek = se.pasek === true;
+    // „pasek: true” z wersji z 19.11.2026 (sam pasek) przechodzi w „tempo: pasek”
+    s.schulte.seria.tempo = TEMPA.includes(se.tempo) ? se.tempo : (se.pasek === true ? 'pasek' : 'brak');
+    s.schulte.seria.paleta = se.paleta === 'wyrazna' ? 'wyrazna' : 'delikatna';
     s.schulte.seria.metronom = METRONOMY.includes(se.metronom) ? se.metronom : 'brak';
     for (const [k, v] of Object.entries(obiekt(se.tempa))) {
       if (!/^(?:[3-9]|10)_(?:liczby|litery)$/.test(k) || !Array.isArray(v)) continue;

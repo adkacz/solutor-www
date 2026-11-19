@@ -49,7 +49,8 @@ const T = (() => {
   const DLUGOSCI_SERII = ['5', '10', '15', '3m', '5m'];
   // tempa: ostatnie tempa (s/pole) na każdym rozmiarze i rodzaju znaków, np. { "5_liczby": [0.82, 0.9, …] } — z nich próg osobisty
   // podpowiedzi: 'brak' | 'cwiartka' | 'pole' (najpierw ćwiartka, potem samo pole) — dotyczą obu trybów
-  const domyslnaSeria = () => ({ tryb: 'jedna', poziom: 5, dlugosc: '10', sufit: 7, podpowiedzi: 'brak', historia: [], tempa: {} });
+  // pasek: cichy pasek tempa pod wskaźnikami (oba tryby)
+  const domyslnaSeria = () => ({ tryb: 'jedna', poziom: 5, dlugosc: '10', sufit: 7, podpowiedzi: 'brak', pasek: false, historia: [], tempa: {} });
   const PODPOWIEDZI = ['brak', 'cwiartka', 'pole'];
   const MAX_TEMP = 10;
   function domyslny() {
@@ -93,6 +94,7 @@ const T = (() => {
     s.schulte.seria.dlugosc = DLUGOSCI_SERII.includes(se.dlugosc) ? se.dlugosc : '10';
     s.schulte.seria.sufit = calk(se.sufit, 4, 10) || 7;
     s.schulte.seria.podpowiedzi = PODPOWIEDZI.includes(se.podpowiedzi) ? se.podpowiedzi : 'brak';
+    s.schulte.seria.pasek = se.pasek === true;
     for (const [k, v] of Object.entries(obiekt(se.tempa))) {
       if (!/^(?:[3-9]|10)_(?:liczby|litery)$/.test(k) || !Array.isArray(v)) continue;
       const t = v.filter((x) => liczba(x, 0.05, 60) !== null).slice(-MAX_TEMP);

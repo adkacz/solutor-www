@@ -29,7 +29,7 @@
   const MIN_N = 3;
 
   const g = { n: 5, znaki: 'liczby', kolejka: [], i: 0, bledy: 0, trwa: false, start: 0, zegar: null,
-    podp: 0, etap: 0, ostatnie: 0, poMs: 0, poleMs: 0 };
+    podp: 0, etap: 0, ostatnie: 0, poMs: 0, poleMs: 0, prog: 0 };
   const s = { aktywna: false, n: 5, sufit: 7, limitPlansz: 10, limitMs: 0, start: 0, plansze: [], dobre: 0, slabe: 0, odliczanie: null, czeka: false, ostatnia: null };
 
   const ustawienia = () => T.stan.schulte.seria;
@@ -89,6 +89,22 @@
     g.etap++;
   }
 
+  // ---------- cichy pasek tempa ----------
+  // Kreska idzie w tempie progu (na końcu = cała plansza w czasie próg × liczba pól), wypełnienie to znalezione znaki.
+  // Wypełnienie przed kreską = tempo na awans. Bez dźwięku i migania — tylko do zerknięcia kątem oka.
+  function pokazTempo() {
+    const pasek = $('s-tempo');
+    if (pasek.hidden) return;
+    const ile = g.kolejka.length || 1;
+    let kreska = 0;
+    if (g.trwa) kreska = Math.min(1, (performance.now() - g.start) / 1000 / (g.prog * ile));
+    else if (g.i > 0) return;   // po planszy zostaje ostatni stan
+    const zrobione = g.i / ile;
+    pasek.firstElementChild.style.width = `${(zrobione * 100).toFixed(1)}%`;
+    pasek.lastElementChild.style.left = `calc(${(kreska * 100).toFixed(1)}% - 1px)`;
+    pasek.classList.toggle('za', g.trwa && zrobione < kreska);
+  }
+
   // 0 › A, 25 › Z, 26 › AA … (przy 10×10 ostatnia to CV)
   function litera(i) {
     let w = '';
@@ -120,6 +136,7 @@
     $('s-cel').textContent = g.i < ile ? g.kolejka[g.i] : '—';
     $('s-postep').textContent = `${g.i} z ${ile}`;
     $('s-bledy').textContent = String(g.bledy);
+    pokazTempo();
     $('s-przerwij').textContent = s.aktywna ? 'Zakończ Flow' : 'Przerwij';
 
     $('s-seria-pasek').hidden = !s.aktywna;
@@ -212,12 +229,14 @@
     g.etap = 0;
     g.ostatnie = g.start;
     const prog = progDla(g.n).prog;
+    g.prog = prog;
     g.poMs = Math.max(PODP_MIN_S, PODP_RAZY * prog) * 1000;
     g.poleMs = g.poMs + Math.max(POLE_MIN_S, POLE_RAZY * prog) * 1000;
     clearInterval(g.zegar);
     g.zegar = setInterval(() => {
       $('s-czas').textContent = `${T.ulamek((performance.now() - g.start) / 1000)} s`;
       sprawdzPodpowiedz();
+      pokazTempo();
       if (s.aktywna && s.limitMs) $('s-czas-pod').textContent = `zostało ${minSek(s.limitMs - (performance.now() - s.start))}`;
     }, 100);
     pokaz();
@@ -398,6 +417,7 @@
     if (b.dataset.v === g.kolejka[g.i]) {
       zgasPodpowiedz();
       g.i++;
+      pokazTempo();
       if ($('s-wygaszaj').checked) b.classList.add('trafione');
       else T.migniecie(b, 'blysk-dobry', 180);
       if (g.i >= g.kolejka.length) koniecPlanszy();
@@ -418,6 +438,12 @@
   $('s-znaki').addEventListener('change', przygotuj);
   $('s-dlugosc').addEventListener('change', () => { ustawienia().dlugosc = $('s-dlugosc').value; T.zapisz(); przygotuj(); });
   $('s-podpowiedzi').addEventListener('change', () => { ustawienia().podpowiedzi = $('s-podpowiedzi').value; T.zapisz(); });
+  $('s-pasek').addEventListener('change', () => {
+    ustawienia().pasek = $('s-pasek').checked;
+    $('s-tempo').hidden = !ustawienia().pasek;
+    T.zapisz();
+    pokaz();
+  });
   $('s-sufit').addEventListener('change', () => {
     const u = ustawienia();
     u.sufit = Number($('s-sufit').value) || 7;
@@ -451,6 +477,8 @@
       $('s-dlugosc').value = u.dlugosc;
       $('s-sufit').value = String(u.sufit);
       $('s-podpowiedzi').value = u.podpowiedzi;
+      $('s-pasek').checked = u.pasek;
+      $('s-tempo').hidden = !u.pasek;
       zmienTryb();
     },
     wyjdz() { zatrzymajPlansze(); zatrzymajOdliczanie(); s.aktywna = false; s.czeka = false; },

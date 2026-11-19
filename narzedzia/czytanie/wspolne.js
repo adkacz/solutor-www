@@ -47,7 +47,9 @@ const T = (() => {
   // ---------- stan i jego sprawdzanie ----------
   // Seria w tablicy Schultego: ustawienia, poziom, od którego zacznie się następna seria, i historia serii
   const DLUGOSCI_SERII = ['5', '10', '15', '3m', '5m'];
-  const domyslnaSeria = () => ({ tryb: 'jedna', poziom: 5, dlugosc: '10', sufit: 7, historia: [] });
+  // tempa: ostatnie tempa (s/pole) na każdym rozmiarze i rodzaju znaków, np. { "5_liczby": [0.82, 0.9, …] } — z nich próg osobisty
+  const domyslnaSeria = () => ({ tryb: 'jedna', poziom: 5, dlugosc: '10', sufit: 7, historia: [], tempa: {} });
+  const MAX_TEMP = 10;
   function domyslny() {
     const skaner = {};
     for (const w of WARIANTY) skaner[w] = { rekord: 0, plansze: 0, historia: [] };
@@ -87,6 +89,11 @@ const T = (() => {
     s.schulte.seria.poziom = calk(se.poziom, 3, 10) || 5;
     s.schulte.seria.dlugosc = DLUGOSCI_SERII.includes(se.dlugosc) ? se.dlugosc : '10';
     s.schulte.seria.sufit = calk(se.sufit, 4, 10) || 7;
+    for (const [k, v] of Object.entries(obiekt(se.tempa))) {
+      if (!/^(?:[3-9]|10)_(?:liczby|litery)$/.test(k) || !Array.isArray(v)) continue;
+      const t = v.filter((x) => liczba(x, 0.05, 60) !== null).slice(-MAX_TEMP);
+      if (t.length) s.schulte.seria.tempa[k] = t;
+    }
     s.schulte.seria.historia = lista(se.historia, (w) => wszystkie({
       kiedy: kiedyOk(w.kiedy), plansze: calk(w.plansze, 1, 1000), od: calk(w.od, 3, 10), najwyzszy: calk(w.najwyzszy, 3, 10),
       wzgl: liczba(w.wzgl, 0.01, 100), awanse: calk(w.awanse, 0, 1000), spadki: calk(w.spadki, 0, 1000),
@@ -244,7 +251,7 @@ const T = (() => {
   }
 
   return {
-    KLUCZ, MAX_TEKSTU, WARIANTY, $, el, losowa, tasuj, wybierz, ulamek, kiedyTekst, odmiana,
+    KLUCZ, MAX_TEKSTU, MAX_TEMP, WARIANTY, $, el, losowa, tasuj, wybierz, ulamek, kiedyTekst, odmiana,
     domyslny, oczysc, wczytaj, zapisz, usunZapis, dopisz, liczbaWynikow,
     get stan() { return stan; },
     ustawStan(nowy) { stan = nowy; },

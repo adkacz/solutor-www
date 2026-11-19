@@ -25,7 +25,7 @@
   const tempo = (w) => Math.round(w.slowa / (w.czas / 60));
   const procent = (w) => Math.round((100 * w.dobre) / w.pytania);
   const skuteczne = (w) => Math.round((tempo(w) * w.dobre) / w.pytania);
-  const czasTekst = (s) => { const r = Math.round(s); return r < 60 ? `${r} s` : `${Math.floor(r / 60)} min ${r % 60} s`; };
+  const czasTekst = (s) => { const r = Math.round(s); return r < 60 ? `${r} s` : `${Math.floor(r / 60)} min${r % 60 ? ` ${r % 60} s` : ""}`; };
 
   function etap(nazwa, pod = '') {
     z.etap = nazwa;

@@ -1,13 +1,14 @@
 /* Trener czytania — teksty testu tempa i zrozumienia (S24). Krótkie opowiadania: odpowiedzi nie da się znać
    bez przeczytania, a wiedza o temacie nikogo nie faworyzuje. W każdym pytaniu pierwsza odpowiedź jest poprawna —
-   kolejność na ekranie jest losowana. Teksty mają podobną budowę (300–330 słów, ok. 10–11 słów w zdaniu,
-   ok. 5,1–5,3 litery w słowie), a długość odpowiedzi nie zdradza poprawnej (poprawna jest najdłuższa
-   i najkrótsza w 6 z 32 pytań). Zmieniając treść, zachowaj te proporcje. */
+   kolejność na ekranie jest losowana. Zasady (po recenzji 19.11.2026): teksty o podobnej budowie (300–330 słów,
+   ok. 10–11 słów w zdaniu); długość odpowiedzi nie zdradza poprawnej; pytania i odpowiedzi nie podpowiadają się
+   nawzajem (wszystkie pytania widać naraz) ani z tytułu; przy „sensie opowiadania” także błędne odpowiedzi brzmią
+   jak morał; błędne odpowiedzi są jednoznacznie sprzeczne z tekstem. Zmieniając treść, pilnuj tych zasad. */
 'use strict';
 
 T.TESTY = [
  {
-  "tytul": "Klucz pod doniczką",
+  "tytul": "Klucz",
   "akapity": [
    "Marta wróciła z Gdańska w niedzielę wieczorem, trzy dni później, niż planowała. Pociąg stał godzinę pod Iławą, a ostatni autobus na jej osiedle odjechał jej sprzed nosa. Do domu doszła pieszo, z ciężką torbą na ramieniu, marząc tylko o herbacie i własnym łóżku.",
    "Przed wyjazdem zostawiła klucz pod niebieską doniczką przy drzwiach, żeby sąsiad, pan Zenon, mógł podlewać jej pomidory na balkonie. Teraz podniosła doniczkę i zamarła. Klucza nie było. Sprawdziła pod wycieraczką, w skrzynce na listy, nawet w kieszeniach kurtki, choć wiedziała, że to bez sensu.",
@@ -17,7 +18,7 @@ T.TESTY = [
    "— Klucz jest u mnie, w kuchni, na gwoździu obok kalendarza. W czwartek kręcił się tu jakiś chłopak i zaglądał pod wycieraczki. Nie podobało mi się to, więc zabrałem klucz do siebie. Chciałem zadzwonić, ale nie mam pani numeru.",
    "Marta poczuła, jak opuszcza ją całe zmęczenie. Podziękowała, a pan Zenon machnął ręką i dodał, że pomidory mają się świetnie, tylko jeden krzak złamał wiatr. Przywiązał go sznurkiem do kija od starej szczotki.",
    "Na balkonie rzeczywiście stał krzak podparty kijem, a na parapecie leżały trzy czerwone pomidory ułożone w rządku. Obok była kartka: „Te już dojrzały, szkoda było, żeby spadły. Z.”",
-   "Następnego dnia Marta upiekła szarlotkę i zaniosła połowę sąsiadowi. Przy kawie wymienili się numerami telefonów. Pan Zenon zapisał jej numer ołówkiem na kalendarzu, tuż obok gwoździa, na którym przez cztery dni wisiał jej klucz.",
+   "Następnego dnia Marta upiekła szarlotkę i zaniosła połowę sąsiadowi. Przy kawie wymienili się numerami telefonów. Pan Zenon zapisał jej numer ołówkiem na kalendarzu, tuż obok gwoździa, na którym przez kilka dni wisiał jej klucz.",
    "— Teraz już będę wiedział, gdzie dzwonić — powiedział. — Ale pod doniczką klucza więcej nie zostawiajmy.",
    "Marta się zgodziła. Wieczorem dorobiła drugi klucz i od tamtej pory pan Zenon trzymał go u siebie, na tym samym gwoździu."
   ],
@@ -36,15 +37,15 @@ T.TESTY = [
     "o": [
      "Ostatni autobus odjechał, zanim zdążyła",
      "Pociąg zatrzymał się pod Iławą i nie dojechał do miasta",
-     "Nie miała pieniędzy na taksówkę",
+     "Nie miała przy sobie pieniędzy na taksówkę",
      "Chciała rozprostować nogi po długiej podróży"
     ]
    },
    {
     "p": "Co robił pan Zenon, gdy Marta zapukała?",
     "o": [
-     "Był na strychu, skąd zawołał do Marty z góry",
-     "Podlewał pomidory na jej balkonie",
+     "Był na strychu",
+     "Podlewał pomidory",
      "Spał przy zapalonym świetle",
      "Rozmawiał przez telefon"
     ]
@@ -52,16 +53,16 @@ T.TESTY = [
    {
     "p": "Dlaczego pan Zenon zabrał klucz do siebie?",
     "o": [
-     "Bał się, że obcy chłopak znajdzie klucz pod doniczką",
+     "Bał się, że obcy chłopak go znajdzie",
      "Nie chciał się schylać po klucz przy każdym podlewaniu",
      "Marta poprosiła go o to przed wyjazdem",
-     "Klucz wypadł spod doniczki i leżał na schodach"
+     "Chciał w spokoju naprawić zamek w jej drzwiach"
     ]
    },
    {
     "p": "Dlaczego pan Zenon nie dał Marcie znać, że ma jej klucz?",
     "o": [
-     "Nie miał zapisanego jej numeru telefonu",
+     "Nie miał jej numeru telefonu",
      "Nie chciał jej niepokoić w czasie podróży",
      "Zapomniał o tym w natłoku spraw",
      "Był pewien, że Marta wróci wcześniej"
@@ -72,16 +73,16 @@ T.TESTY = [
     "o": [
      "Zerwał je i zostawił na parapecie z kartką",
      "Zjadł je, żeby się nie zmarnowały",
-     "Zaniósł je do swojej kuchni, żeby dojrzały w cieple",
+     "Zaniósł je do swojej kuchni na sałatkę",
      "Zostawił je na krzaku podpartym kijem od szczotki"
     ]
    },
    {
     "p": "Co Marta zrobiła następnego dnia?",
     "o": [
-     "Upiekła szarlotkę i zaniosła jej połowę panu Zenonowi",
+     "Upiekła szarlotkę i zaniosła jej połowę sąsiadowi",
      "Wymieniła zamek w drzwiach na nowy, mocniejszy",
-     "Kupiła nową doniczkę i postawiła ją na balkonie",
+     "Pojechała na dworzec po zostawioną w pociągu torbę",
      "Zgłosiła na policję obcego chłopaka spod bloku"
     ]
    },
@@ -89,9 +90,9 @@ T.TESTY = [
     "p": "Co najlepiej oddaje sens tego opowiadania?",
     "o": [
      "Zaginiony klucz zbliżył Martę do troskliwego sąsiada",
-     "Marta przez nieuwagę zgubiła klucz i musiała dorobić nowy",
-     "Sąsiad przyłapał złodzieja, który chciał wejść do mieszkania",
-     "Podróż Marty przedłużyła się przez awarię pociągu pod Iławą"
+     "Marta przekonała się, że nie warto powierzać klucza sąsiadom",
+     "Wspólna praca przy pomidorach zbliżyła Martę do sąsiada",
+     "Podróż do Gdańska nauczyła Martę lepiej planować powroty"
     ]
    }
   ]
@@ -121,12 +122,12 @@ T.TESTY = [
     ]
    },
    {
-    "p": "Kim był mężczyzna w kraciastym płaszczu?",
+    "p": "Kiedy Tomek rozpoznał mężczyznę na peronie?",
     "o": [
-     "Nauczycielem fizyki z liceum",
-     "Dawnym dyrektorem szkoły",
-     "Szefem firmy, w której pracował Tomek",
-     "Lekarzem ze szpitala w mieście"
+     "Gdy ten zdjął kapelusz",
+     "Gdy usłyszał jego głos",
+     "Gdy mężczyzna usiadł obok niego",
+     "Gdy zobaczył jego teczkę z bliska"
     ]
    },
    {
@@ -134,7 +135,7 @@ T.TESTY = [
     "o": [
      "Z rakietą z butelek",
      "Z jedynką z fizyki",
-     "Z kładką nad rzeką",
+     "Z konkursem matematycznym",
      "Z ogródkiem dyrektora"
     ]
    },
@@ -142,27 +143,27 @@ T.TESTY = [
     "p": "Dokąd jechał pan Lis?",
     "o": [
      "Do szpitala na rehabilitację kolana",
-     "Do szkoły, w której wciąż uczył fizyki",
+     "Do szkoły, w której wciąż uczył",
      "Do rodziny mieszkającej w mieście",
      "Na spotkanie nauczycieli emerytów"
     ]
    },
    {
-    "p": "Dlaczego nauczyciel postawił kiedyś Tomkowi jedynkę?",
+    "p": "Dlaczego pan Lis postawił kiedyś Tomkowi jedynkę?",
     "o": [
      "Chciał nim potrząsnąć, bo Tomek marnował zdolności",
      "Za rakietę, która wylądowała w ogródku dyrektora",
-     "Tomek zniszczył drogi sprzęt w szkolnej pracowni fizycznej",
+     "Tomek zniszczył drogi sprzęt w szkolnej pracowni",
      "Nie lubił Tomka i jego kolegi z ławki"
     ]
    },
    {
-    "p": "Jak Tomek przez lata myślał o słowach nauczyciela?",
+    "p": "Jak Tomek przez lata myślał o słowach pana Lisa?",
     "o": [
-     "Jak o krzywdzącym wyroku",
-     "Jak o żarcie, którego nikt nie brał na serio",
-     "Jak o cennej radzie na przyszłość",
-     "Zupełnie o nich zapomniał"
+     "Jak o wyroku, który nad nim ciążył",
+     "Jak o niesprawiedliwości, którą chciał mu kiedyś wytknąć",
+     "Jak o wyzwaniu, które pchnęło go do budowania mostów",
+     "Jak o czymś, co szybko wypuścił z pamięci"
     ]
    },
    {
@@ -171,16 +172,16 @@ T.TESTY = [
      "Kładkę dla pieszych nad rzeką w Rudzie",
      "Most kolejowy przy dworcu w mieście",
      "Nowy peron na stacji w Rudzie",
-     "Wiadukt nad torami przy szpitalu"
+     "Wiadukt nad torami za miastem"
     ]
    },
    {
-    "p": "Dlaczego Tomek chętnie pojechałby następnego dnia pociągiem o 7:30?",
+    "p": "Co najlepiej oddaje sens tego opowiadania?",
     "o": [
-     "Rozmowa z nauczycielem zmieniła jego spojrzenie na dawną porażkę",
-     "Pociąg o 7:30 jest wygodniejszy i mniej zatłoczony niż ten o 6:42",
-     "Szefowa po spóźnieniu pozwoliła mu przychodzić do pracy później",
-     "Nowy budzik dzwonił za późno, żeby zdążył na pociąg o 6:42"
+     "Przypadkowe spotkanie pokazało Tomkowi dawną jedynkę w nowym świetle",
+     "Spóźnienie nauczyło Tomka, że punktualność jest najważniejsza",
+     "Tomek przekonał się, że nauczyciele szybko zapominają uczniów",
+     "Dawny uczeń pomógł nauczycielowi wrócić do zdrowia"
     ]
    }
   ]
@@ -190,22 +191,22 @@ T.TESTY = [
   "akapity": [
    "Pani Halina od trzydziestu lat gotowała zupę ogórkową na festyn w Zawadzie. Mówiono, że ludzie przyjeżdżają z sąsiednich wsi nie dla zespołu ani loterii, tylko właśnie dla niej. W tym roku po raz pierwszy pomagała jej wnuczka, czternastoletnia Ola, która przyjechała na wakacje z Wrocławia.",
    "Gotowały w remizie, w dwóch wielkich garnkach, każdy na czterdzieści porcji. Babcia kroiła ziemniaki, a Ola tarła ogórki i pilnowała, żeby nic się nie przypaliło. Około jedenastej babcia poszła do sklepu po śmietanę, której zabrakło, i poprosiła wnuczkę, żeby posoliła zupę: dwie garście do każdego garnka, nie więcej.",
-   "Ola posoliła pierwszy garnek, a potem zadzwoniła mama. Rozmowa trwała długo, a kiedy się skończyła, Ola nie była pewna, czy posoliła już drugi garnek. Na wszelki wypadek dosypała do niego dwie garście. Gdy spróbowała, aż się skrzywiła. Zupa była tak słona, że nie dało się jej przełknąć.",
+   "Ola posoliła oba garnki, a potem zadzwoniła mama. Rozmowa trwała długo, a kiedy się skończyła, Ola nie była już pewna, czy posoliła drugi garnek. Na wszelki wypadek dosypała do niego dwie garście. Gdy spróbowała, aż się skrzywiła. Zupa była tak słona, że nie dało się jej przełknąć.",
    "Do festynu zostały dwie godziny. Ola chciała zadzwonić do babci, ale bała się, że babcia się zdenerwuje, więc zaczęła szukać ratunku w telefonie. Przeczytała, że przesoloną zupę ratuje surowy ziemniak, który wchłania sól. Wrzuciła do garnka pięć obranych ziemniaków i czekała. Nie pomogło prawie wcale.",
    "Kiedy babcia wróciła, Ola przyznała się od razu. Babcia spróbowała zupy, pomyślała chwilę i zamiast się złościć, zaczęła się śmiać.",
    "— Ziemniak to bajka — powiedziała. — Na sól jest tylko jeden sposób: więcej zupy.",
-   "Przelały połowę przesolonej zupy do trzeciego garnka, pożyczonego od strażaków, i do obu dolały wody, ogórków i ziemniaków. Teraz w każdym z nich soli było tylko trochę za dużo. Babcia doprawiła wszystko śmietaną i koperkiem.",
+   "Przelały połowę przesolonej zupy do trzeciego garnka, pożyczonego od strażaków, i do obu dolały wody, ogórków i ziemniaków. Teraz w każdym z nich soli było akurat tyle, ile trzeba. Babcia doprawiła wszystko śmietaną i koperkiem.",
    "Zupy wyszło w tym roku sto dwadzieścia porcji zamiast osiemdziesięciu. Zabrakło jej dopiero o siedemnastej, a sołtys powiedział, że chyba nigdy nie była tak dobra. Ola milczała, a babcia mrugnęła do niej porozumiewawczo.",
    "Wieczorem babcia dopisała w zeszycie z przepisami nową linijkę: „Sól sypać samemu. Telefon zostawić w torbie”."
   ],
   "pytania": [
    {
-    "p": "Kto w tym roku pomagał pani Halinie?",
+    "p": "Skąd przyjechała Ola?",
     "o": [
-     "Czternastoletnia wnuczka Ola",
-     "Sołtys Zawady",
-     "Strażacy z remizy",
-     "Córka z Wrocławia"
+     "Z Wrocławia",
+     "Z Krakowa",
+     "Z Poznania",
+     "Z sąsiedniej wsi"
     ]
    },
    {
@@ -218,21 +219,21 @@ T.TESTY = [
     ]
    },
    {
-    "p": "Dlaczego Ola przesoliła zupę?",
+    "p": "Dlaczego zupa w jednym z garnków była przesolona?",
     "o": [
-     "Nie pamiętała, czy posoliła już drugi garnek",
-     "Babcia kazała jej sypać więcej soli niż zwykle",
-     "Pomyliła w pośpiechu sól z cukrem",
-     "Posoliła oba garnki po dwa razy, bo tak zrozumiała"
+     "Ola zapomniała, że ten garnek był już posolony",
+     "Babcia kazała sypać więcej soli niż zwykle",
+     "Ola źle zrozumiała, ile garści soli trzeba dać",
+     "Sól wysypała się Oli z torebki do garnka"
     ]
    },
    {
     "p": "Jaki sposób z internetu wypróbowała Ola?",
     "o": [
      "Wrzuciła surowe ziemniaki",
-     "Dolała do garnka śmietany",
-     "Dosypała szczyptę cukru",
-     "Przecedziła zupę przez sito"
+     "Wrzuciła skórkę chleba",
+     "Dolała soku z cytryny",
+     "Dosypała szczyptę cukru"
     ]
    },
    {
@@ -249,7 +250,7 @@ T.TESTY = [
     "o": [
      "Rozcieńczyła ją, gotując więcej zupy",
      "Wylała przesoloną zupę i ugotowała nową",
-     "Dorzuciła do garnka więcej surowych ziemniaków",
+     "Dodała do garnka kilka garści ryżu",
      "Podawała zupę z chlebem bez soli"
     ]
    },
@@ -266,9 +267,9 @@ T.TESTY = [
     "p": "Co najlepiej oddaje sens tego opowiadania?",
     "o": [
      "Pomyłka skończyła się dobrze dzięki spokojowi i doświadczeniu babci",
-     "Ola zepsuła zupę i przez nią tegoroczny festyn w Zawadzie się nie udał",
-     "Babcia nauczyła wnuczkę, że surowy ziemniak wchłania nadmiar soli",
-     "Sołtys poznał wreszcie tajemnicę przepisu pani Haliny"
+     "Babcia przekonała się, że wnuczce nie można powierzać gotowania",
+     "Dzięki pomocy strażaków zupę udało się ugotować na czas",
+     "Ola odkryła, że najlepsze rady kuchenne znajdzie w internecie"
     ]
    }
   ]
@@ -296,12 +297,12 @@ T.TESTY = [
     ]
    },
    {
-    "p": "Co było zaznaczone krzyżykiem na rysunku?",
+    "p": "Co było napisane na dole rysunku?",
     "o": [
-     "Miejsce przy najmniejszym drzewie",
-     "Kamienna obudowa studni przy płocie",
-     "Wejście do domu dziadka",
-     "Miejsce pod najstarszą gruszą"
+     "Skarb Józka i Staszka, otworzyć w roku 2000",
+     "Własność Józka, nikomu nie ruszać",
+     "Mapa skarbu dla moich przyszłych wnuków",
+     "Tu zakopaliśmy skarb w 1968 roku"
     ]
    },
    {
@@ -317,7 +318,7 @@ T.TESTY = [
     "p": "Dlaczego Kuba nie chciał od razu kopać?",
     "o": [
      "Uważał, że trzeba najpierw zapytać dziadka",
-     "Bał się, że zniszczy ławkę postawioną przez tatę",
+     "Bał się, że uszkodzi korzenie starej gruszy",
      "Nie wierzył, że po tylu latach coś tam jest",
      "Rodzice zabronili kopać na podwórku"
     ]
@@ -326,35 +327,35 @@ T.TESTY = [
     "p": "Co było w puszce?",
     "o": [
      "Kulki, scyzoryk, zdjęcie i list",
-     "Stare monety i druga, dokładniejsza mapa",
-     "Zegarek kieszonkowy i wojskowy medal",
-     "Listy, które Staszek przysyłał z Kanady"
+     "Stare monety, druga mapa i list",
+     "Zegarek kieszonkowy, medal i list",
+     "Pocztówki, znaczki i krótki list"
     ]
    },
    {
-    "p": "Dlaczego dziadek i Staszek nie widzieli się od lat?",
+    "p": "Dlaczego dziadek tak długo nie widział przyjaciela z dzieciństwa?",
     "o": [
-     "Staszek wyjechał na stałe do Kanady w 1968 roku",
-     "Pokłócili się o wspólny skarb z dzieciństwa",
-     "Staszek przeprowadził się do dużego miasta",
-     "Dziadek wyjechał na wiele lat za granicę"
+     "Przyjaciel wyjechał do Kanady w 1968 roku",
+     "Pokłócili się o skarb w 1975 roku",
+     "Przyjaciel wypłynął w 1970 roku do pracy na statku",
+     "Dziadek wyjechał w 1965 roku do pracy w Niemczech"
     ]
    },
    {
     "p": "Dlaczego dziadek zamilkł przy ostatnim zdaniu listu?",
     "o": [
-     "Przypomniał sobie dawną obietnicę",
-     "Był bardzo zmęczony po powrocie ze szpitala",
-     "Nie rozumiał, co właściwie napisał mu Staszek",
-     "Zdenerwował się, że wnuki otworzyły puszkę"
+     "Poruszyła go prośba przyjaciela, żeby go odnaleźć",
+     "Był zmęczony po długim i pełnym wrażeń dniu",
+     "Przeczytał w liście, że przyjaciel był ciężko chory",
+     "Zdenerwował się, że wnuki otworzyły puszkę bez niego"
     ]
    },
    {
     "p": "Co najlepiej oddaje sens tego opowiadania?",
     "o": [
      "Dziecięca mapa pomogła dziadkowi odnaleźć przyjaciela",
+     "Dziadek przekonał się, że przyjaciela nie da się już odnaleźć",
      "Dzieci znalazły na podwórku cenny skarb sprzed wielu lat",
-     "Dziadek przez całe życie nie pozwalał nikomu dotykać biurka",
      "Kuba nauczył dziadka korzystać z komputera i internetu"
     ]
    }

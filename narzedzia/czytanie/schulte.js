@@ -29,7 +29,8 @@
   const MIN_N = 3;
 
   const g = { n: 5, znaki: 'liczby', kolejka: [], i: 0, bledy: 0, trwa: false, start: 0, zegar: null,
-    podp: 0, etap: 0, ostatnie: 0, poMs: 0, poleMs: 0, prog: 0, stanTempa: '', rytmiczna: false, wRytmie: 0 };
+    podp: 0, etap: 0, ostatnie: 0, poMs: 0, poleMs: 0, prog: 0, stanTempa: '', rytmiczna: false, wRytmie: 0,
+    wDolku: false, maxStrata: 0, powroty: 0, spektakularne: 0 };
   const s = { aktywna: false, n: 5, sufit: 7, limitPlansz: 10, limitMs: 0, start: 0, plansze: [], dobre: 0, slabe: 0, odliczanie: null, czeka: false, ostatnia: null };
 
   const ustawienia = () => T.stan.schulte.seria;
@@ -139,6 +140,47 @@
     modul.classList.toggle('paleta-wyrazna', u.paleta === 'wyrazna');
     if (u.tempo !== 'kolor') ustawKolorTempa('');
   }
+
+  // ---------- powrót do gry ----------
+  // Gdy zostajesz w tyle za tempem progu (ogon znaków do nadrobienia) i potem doganiasz rytm, apka to zauważa:
+  // napis „Powrót!”, niebieska poświata i — przy włączonym metronomie — dzwonek. Duża strata (dwa razy próg)
+  // nadrobiona do zera to „spektakularny powrót”. Działa, gdy widać tempo (pasek, kolor) albo gra rytm progu.
+  const STRATA_CZESC = 0.1, STRATA_MIN = 2;   // „w tyle” = co najmniej 10% pól planszy (najmniej 2 znaki)
+  const powrotWlaczony = () => {
+    const u = ustawienia();
+    return !g.rytmiczna && (u.tempo !== 'brak' || u.metronom === 'prog');
+  };
+  function sprawdzPowrot() {
+    if (!g.trwa || !powrotWlaczony()) return;
+    const ile = g.kolejka.length;
+    const strata = (performance.now() - g.start) / 1000 / g.prog - g.i;   // ile znaków za tempem progu
+    const prog = Math.max(STRATA_MIN, Math.round(ile * STRATA_CZESC));
+    if (strata >= prog) {
+      g.wDolku = true;
+      g.maxStrata = Math.max(g.maxStrata, strata);
+    } else if (g.wDolku && strata <= 0) {
+      const spektakularny = g.maxStrata >= 2 * prog;
+      g.wDolku = false;
+      g.maxStrata = 0;
+      g.powroty++;
+      if (spektakularny) g.spektakularne++;
+      pokazPowrot(spektakularny);
+    }
+  }
+  function pokazPowrot(spektakularny) {
+    const napis = $('s-powrot');
+    napis.textContent = spektakularny ? 'Spektakularny powrót!' : 'Powrót!';
+    T.migniecie(napis, 'widoczny', 1500);
+    T.migniecie(ramka, 'w-rytmie', 700);
+    if (met.ctx && met.ctx.state === 'running' && ustawienia().metronom !== 'brak') {
+      const t = met.ctx.currentTime + 0.01;
+      DZWIEKI.premia(t);
+      if (spektakularny) DZWIEKI.premia(t + 0.18);
+    }
+  }
+  const opisPowrotow = (powroty, spekt) => (powroty
+    ? `Powroty do tempa: ${powroty}${spekt ? ` (spektakularne: ${spekt})` : ''}.`
+    : '');
 
   // ---------- metronom ----------
   // Dźwięk generuje przeglądarka (Web Audio) — bez plików i obcych serwerów. Stuknięcia planowane z wyprzedzeniem
@@ -402,6 +444,10 @@
     g.podp = 0;
     g.etap = 0;
     g.rytmiczna = false;
+    g.wDolku = false;
+    g.maxStrata = 0;
+    g.powroty = 0;
+    g.spektakularne = 0;
     g.wRytmie = 0;
     g.ostatnie = g.start;
     const prog = progDla(g.n).prog;
@@ -413,6 +459,7 @@
       $('s-czas').textContent = `${T.ulamek((performance.now() - g.start) / 1000)} s`;
       sprawdzPodpowiedz();
       pokazTempo();
+      sprawdzPowrot();
       if (s.aktywna && s.limitMs) $('s-czas-pod').textContent = `zostało ${minSek(s.limitMs - (performance.now() - s.start))}`;
     }, 100);
     startMetronomu();
@@ -462,7 +509,7 @@
     T.dopisz(z.historia, { kiedy: Date.now(), n: g.n, znaki: g.znaki, czas, bledy: g.bledy, rekord, podp: g.podp });
     T.zapisz();
     pokazNakladke(rekord ? 'Nowy rekord!' : 'Gotowe',
-      `${T.ulamek(czas, 2)} s, pomyłki: ${g.bledy}${g.podp ? `, podpowiedzi: ${g.podp} (bez rekordu)` : ''}.${!rekord && poprzedni ? ` Rekord: ${T.ulamek(poprzedni, 2)} s.` : ''}${rytm ? ` Spokojny rytm: ${rytm.tekst}. ${rytm.tytul}.` : ''}`, 'Jeszcze raz');
+      `${T.ulamek(czas, 2)} s, pomyłki: ${g.bledy}${g.podp ? `, podpowiedzi: ${g.podp} (bez rekordu)` : ''}.${!rekord && poprzedni ? ` Rekord: ${T.ulamek(poprzedni, 2)} s.` : ''}${rytm ? ` Spokojny rytm: ${rytm.tekst}. ${rytm.tytul}.` : ''}${g.powroty ? ` ${opisPowrotow(g.powroty, g.spektakularne)}` : ''}`, 'Jeszcze raz');
     T.trybGry(false, ramka);
     pokaz();
     historia();
@@ -478,7 +525,7 @@
     const wolno = (!rytm && tempo > ZA_WOLNO * prog) || g.bledy >= BLEDY_SPADEK;
     // na wykresie: zwykle tempo względem progu, w spokojnym rytmie trafienia względem 80% (kreska = 80% w rytmie)
     const wzgl = rytm ? Math.max(0.01, rytm.czesc / RYTM_DOBRZE) : prog / tempo;
-    const wpis = { n, czas, tempo, bledy: g.bledy, podp: g.podp, wzgl, zmiana: 0, rytm: Boolean(rytm) };
+    const wpis = { n, czas, tempo, bledy: g.bledy, podp: g.podp, wzgl, zmiana: 0, rytm: Boolean(rytm), powroty: g.powroty, spekt: g.spektakularne };
     s.plansze.push(wpis);
     s.ostatnia = wpis;
     s.dobre = szybko ? s.dobre + 1 : 0;
@@ -503,7 +550,7 @@
     } else {
       tytul = 'Dobrze, ten sam poziom';
     }
-    const opis = `${rozmiar(n)}: ${rytm ? rytm.tekst : `${sPole(tempo)} (próg ${T.ulamek(prog, 2)}${progInfo.wlasny ? ', Twój' : ''})`}${g.bledy ? `, pomyłki: ${g.bledy}` : ''}${g.podp ? `, podpowiedzi: ${g.podp}` : ''}.${rekord ? ' Rekord tej tablicy!' : ''}`;
+    const opis = `${rozmiar(n)}: ${rytm ? rytm.tekst : `${sPole(tempo)} (próg ${T.ulamek(prog, 2)}${progInfo.wlasny ? ', Twój' : ''})`}${g.bledy ? `, pomyłki: ${g.bledy}` : ''}${g.podp ? `, podpowiedzi: ${g.podp}` : ''}.${rekord ? ' Rekord tej tablicy!' : ''}${g.powroty ? ` ${opisPowrotow(g.powroty, g.spektakularne)}` : ''}`;
 
     const koniec = s.plansze.length >= s.limitPlansz || (s.limitMs && performance.now() - s.start >= s.limitMs);
     if (koniec) { koniecSerii(); return; }
@@ -538,6 +585,8 @@
     const najwyzszy = Math.max(...p.map((x) => x.n));
     const najlepsza = p.reduce((a, x) => (x.wzgl > a.wzgl ? x : a));
     const podp = p.reduce((a, x) => a + x.podp, 0);
+    const powroty = p.reduce((a, x) => a + x.powroty, 0);
+    const spekt = p.reduce((a, x) => a + x.spekt, 0);
     const rytmiczna = p.every((x) => x.rytm);
     T.dopisz(u.historia, { kiedy: Date.now(), plansze: p.length, od: p[0].n, najwyzszy, wzgl: Math.max(0.01, Math.round(wzgl * 1000) / 1000), awanse, spadki, znaki: g.znaki, rekord: false, podp, rytmiczna });
     T.zapisz();
@@ -546,7 +595,7 @@
       + (rytmiczna
         ? `w spokojnym rytmie. Średnio ${Math.round(wzgl * RYTM_DOBRZE * 100)}% trafień w rytm, rytm teraz co ${T.ulamek(u.rytm, 2)} s. `
         : `(awanse: ${awanse}, spadki: ${spadki}). Średnio ${Math.round(wzgl * 100)}% progu, najlepsza: ${rozmiar(najlepsza.n)}, ${sPole(najlepsza.tempo)}. `)
-      + `${podp ? `Podpowiedzi: ${podp}. ` : ''}Następny Flow zacznie od ${rozmiar(s.n)}.`;
+      + `${podp ? `Podpowiedzi: ${podp}. ` : ''}${powroty ? `${opisPowrotow(powroty, spekt)} ` : ''}Następny Flow zacznie od ${rozmiar(s.n)}.`;
     wykres(p);
     $('s-pods-opis').textContent = rytmiczna
       ? 'Słupek to trafienia w rytm na planszy: nad kreską 80% i więcej. Pod słupkiem rozmiar tablicy.'
@@ -609,6 +658,7 @@
       zgasPodpowiedz();
       g.i++;
       pokazTempo();
+      sprawdzPowrot();
       if ($('s-wygaszaj').checked) b.classList.add('trafione');
       else T.migniecie(b, 'blysk-dobry', 180);
       if (g.i >= g.kolejka.length) koniecPlanszy();

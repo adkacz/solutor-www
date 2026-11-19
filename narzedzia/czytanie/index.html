@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
 <title>Trener czytania — Solutor</title>
-<meta name="description" content="Ćwiczenia wzroku i uwagi przy czytaniu: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie (RSVP), widzenie peryferyjne, wyszukiwanie pojęć w tekście. Wyniki tylko w Twojej przeglądarce.">
-<link rel="stylesheet" href="../wspolne.css?v=11">
-<link rel="stylesheet" href="czytanie.css?v=11">
+<meta name="description" content="Ćwiczenia wzroku i uwagi przy czytaniu: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie (RSVP), widzenie peryferyjne, wyszukiwanie pojęć w tekście, podobne zestawy i test tempa i zrozumienia. Wyniki tylko w Twojej przeglądarce.">
+<link rel="stylesheet" href="../wspolne.css?v=12">
+<link rel="stylesheet" href="czytanie.css?v=12">
 </head>
 <body>
 
@@ -15,7 +15,7 @@
   <div class="poza-gra">
     <nav class="okruszki" aria-label="Ścieżka"><a href="../../">Solutor.pl</a> › <a href="../">Narzędzia</a></nav>
     <h1>Trener czytania</h1>
-    <p class="podtytul">Ćwiczenia wzroku i uwagi: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie, widzenie peryferyjne, wyszukiwanie pojęć w tekście i odróżnianie podobnych zestawów.</p>
+    <p class="podtytul">Ćwiczenia wzroku i uwagi: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie, widzenie peryferyjne, wyszukiwanie pojęć w tekście i odróżnianie podobnych zestawów, a do tego test tempa i zrozumienia.</p>
     <nav class="zakladki" aria-label="Ćwiczenia">
       <button type="button" data-modul="schulte">Tablica</button>
       <button type="button" data-modul="litery">Litery</button>
@@ -25,6 +25,7 @@
       <button type="button" data-modul="peryferyjne">Peryferyjne</button>
       <button type="button" data-modul="pojecia">Pojęcia</button>
       <button type="button" data-modul="podobne">Podobne</button>
+      <button type="button" data-modul="test">Test</button>
     </nav>
   </div>
 
@@ -509,6 +510,58 @@
     </div>
   </section>
 
+  <!-- ============ Test tempa i zrozumienia ============ -->
+  <section id="m-test" class="modul" hidden aria-labelledby="t-tytul">
+    <div class="poza-gra">
+      <h2 id="t-tytul">Test tempa i zrozumienia</h2>
+      <p class="opis">Przeczytaj krótkie opowiadanie tak, jak zwykle czytasz, gdy chcesz coś zrozumieć. Czas mierzy się sam. Potem odpowiesz na 8 pytań bez zaglądania do tekstu. Powtarzaj test co 2–4 tygodnie na nowym tekście — zobaczysz, czy trening zmienia Twoje zwykłe czytanie.</p>
+    </div>
+    <div class="pasek-celu">
+      <div class="cel-blok"><span class="etykieta">Etap</span> <strong id="t-etap" class="cel">Wybierz tekst</strong> <span id="t-etap-pod" class="cel-pod"></span></div>
+      <button type="button" class="przycisk maly tylko-w-grze" data-przerwij="test">Przerwij</button>
+    </div>
+    <div class="ramka ustawienia poza-gra">
+      <div class="pola">
+        <label class="pole" for="t-tekst">Tekst
+          <select id="t-tekst"></select>
+        </label>
+      </div>
+      <p id="t-nastepny" class="drobny"></p>
+    </div>
+    <div id="t-wynik-koniec" class="wynik podsumowanie" role="status" hidden></div>
+    <article id="t-czytanie" class="tekst-czytanie" hidden>
+      <h3 id="t-czytanie-tytul"></h3>
+      <div id="t-czytanie-tresc"></div>
+    </article>
+    <div id="t-pytania" class="pytania" hidden></div>
+    <div class="akcje odstep-dol">
+      <button type="button" id="t-start" class="przycisk glowny">Zacznij czytać</button>
+      <button type="button" id="t-przeczytane" class="przycisk glowny" hidden>Przeczytane — do pytań</button>
+      <button type="button" id="t-sprawdz" class="przycisk glowny" hidden disabled>Sprawdź odpowiedzi</button>
+    </div>
+    <div class="poza-gra">
+      <div class="naglowek-sekcji"><h3>Twoje testy</h3><button type="button" id="t-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
+      <div id="t-wykres-blok" hidden>
+        <svg id="t-wykres" class="wykres" viewBox="0 0 300 100" role="img" aria-label="Tempo skuteczne w kolejnych testach"></svg>
+        <p class="drobny">Słupek to tempo skuteczne (słowa zrozumiane na minutę), pod nim data testu. Jaśniejsze słupki to powtórki tekstu.</p>
+      </div>
+      <ul id="t-historia" class="historia"></ul>
+      <p class="porada">Czytaj jak zwykle, gdy chcesz coś zrozumieć — nie na wyścigi; stopera celowo nie widać. Na końcu tekstu kliknij „Przeczytane”. Rób test wypoczęty i o podobnej porze dnia, wtedy wyniki są porównywalne. Gdy przejdziesz do innej karty albo aplikacji, czas się zatrzymuje.</p>
+      <details class="w-tle">
+        <summary>Co mierzysz i co o tym wiadomo</summary>
+        <p><b>Co mierzysz.</b> Tempo zwykłego czytania i to, ile z tekstu zostaje w głowie. Tempo skuteczne łączy jedno z drugim: 250 słów na minutę przy 6 z 8 dobrych odpowiedzi to 188 słów zrozumianych na minutę. Wynik porównujesz z samym sobą — co 2–4 tygodnie, na nowym tekście.</p>
+        <p><b>Co wiadomo z badań.</b> Wprawni czytelnicy angielskiego czytają zwykle 200–400 słów na minutę, a szybciej da się czytać tylko kosztem zrozumienia (Rayner i in. 2016) — dlatego test mierzy jedno i drugie naraz. Polskie słowa są średnio dłuższe, więc tych liczb nie da się wprost przenieść na polski. Pytania muszą wymagać przeczytania tekstu: w popularnym teście czytania na wiele pytań dało się odpowiedzieć bez czytania (Keenan i Betjemann 2006). Wiedza o temacie bardzo pomaga rozumieć tekst (Recht i Leslie 1988), więc tekst popularnonaukowy faworyzowałby tych, którzy znają temat. Dlatego testem są krótkie opowiadania: odpowiedzi nie zna nikt, kto ich nie przeczytał.</p>
+        <p><b>Granica.</b> Osiem pytań to mała próbka, a wynik zależy też od snu, zmęczenia i samego tekstu — z testu na test może się wahać o pytanie czy dwa. Patrz na kierunek z kilku testów. Zgadując, trafia się średnio 2 z 8. To nie jest diagnoza ani badanie, tylko porównanie z samym sobą.</p>
+        <p class="zrodla-tytul">Źródła</p>
+        <ul class="zrodla">
+          <li>Rayner K., Schotter E. R., Masson M. E. J., Potter M. C., Treiman R. (2016). So much to read, so little time: how do we read, and can speed reading help? <i>Psychological Science in the Public Interest</i>, 17, 4–34.</li>
+          <li>Keenan J. M., Betjemann R. S. (2006). Comprehending the Gray Oral Reading Test without reading it: why comprehension tests should not include passage-independent items. <i>Scientific Studies of Reading</i>, 10, 363–380.</li>
+          <li>Recht D. R., Leslie L. (1988). Effect of prior knowledge on good and poor readers’ memory of text. <i>Journal of Educational Psychology</i>, 80, 16–20.</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
   <section class="ramka poza-gra odstep-gora" aria-labelledby="kopia-tytul">
     <h3 id="kopia-tytul">Twoje wyniki</h3>
     <p class="drobny odstep-dol">Wyniki są tylko w tej przeglądarce. Żeby przenieść je na inne urządzenie albo zachować na zapas, zapisz kopię do pliku (razem z własnym tekstem).</p>
@@ -522,18 +575,20 @@
   </section>
 
   <footer class="stopka-narzedzia poza-gra">
-    Ćwiczenia mierzą postęp w samych ćwiczeniach. Badania nie potwierdzają, że trening wzroku wielokrotnie przyspiesza czytanie bez utraty zrozumienia, więc przy szybkim czytaniu sprawdzaj, co zostało w głowie. To nie jest terapia ani badanie wzroku czy uwagi. Ćwiczenie poprawia przede wszystkim to, co ćwiczysz, dlatego każde przypomina coś, co robisz na co dzień — przy każdym w części „Co ćwiczysz i co o tym wiadomo” piszemy, do czego jest podobne i co mówią o tym badania.
+    Ćwiczenia mierzą postęp w samych ćwiczeniach, a to, czy zmienia się Twoje zwykłe czytanie, pokazuje zakładka „Test”. Badania nie potwierdzają, że trening wzroku wielokrotnie przyspiesza czytanie bez utraty zrozumienia, więc przy szybkim czytaniu sprawdzaj, co zostało w głowie. To nie jest terapia ani badanie wzroku czy uwagi. Ćwiczenie poprawia przede wszystkim to, co ćwiczysz, dlatego każde przypomina coś, co robisz na co dzień — przy każdym w części „Co ćwiczysz i co o tym wiadomo” piszemy, do czego jest podobne i co mówią o tym badania.
     Działa w Twojej przeglądarce: nic nie jest wysyłane na serwer, nie ma kont ani ciasteczek. Kod jest jawny: <a href="https://github.com/adkacz/solutor-www/tree/main/narzedzia/czytanie">GitHub</a>.
   </footer>
 </main>
 
-<script src="wspolne.js?v=11"></script>
-<script src="schulte.js?v=11"></script>
-<script src="skaner.js?v=11"></script>
-<script src="rsvp.js?v=11"></script>
-<script src="peryferyjne.js?v=11"></script>
-<script src="pojecia.js?v=11"></script>
-<script src="podobne.js?v=11"></script>
-<script src="start.js?v=11"></script>
+<script src="wspolne.js?v=12"></script>
+<script src="schulte.js?v=12"></script>
+<script src="skaner.js?v=12"></script>
+<script src="rsvp.js?v=12"></script>
+<script src="peryferyjne.js?v=12"></script>
+<script src="pojecia.js?v=12"></script>
+<script src="podobne.js?v=12"></script>
+<script src="testy.js?v=12"></script>
+<script src="test.js?v=12"></script>
+<script src="start.js?v=12"></script>
 </body>
 </html>

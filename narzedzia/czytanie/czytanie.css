@@ -68,6 +68,15 @@ body:not(.w-grze) .tylko-w-grze { display: none !important; }
 }
 .wskazniki .pod { display: block; font-size: 12px; color: var(--steel); line-height: 1.3; }
 
+/* cichy pasek tempa w tablicy Schultego: wypełnienie = znalezione znaki, kreska = tempo progu */
+.pasek-tempa { position: relative; height: 6px; margin: 0 0 10px; background: var(--line); border-radius: 999px; }
+.pasek-tempa > div:first-child { height: 100%; width: 0; background: var(--ok); opacity: .75; border-radius: 999px; }
+.pasek-tempa.za > div:first-child { background: var(--warn); opacity: .6; }
+.pasek-tempa > div:last-child { position: absolute; top: -3px; bottom: -3px; left: -1px; width: 2px; background: var(--steel); border-radius: 1px; }
+body.w-grze:has(#s-tempo:not([hidden])) .plansza-ramka {
+  width: min(100%, 560px, max(240px, calc(100vh - 216px)));
+  width: min(100%, 560px, max(240px, calc(100svh - 216px)));
+}
 .pasek-czasu { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; margin-bottom: 12px; }
 .pasek-czasu > div { height: 100%; width: 100%; background: var(--ok); border-radius: 999px; transition: width .15s linear; }
 .pasek-czasu > div.postep { width: 0; background: var(--steel); }

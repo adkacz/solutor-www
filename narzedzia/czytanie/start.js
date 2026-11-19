@@ -13,6 +13,7 @@
     peryferyjne: ['m-peryferyjne', 'peryferyjne'],
     pojecia: ['m-pojecia', 'pojecia'],
     podobne: ['m-podobne', 'podobne'],
+    test: ['m-test', 'test'],
   };
   const SEKCJE = [...new Set(Object.values(CWICZENIA).map((c) => c[0]))];
   let biezace = null;

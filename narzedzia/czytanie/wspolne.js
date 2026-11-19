@@ -69,6 +69,8 @@ const T = (() => {
       pojecia: { rekord: 0, poziom: 0, historia: [] },
       // podobne zestawy: rekord i najwyższy poziom osobno dla cyfr i słów, poziom startowy następnej sesji
       podobne: { rekordy: { cyfry: { wynik: 0, poziom: 0 }, slowa: { wynik: 0, poziom: 0 } }, poziom: { cyfry: 1, slowa: 1 }, historia: [] },
+      // test tempa i zrozumienia: wpisy z liczbą słów, czasem czytania (s) i dobrymi odpowiedziami
+      test: { historia: [] },
       tekst: { wybor: '0', wlasny: '' },
     };
   }
@@ -164,6 +166,12 @@ const T = (() => {
       rekord: w.rekord === true,
     }));
 
+    s.test.historia = lista(obiekt(o.test).historia, (w) => wszystkie({
+      kiedy: kiedyOk(w.kiedy), tekst: calk(w.tekst, 1, 100), slowa: calk(w.slowa, 1, 1e5), czas: liczba(w.czas, 1, 36000),
+      dobre: calk(w.dobre, 0, 100), pytania: calk(w.pytania, 1, 100), powtorka: w.powtorka === true, przerwa: w.przerwa === true,
+      rekord: false,
+    }));
+
     const t = obiekt(o.tekst);
     if (typeof t.wybor === 'string' && /^(?:[0-9]|wlasny)$/.test(t.wybor)) s.tekst.wybor = t.wybor;
     if (typeof t.wlasny === 'string') s.tekst.wlasny = t.wlasny.slice(0, MAX_TEKSTU);
@@ -192,7 +200,7 @@ const T = (() => {
     if (historia.length > MAX_HISTORII) historia.length = MAX_HISTORII;
   }
   function liczbaWynikow(s) {
-    let n = s.schulte.historia.length + s.schulte.seria.historia.length + s.rsvp.historia.length + s.peryferyjne.historia.length + s.pojecia.historia.length + s.podobne.historia.length;
+    let n = s.schulte.historia.length + s.schulte.seria.historia.length + s.rsvp.historia.length + s.peryferyjne.historia.length + s.pojecia.historia.length + s.podobne.historia.length + s.test.historia.length;
     for (const w of WARIANTY) n += s.skaner[w].historia.length;
     return n;
   }

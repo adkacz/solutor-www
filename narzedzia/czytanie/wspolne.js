@@ -67,6 +67,8 @@ const T = (() => {
       rsvp: { rekord: 0, historia: [] },
       peryferyjne: { rozpietosc: 0, wynik: 0, historia: [] },
       pojecia: { rekord: 0, poziom: 0, historia: [] },
+      // podobne zestawy: rekord i najwyższy poziom osobno dla cyfr i słów, poziom startowy następnej sesji
+      podobne: { rekordy: { cyfry: { wynik: 0, poziom: 0 }, slowa: { wynik: 0, poziom: 0 } }, poziom: { cyfry: 1, slowa: 1 }, historia: [] },
       tekst: { wybor: '0', wlasny: '' },
     };
   }
@@ -150,6 +152,18 @@ const T = (() => {
       kiedy: kiedyOk(w.kiedy), wynik: calk(w.wynik, 0, 1e9), poziom: calk(w.poziom, 1, 4), ukonczone: calk(w.ukonczone, 0, 1e6), rekord: w.rekord === true,
     }));
 
+    const d = obiekt(o.podobne);
+    for (const r of ['cyfry', 'slowa']) {
+      const rk = obiekt(obiekt(d.rekordy)[r]);
+      s.podobne.rekordy[r] = { wynik: calk(rk.wynik, 0, 1e9) || 0, poziom: calk(rk.poziom, 0, 10) || 0 };
+      s.podobne.poziom[r] = calk(obiekt(d.poziom)[r], 1, 10) || 1;
+    }
+    s.podobne.historia = lista(d.historia, (w) => wszystkie({
+      kiedy: kiedyOk(w.kiedy), rodzaj: w.rodzaj === 'cyfry' || w.rodzaj === 'slowa' ? w.rodzaj : null,
+      rundy: calk(w.rundy, 1, 1000), dobre: calk(w.dobre, 0, 1000), poziom: calk(w.poziom, 1, 10), wynik: calk(w.wynik, 0, 1e9),
+      rekord: w.rekord === true,
+    }));
+
     const t = obiekt(o.tekst);
     if (typeof t.wybor === 'string' && /^(?:[0-9]|wlasny)$/.test(t.wybor)) s.tekst.wybor = t.wybor;
     if (typeof t.wlasny === 'string') s.tekst.wlasny = t.wlasny.slice(0, MAX_TEKSTU);
@@ -178,7 +192,7 @@ const T = (() => {
     if (historia.length > MAX_HISTORII) historia.length = MAX_HISTORII;
   }
   function liczbaWynikow(s) {
-    let n = s.schulte.historia.length + s.schulte.seria.historia.length + s.rsvp.historia.length + s.peryferyjne.historia.length + s.pojecia.historia.length;
+    let n = s.schulte.historia.length + s.schulte.seria.historia.length + s.rsvp.historia.length + s.peryferyjne.historia.length + s.pojecia.historia.length + s.podobne.historia.length;
     for (const w of WARIANTY) n += s.skaner[w].historia.length;
     return n;
   }

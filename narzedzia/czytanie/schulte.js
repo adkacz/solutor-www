@@ -60,7 +60,7 @@
     $('s-cel').textContent = g.i < ile ? g.kolejka[g.i] : '—';
     $('s-postep').textContent = `${g.i} z ${ile}`;
     $('s-bledy').textContent = String(g.bledy);
-    $('s-przerwij').textContent = s.aktywna ? 'Zakończ serię' : 'Przerwij';
+    $('s-przerwij').textContent = s.aktywna ? 'Zakończ Flow' : 'Przerwij';
 
     $('s-seria-pasek').hidden = !s.aktywna;
     if (s.aktywna) {
@@ -88,7 +88,7 @@
   function historia() {
     const ul = $('s-historia');
     if (trybSerii()) {
-      $('s-hist-tytul').textContent = 'Ostatnie serie';
+      $('s-hist-tytul').textContent = 'Ostatnie sesje Flow';
       T.pokazHistorie(ul, ustawienia().historia, (w) => ({
         tytul: `${w.plansze} ${T.odmiana(w.plansze, 'plansza', 'plansze', 'plansz')}, ${rozmiar(w.od)}${w.najwyzszy !== w.od ? ` › ${rozmiar(w.najwyzszy)}` : ''}`,
         wartosc: `${Math.round(w.wzgl * 100)}% progu`,
@@ -125,9 +125,9 @@
     $('s-czas').textContent = '0,0 s';
     if (trybSerii()) {
       const sufit = ustawienia().sufit;
-      pokazNakladke('Seria',
+      pokazNakladke('Flow',
         `${opisLimitu()} od ${rozmiar(Math.min(g.n, sufit))}, najwyżej do ${rozmiar(sufit)}. Awans: dwie plansze z rzędu szybciej niż ${sPole(PROG[Math.min(g.n, sufit)])}.`,
-        'Start serii');
+        'Start Flow');
     } else {
       pokazNakladke(`Tablica ${rozmiar(g.n)}`,
         `Klikaj po kolei od ${g.kolejka[0]} do ${g.kolejka[g.kolejka.length - 1]}. Czas liczy się od kliknięcia Start.`, 'Start');
@@ -213,7 +213,7 @@
 
     let tytul;
     if (s.dobre >= POD_RZAD) {
-      if (s.n < s.sufit) { s.n++; wpis.zmiana = 1; tytul = `Awans: ${rozmiar(s.n)}`; } else tytul = `Świetnie, to najwyższy poziom tej serii`;
+      if (s.n < s.sufit) { s.n++; wpis.zmiana = 1; tytul = `Awans: ${rozmiar(s.n)}`; } else tytul = `Świetnie, to najwyższy ustawiony poziom`;
       s.dobre = 0;
       s.slabe = 0;
     } else if (s.slabe >= POD_RZAD) {
@@ -264,14 +264,14 @@
     T.dopisz(u.historia, { kiedy: Date.now(), plansze: p.length, od: p[0].n, najwyzszy, wzgl: Math.round(wzgl * 1000) / 1000, awanse, spadki, znaki: g.znaki, rekord: false });
     T.zapisz();
 
-    $('s-pods-tekst').textContent = `Seria: ${p.length} ${T.odmiana(p.length, 'plansza', 'plansze', 'plansz')}, od ${rozmiar(p[0].n)}, najwyżej ${rozmiar(najwyzszy)} `
+    $('s-pods-tekst').textContent = `Flow: ${p.length} ${T.odmiana(p.length, 'plansza', 'plansze', 'plansz')}, od ${rozmiar(p[0].n)}, najwyżej ${rozmiar(najwyzszy)} `
       + `(awanse: ${awanse}, spadki: ${spadki}). Średnio ${Math.round(wzgl * 100)}% progu, najlepsza: ${rozmiar(najlepsza.n)}, ${sPole(najlepsza.tempo)}. `
-      + `Następna seria zacznie od ${rozmiar(s.n)}.`;
+      + `Następny Flow zacznie od ${rozmiar(s.n)}.`;
     wykres(p);
     $('s-podsumowanie').hidden = false;
     $('s-rozmiar').value = String(s.n);
     czytajUstawienia();
-    pokazNakladke('Seria zakończona', 'Podsumowanie jest nad tablicą.', 'Nowa seria');
+    pokazNakladke('Flow zakończony', 'Podsumowanie jest nad tablicą.', 'Jeszcze raz');
     T.trybGry(false, $('s-podsumowanie'));
     pokaz();
     historia();
@@ -353,7 +353,7 @@
     const z = T.stan.schulte;
     if (trybSerii()) {
       if (!z.seria.historia.length) return;
-      if (!confirm('Usunąć historię serii? Rekordy tablic zostają.')) return;
+      if (!confirm('Usunąć historię sesji Flow? Rekordy tablic zostają.')) return;
       z.seria.historia = [];
     } else {
       if (!z.historia.length && !Object.keys(z.rekordy).length) return;

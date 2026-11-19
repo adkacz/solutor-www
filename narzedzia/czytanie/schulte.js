@@ -29,7 +29,7 @@
   const MIN_N = 3;
 
   const g = { n: 5, znaki: 'liczby', kolejka: [], i: 0, bledy: 0, trwa: false, start: 0, zegar: null,
-    podp: 0, etap: 0, ostatnie: 0, poMs: 0, poleMs: 0, prog: 0, stanTempa: '' };
+    podp: 0, etap: 0, ostatnie: 0, poMs: 0, poleMs: 0, prog: 0, stanTempa: '', rytmiczna: false, wRytmie: 0 };
   const s = { aktywna: false, n: 5, sufit: 7, limitPlansz: 10, limitMs: 0, start: 0, plansze: [], dobre: 0, slabe: 0, odliczanie: null, czeka: false, ostatnia: null };
 
   const ustawienia = () => T.stan.schulte.seria;
@@ -144,9 +144,16 @@
   // Dźwięk generuje przeglądarka (Web Audio) — bez plików i obcych serwerów. Stuknięcia planowane z wyprzedzeniem
   // na zegarze dźwięku, więc rytm jest równy, nawet gdy strona ma chwilowo dużo pracy.
   // „Rytm progu”: jedno stuknięcie na pole w tempie progu; wyższy, jaśniejszy dźwięk, gdy znalezione znaki wyprzedzają rytm.
-  // „Spokojny rytm”: główne uderzenie co 1,5 s i dwa cichsze podziały między nimi — niezależny od tempa planszy.
-  const SPOKOJNY_KROK_S = 0.5, SPOKOJNY_AKCENT = 3;
-  const met = { ctx: null, timer: null, nast: 0, k: 0, krok: 0, rodzaj: 'brak' };
+  // „Spokojny rytm”: główne uderzenie (na start co 1,5 s) i dwa cichsze podziały między nimi. Trafienie znaku
+  // w główne uderzenie dostaje premię (cichy dzwonek, niebieska poświata ramki) — uczy czekać na rytm zamiast gonić,
+  // a podziały pomagają do niego wrócić. Kliknięcie między uderzeniami nie jest błędem, tylko nie ma premii.
+  // Progresja: dwie plansze z rzędu z ≥ 80% trafień w rytm › rytm szybszy o 5% (zmianę tempa o kilka procent
+  // ledwo się wyczuwa — „odrobinę”); dwie z rzędu < 50% › krok wolniej. W tym rytmie Flow nie zmienia rozmiaru
+  // za tempo (plansza jest celowo wolna), a jej tempo nie wchodzi do progu osobistego.
+  const SPOKOJNY_AKCENT = 3;
+  const RYTM_START = 1.5, RYTM_MIN = 0.6, RYTM_MAX = 2.5, RYTM_KROK = 0.95, RYTM_DOBRZE = 0.8, RYTM_SLABO = 0.5;
+  const OKNO_CZESC = 0.1, OKNO_MIN_S = 0.12;   // okienko trafienia: ±10% odstępu, najmniej ±0,12 s
+  const met = { ctx: null, timer: null, nast: 0, k: 0, krok: 0, rodzaj: 'brak', glowne: [], dobre: 0, slabe: 0 };
   function odblokujDzwiek() {
     // Przeglądarki pozwalają na dźwięk dopiero po kliknięciu — wołane z obsługi kliknięcia
     if (ustawienia().metronom === 'brak') return;
@@ -175,22 +182,34 @@
     przed: (t) => stuk(t, 1320, 0.22, 0.09),
     glowny: (t) => stuk(t, 440, 0.3, 0.3),
     podzial: (t) => stuk(t, 440, 0.07, 0.12),
+    premia: (t) => { stuk(t, 880, 0.1, 0.35); stuk(t, 1320, 0.06, 0.4); },
   };
   function planujMetronom() {
     const c = met.ctx;
     while (met.nast < c.currentTime + 0.12) {
       met.k++;
       if (met.rodzaj === 'prog') DZWIEKI[g.i >= met.k ? 'przed' : 'zwykly'](met.nast);
-      else DZWIEKI[(met.k - 1) % SPOKOJNY_AKCENT === 0 ? 'glowny' : 'podzial'](met.nast);
+      else if ((met.k - 1) % SPOKOJNY_AKCENT === 0) {
+        DZWIEKI.glowny(met.nast);
+        met.glowne.push(met.nast);
+        if (met.glowne.length > 6) met.glowne.shift();
+      } else DZWIEKI.podzial(met.nast);
       met.nast += met.krok;
     }
   }
   function startMetronomu() {
     zatrzymajMetronom();
     met.rodzaj = ustawienia().metronom;
-    if (met.rodzaj === 'brak' || !met.ctx || met.ctx.state !== 'running') return;
-    met.krok = met.rodzaj === 'prog' ? g.prog : SPOKOJNY_KROK_S;
+    if (met.rodzaj === 'brak' || !met.ctx) return;
+    if (met.ctx.state !== 'running') {
+      // pierwsze kliknięcie dopiero budzi dźwięk — wystartuj, gdy się obudzi (jeśli plansza nadal trwa)
+      met.ctx.resume().then(() => { if (g.trwa && !met.timer && met.ctx.state === 'running') startMetronomu(); }).catch(() => {});
+      return;
+    }
+    met.krok = met.rodzaj === 'prog' ? g.prog : ustawienia().rytm / SPOKOJNY_AKCENT;
     met.k = 0;
+    met.glowne = [];
+    g.rytmiczna = met.rodzaj === 'spokojny';
     // rytm progu: pierwsze stuknięcie po czasie jednego pola; spokojny: od razu główne uderzenie
     met.nast = met.ctx.currentTime + (met.rodzaj === 'prog' ? met.krok : 0.05);
     planujMetronom();
@@ -207,7 +226,54 @@
     if (rodzaj === 'brak' || !met.ctx) return;
     const t = met.ctx.currentTime + 0.05;
     if (rodzaj === 'prog') { DZWIEKI.zwykly(t); DZWIEKI.zwykly(t + 0.6); DZWIEKI.przed(t + 1.2); }
-    else { DZWIEKI.glowny(t); DZWIEKI.podzial(t + 0.5); DZWIEKI.podzial(t + 1); DZWIEKI.glowny(t + 1.5); }
+    else {
+      const k = ustawienia().rytm / SPOKOJNY_AKCENT;
+      DZWIEKI.glowny(t); DZWIEKI.podzial(t + k); DZWIEKI.podzial(t + 2 * k); DZWIEKI.glowny(t + 3 * k); DZWIEKI.premia(t + 3 * k);
+    }
+  }
+  // Czas kliknięcia na zegarze dźwięku — tak, jak słychać (z opóźnieniem głośnika; słuchawki Bluetooth
+  // dokładają 150–300 ms, przeglądarka nie zawsze to zgłasza)
+  function czasSlyszany(znacznik) {
+    const c = met.ctx;
+    if (c.getOutputTimestamp) {
+      const o = c.getOutputTimestamp();
+      if (o.contextTime > 0 && o.performanceTime > 0) return o.contextTime + (znacznik - o.performanceTime) / 1000;
+    }
+    return c.currentTime - (c.outputLatency || c.baseLatency || 0);
+  }
+  function ocenTrafienieRytmu(znacznik) {
+    if (!g.rytmiczna || !met.ctx || !met.glowne.length) return;
+    const t = czasSlyszany(znacznik);
+    const rytm = ustawienia().rytm;
+    const okno = Math.max(OKNO_MIN_S, OKNO_CZESC * rytm);
+    const odleglosc = Math.min(...met.glowne.map((x) => Math.abs(t - x)));
+    if (odleglosc > okno) return;
+    g.wRytmie++;
+    DZWIEKI.premia(met.ctx.currentTime + 0.01);
+    T.migniecie(ramka, 'w-rytmie', 350);
+  }
+  // Po planszy w spokojnym rytmie: wynik trafień i ewentualna zmiana rytmu (dwie plansze z rzędu)
+  function ocenPlanszeRytmu() {
+    const u = ustawienia();
+    const ile = g.kolejka.length;
+    const czesc = g.wRytmie / ile;
+    met.dobre = czesc >= RYTM_DOBRZE ? met.dobre + 1 : 0;
+    met.slabe = czesc < RYTM_SLABO ? met.slabe + 1 : 0;
+    let tytul = czesc >= RYTM_DOBRZE ? `W rytmie! Jeszcze ${POD_RZAD - met.dobre} do szybszego` : 'Dobrze, ten sam rytm';
+    if (met.dobre >= POD_RZAD) {
+      const nowy = Math.max(RYTM_MIN, Math.round(u.rytm * RYTM_KROK * 100) / 100);
+      tytul = nowy < u.rytm ? `Rytm odrobinę szybszy: co ${T.ulamek(nowy, 2)} s` : 'Świetnie, to najszybszy rytm';
+      u.rytm = nowy;
+      met.dobre = 0;
+      met.slabe = 0;
+    } else if (met.slabe >= POD_RZAD) {
+      const nowy = Math.min(RYTM_MAX, Math.round((u.rytm / RYTM_KROK) * 100) / 100);
+      tytul = nowy > u.rytm ? `Rytm odrobinę wolniejszy: co ${T.ulamek(nowy, 2)} s` : 'Spokojnie, to najwolniejszy rytm';
+      u.rytm = nowy;
+      met.dobre = 0;
+      met.slabe = 0;
+    }
+    return { tytul, czesc, tekst: `w rytmie ${g.wRytmie} z ${ile} (${Math.round(czesc * 100)}%)` };
   }
 
   // 0 › A, 25 › Z, 26 › AA … (przy 10×10 ostatnia to CV)
@@ -273,7 +339,7 @@
       $('s-hist-tytul').textContent = 'Ostatnie sesje Flow';
       T.pokazHistorie(ul, ustawienia().historia, (w) => ({
         tytul: `${w.plansze} ${T.odmiana(w.plansze, 'plansza', 'plansze', 'plansz')}, ${rozmiar(w.od)}${w.najwyzszy !== w.od ? ` › ${rozmiar(w.najwyzszy)}` : ''}`,
-        wartosc: `${Math.round(w.wzgl * 100)}% progu${w.podp ? `, podpowiedzi: ${w.podp}` : ''}`,
+        wartosc: `${w.rytmiczna ? `${Math.round(w.wzgl * RYTM_DOBRZE * 100)}% w rytmie` : `${Math.round(w.wzgl * 100)}% progu`}${w.podp ? `, podpowiedzi: ${w.podp}` : ''}`,
       }));
     } else {
       $('s-hist-tytul').textContent = 'Ostatnie wyniki';
@@ -310,12 +376,14 @@
       const sufit = ustawienia().sufit;
       const o = progDla(Math.min(g.n, sufit));
       pokazNakladke('Flow',
-        `${opisLimitu()} od ${rozmiar(Math.min(g.n, sufit))}, najwyżej do ${rozmiar(sufit)}. Awans: dwie plansze z rzędu szybciej niż ${sPole(o.prog)}${o.wlasny ? ' (Twój próg)' : ''}.`,
+        ustawienia().metronom === 'spokojny'
+          ? `${opisLimitu()} na ${rozmiar(Math.min(g.n, sufit))} w spokojnym rytmie: główne uderzenie co ${T.ulamek(ustawienia().rytm, 2)} s — trafiaj w nie. Dwie plansze z rzędu z 80% trafień w rytm przyspieszają rytm odrobinę.`
+          : `${opisLimitu()} od ${rozmiar(Math.min(g.n, sufit))}, najwyżej do ${rozmiar(sufit)}. Awans: dwie plansze z rzędu szybciej niż ${sPole(o.prog)}${o.wlasny ? ' (Twój próg)' : ''}.`,
         'Start Flow');
       pokazProgi();
     } else {
       pokazNakladke(`Tablica ${rozmiar(g.n)}`,
-        `Klikaj po kolei od ${g.kolejka[0]} do ${g.kolejka[g.kolejka.length - 1]}. Czas liczy się od kliknięcia Start.`, 'Start');
+        `Klikaj po kolei od ${g.kolejka[0]} do ${g.kolejka[g.kolejka.length - 1]}. Czas liczy się od kliknięcia Start.${ustawienia().metronom === 'spokojny' ? ` Spokojny rytm co ${T.ulamek(ustawienia().rytm, 2)} s: znajdź znak i kliknij go na główne uderzenie.` : ''}`, 'Start');
     }
     pokaz();
   }
@@ -333,6 +401,8 @@
     g.start = performance.now();
     g.podp = 0;
     g.etap = 0;
+    g.rytmiczna = false;
+    g.wRytmie = 0;
     g.ostatnie = g.start;
     const prog = progDla(g.n).prog;
     g.prog = prog;
@@ -383,27 +453,32 @@
     T.migniecie(ramka, 'wygrana', 600);
     // próg liczony przed dopisaniem tej planszy — ocenia ją Twoje dotychczasowe tempo
     const prog = progDla(g.n);
-    if (!g.podp) zapamietajTempo(g.n, g.znaki, czas / (g.n * g.n));   // tempo z podpowiedzią nie zmienia progu
+    // tempo z podpowiedzią albo w spokojnym rytmie (celowo wolne) nie zmienia progu
+    if (!g.podp && !g.rytmiczna) zapamietajTempo(g.n, g.znaki, czas / (g.n * g.n));
+    const rytm = g.rytmiczna ? ocenPlanszeRytmu() : null;
 
-    if (s.aktywna) { poPlanszySerii(czas, prog, rekord && Boolean(poprzedni)); return; }   // w serii tylko pobity rekord
+    if (s.aktywna) { poPlanszySerii(czas, prog, rekord && Boolean(poprzedni), rytm); return; }   // w serii tylko pobity rekord
 
     T.dopisz(z.historia, { kiedy: Date.now(), n: g.n, znaki: g.znaki, czas, bledy: g.bledy, rekord, podp: g.podp });
     T.zapisz();
     pokazNakladke(rekord ? 'Nowy rekord!' : 'Gotowe',
-      `${T.ulamek(czas, 2)} s, pomyłki: ${g.bledy}${g.podp ? `, podpowiedzi: ${g.podp} (bez rekordu)` : ''}.${!rekord && poprzedni ? ` Rekord: ${T.ulamek(poprzedni, 2)} s.` : ''}`, 'Jeszcze raz');
+      `${T.ulamek(czas, 2)} s, pomyłki: ${g.bledy}${g.podp ? `, podpowiedzi: ${g.podp} (bez rekordu)` : ''}.${!rekord && poprzedni ? ` Rekord: ${T.ulamek(poprzedni, 2)} s.` : ''}${rytm ? ` Spokojny rytm: ${rytm.tekst}. ${rytm.tytul}.` : ''}`, 'Jeszcze raz');
     T.trybGry(false, ramka);
     pokaz();
     historia();
   }
 
   // Decyzja po planszy w serii: awans, spadek albo ten sam poziom
-  function poPlanszySerii(czas, progInfo, rekord) {
+  function poPlanszySerii(czas, progInfo, rekord, rytm) {
     const n = g.n;
     const tempo = czas / (n * n);
     const prog = progInfo.prog;
-    const szybko = tempo <= prog && g.bledy <= MAX_BLEDOW_AWANS && g.podp <= MAX_PODP_AWANS;
-    const wolno = tempo > ZA_WOLNO * prog || g.bledy >= BLEDY_SPADEK;
-    const wpis = { n, czas, tempo, bledy: g.bledy, podp: g.podp, wzgl: prog / tempo, zmiana: 0 };
+    // w spokojnym rytmie rozmiar zmienia się tylko po pomyłkach — rozwojem jest szybszy rytm
+    const szybko = !rytm && tempo <= prog && g.bledy <= MAX_BLEDOW_AWANS && g.podp <= MAX_PODP_AWANS;
+    const wolno = (!rytm && tempo > ZA_WOLNO * prog) || g.bledy >= BLEDY_SPADEK;
+    // na wykresie: zwykle tempo względem progu, w spokojnym rytmie trafienia względem 80% (kreska = 80% w rytmie)
+    const wzgl = rytm ? Math.max(0.01, rytm.czesc / RYTM_DOBRZE) : prog / tempo;
+    const wpis = { n, czas, tempo, bledy: g.bledy, podp: g.podp, wzgl, zmiana: 0, rytm: Boolean(rytm) };
     s.plansze.push(wpis);
     s.ostatnia = wpis;
     s.dobre = szybko ? s.dobre + 1 : 0;
@@ -419,6 +494,8 @@
       if (s.n > MIN_N) { s.n--; wpis.zmiana = -1; tytul = `Spokojniej: ${rozmiar(s.n)}`; } else tytul = 'Zostajemy przy 3×3';
       s.dobre = 0;
       s.slabe = 0;
+    } else if (rytm) {
+      tytul = rytm.tytul;
     } else if (szybko) {
       tytul = `Szybko! Jeszcze ${POD_RZAD - s.dobre} do awansu`;
     } else if (wolno) {
@@ -426,7 +503,7 @@
     } else {
       tytul = 'Dobrze, ten sam poziom';
     }
-    const opis = `${rozmiar(n)}: ${sPole(tempo)} (próg ${T.ulamek(prog, 2)}${progInfo.wlasny ? ', Twój' : ''})${g.bledy ? `, pomyłki: ${g.bledy}` : ''}${g.podp ? `, podpowiedzi: ${g.podp}` : ''}.${rekord ? ' Rekord tej tablicy!' : ''}`;
+    const opis = `${rozmiar(n)}: ${rytm ? rytm.tekst : `${sPole(tempo)} (próg ${T.ulamek(prog, 2)}${progInfo.wlasny ? ', Twój' : ''})`}${g.bledy ? `, pomyłki: ${g.bledy}` : ''}${g.podp ? `, podpowiedzi: ${g.podp}` : ''}.${rekord ? ' Rekord tej tablicy!' : ''}`;
 
     const koniec = s.plansze.length >= s.limitPlansz || (s.limitMs && performance.now() - s.start >= s.limitMs);
     if (koniec) { koniecSerii(); return; }
@@ -461,13 +538,19 @@
     const najwyzszy = Math.max(...p.map((x) => x.n));
     const najlepsza = p.reduce((a, x) => (x.wzgl > a.wzgl ? x : a));
     const podp = p.reduce((a, x) => a + x.podp, 0);
-    T.dopisz(u.historia, { kiedy: Date.now(), plansze: p.length, od: p[0].n, najwyzszy, wzgl: Math.round(wzgl * 1000) / 1000, awanse, spadki, znaki: g.znaki, rekord: false, podp });
+    const rytmiczna = p.every((x) => x.rytm);
+    T.dopisz(u.historia, { kiedy: Date.now(), plansze: p.length, od: p[0].n, najwyzszy, wzgl: Math.max(0.01, Math.round(wzgl * 1000) / 1000), awanse, spadki, znaki: g.znaki, rekord: false, podp, rytmiczna });
     T.zapisz();
 
     $('s-pods-tekst').textContent = `Flow: ${p.length} ${T.odmiana(p.length, 'plansza', 'plansze', 'plansz')}, od ${rozmiar(p[0].n)}, najwyżej ${rozmiar(najwyzszy)} `
-      + `(awanse: ${awanse}, spadki: ${spadki}). Średnio ${Math.round(wzgl * 100)}% progu, najlepsza: ${rozmiar(najlepsza.n)}, ${sPole(najlepsza.tempo)}. `
+      + (rytmiczna
+        ? `w spokojnym rytmie. Średnio ${Math.round(wzgl * RYTM_DOBRZE * 100)}% trafień w rytm, rytm teraz co ${T.ulamek(u.rytm, 2)} s. `
+        : `(awanse: ${awanse}, spadki: ${spadki}). Średnio ${Math.round(wzgl * 100)}% progu, najlepsza: ${rozmiar(najlepsza.n)}, ${sPole(najlepsza.tempo)}. `)
       + `${podp ? `Podpowiedzi: ${podp}. ` : ''}Następny Flow zacznie od ${rozmiar(s.n)}.`;
     wykres(p);
+    $('s-pods-opis').textContent = rytmiczna
+      ? 'Słupek to trafienia w rytm na planszy: nad kreską 80% i więcej. Pod słupkiem rozmiar tablicy.'
+      : 'Słupek to tempo planszy względem progu jej poziomu: nad kreską szybciej niż próg. Pod słupkiem rozmiar tablicy.';
     $('s-podsumowanie').hidden = false;
     $('s-rozmiar').value = String(s.n);
     czytajUstawienia();
@@ -522,6 +605,7 @@
     const b = ev.target.closest('.pole-planszy');
     if (!b || !g.trwa || b.classList.contains('trafione')) return;
     if (b.dataset.v === g.kolejka[g.i]) {
+      ocenTrafienieRytmu(ev.timeStamp);
       zgasPodpowiedz();
       g.i++;
       pokazTempo();
@@ -550,6 +634,7 @@
     ustawienia().metronom = $('s-metronom').value;
     T.zapisz();
     probkaMetronomu();
+    przygotuj();   // opis na planszy zależy od rytmu
   });
   $('s-tempo-tryb').addEventListener('change', () => {
     ustawienia().tempo = $('s-tempo-tryb').value;
@@ -574,9 +659,10 @@
     const z = T.stan.schulte;
     if (trybSerii()) {
       if (!z.seria.historia.length && !Object.keys(z.seria.tempa).length) return;
-      if (!confirm('Usunąć historię sesji Flow i Twoje progi (wrócą domyślne)? Rekordy tablic zostają.')) return;
+      if (!confirm('Usunąć historię sesji Flow, Twoje progi i tempo spokojnego rytmu (wrócą domyślne)? Rekordy tablic zostają.')) return;
       z.seria.historia = [];
       z.seria.tempa = {};
+      z.seria.rytm = RYTM_START;
     } else {
       if (!z.historia.length && !Object.keys(z.rekordy).length) return;
       if (!confirm('Usunąć wyniki i rekordy tablicy Schultego?')) return;

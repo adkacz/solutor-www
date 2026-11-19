@@ -6,8 +6,8 @@
 <meta name="referrer" content="no-referrer">
 <title>Trener czytania — Solutor</title>
 <meta name="description" content="Ćwiczenia wzroku i uwagi przy czytaniu: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie (RSVP), widzenie peryferyjne, wyszukiwanie pojęć w tekście. Wyniki tylko w Twojej przeglądarce.">
-<link rel="stylesheet" href="../wspolne.css?v=5">
-<link rel="stylesheet" href="czytanie.css?v=5">
+<link rel="stylesheet" href="../wspolne.css?v=6">
+<link rel="stylesheet" href="czytanie.css?v=6">
 </head>
 <body>
 
@@ -86,6 +86,13 @@
             <option value="pole">Ćwiartka, potem pole</option>
           </select>
         </label>
+        <label class="pole" for="s-metronom">Metronom
+          <select id="s-metronom">
+            <option value="brak" selected>Wyłączony</option>
+            <option value="prog">Rytm progu</option>
+            <option value="spokojny">Spokojny rytm</option>
+          </select>
+        </label>
         <label class="pole tylko-seria" for="s-sufit">Najwyżej do
           <select id="s-sufit">
             <option value="4">4×4</option>
@@ -123,7 +130,7 @@
     <div class="poza-gra">
       <div class="naglowek-sekcji"><h3 id="s-hist-tytul">Ostatnie wyniki</h3><button type="button" id="s-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
       <ul id="s-historia" class="historia"></ul>
-      <p class="porada">Patrz na czerwony punkt w środku i szukaj kolejnych znaków kątem oka, bez przesuwania wzroku. Na początek wystarczy 5×5. Flow to kilka minut ćwiczenia bez klikania między planszami; na początku progi są domyślne, a po kilku planszach na danym rozmiarze liczą się z Twoich ostatnich wyników (Twoje zwykłe tempo minus 5%). Podpowiedzi pomagają wyjść z chwili, gdy znaku „nie widać”: gdy jeden znak szukasz kilka razy dłużej niż zwykle, podświetla się ćwiartka tablicy, a jeśli wybierzesz, po chwili samo pole. Plansza z podpowiedzią nie bije rekordu. Pasek tempa nad tablicą: kreska idzie w tempie progu, a pasek rośnie z każdym znalezionym znakiem — zielony przed kreską to tempo na awans.</p>
+      <p class="porada">Patrz na czerwony punkt w środku i szukaj kolejnych znaków kątem oka, bez przesuwania wzroku. Na początek wystarczy 5×5. Flow to kilka minut ćwiczenia bez klikania między planszami; na początku progi są domyślne, a po kilku planszach na danym rozmiarze liczą się z Twoich ostatnich wyników (Twoje zwykłe tempo minus 5%). Podpowiedzi pomagają wyjść z chwili, gdy znaku „nie widać”: gdy jeden znak szukasz kilka razy dłużej niż zwykle, podświetla się ćwiartka tablicy, a jeśli wybierzesz, po chwili samo pole. Plansza z podpowiedzią nie bije rekordu. Pasek tempa nad tablicą: kreska idzie w tempie progu, a pasek rośnie z każdym znalezionym znakiem — zielony przed kreską to tempo na awans. Metronom: „rytm progu” stuka raz na pole w tempie progu, a wyższy, jaśniejszy dźwięk znaczy, że wyprzedzasz rytm; „spokojny rytm” to wolne uderzenia z cichszymi podziałami, niezależne od tempa — spróbuj, czy pomaga Ci się skupić. Na iPhonie dźwięk strony wycisza przełącznik wyciszenia.</p>
     </div>
   </section>
 
@@ -371,12 +378,12 @@
   </footer>
 </main>
 
-<script src="wspolne.js?v=5"></script>
-<script src="schulte.js?v=5"></script>
-<script src="skaner.js?v=5"></script>
-<script src="rsvp.js?v=5"></script>
-<script src="peryferyjne.js?v=5"></script>
-<script src="pojecia.js?v=5"></script>
-<script src="start.js?v=5"></script>
+<script src="wspolne.js?v=6"></script>
+<script src="schulte.js?v=6"></script>
+<script src="skaner.js?v=6"></script>
+<script src="rsvp.js?v=6"></script>
+<script src="peryferyjne.js?v=6"></script>
+<script src="pojecia.js?v=6"></script>
+<script src="start.js?v=6"></script>
 </body>
 </html>

@@ -52,7 +52,8 @@ const T = (() => {
   // tempo: jak pokazywać tempo względem progu — 'brak' | 'pasek' (nad tablicą) | 'kolor' (tło tablicy); oba tryby
   // paleta: 'delikatna' | 'wyrazna' — kolory tła tempa (niebieski/bursztyn różniące się też jasnością)
   // metronom: 'brak' | 'prog' (stuknięcie na pole w tempie progu) | 'spokojny' (wolny rytm z cichszymi podziałami)
-  const domyslnaSeria = () => ({ tryb: 'jedna', poziom: 5, dlugosc: '10', sufit: 7, podpowiedzi: 'brak', tempo: 'brak', paleta: 'delikatna', metronom: 'brak', historia: [], tempa: {} });
+  // rytm: odstęp głównych uderzeń spokojnego rytmu w sekundach (przyspiesza o 5%, gdy trafiasz w rytm)
+  const domyslnaSeria = () => ({ tryb: 'jedna', poziom: 5, dlugosc: '10', sufit: 7, podpowiedzi: 'brak', tempo: 'brak', paleta: 'delikatna', metronom: 'brak', rytm: 1.5, historia: [], tempa: {} });
   const PODPOWIEDZI = ['brak', 'cwiartka', 'pole'];
   const METRONOMY = ['brak', 'prog', 'spokojny'];
   const TEMPA = ['brak', 'pasek', 'kolor'];
@@ -102,6 +103,7 @@ const T = (() => {
     s.schulte.seria.tempo = TEMPA.includes(se.tempo) ? se.tempo : (se.pasek === true ? 'pasek' : 'brak');
     s.schulte.seria.paleta = se.paleta === 'wyrazna' ? 'wyrazna' : 'delikatna';
     s.schulte.seria.metronom = METRONOMY.includes(se.metronom) ? se.metronom : 'brak';
+    s.schulte.seria.rytm = liczba(se.rytm, 0.6, 2.5) ?? 1.5;
     for (const [k, v] of Object.entries(obiekt(se.tempa))) {
       if (!/^(?:[3-9]|10)_(?:liczby|litery)$/.test(k) || !Array.isArray(v)) continue;
       const t = v.filter((x) => liczba(x, 0.05, 60) !== null).slice(-MAX_TEMP);
@@ -112,6 +114,7 @@ const T = (() => {
       wzgl: liczba(w.wzgl, 0.01, 100), awanse: calk(w.awanse, 0, 1000), spadki: calk(w.spadki, 0, 1000),
       znaki: w.znaki === 'liczby' || w.znaki === 'litery' ? w.znaki : null, rekord: false,
       podp: w.podp === undefined ? 0 : calk(w.podp, 0, 1e6),
+      rytmiczna: w.rytmiczna === true,   // sesja w spokojnym rytmie: wzgl = trafienia w rytm / 80%
     }));
 
     const sk = obiekt(o.skaner);

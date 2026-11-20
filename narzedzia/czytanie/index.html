@@ -6,8 +6,8 @@
 <meta name="referrer" content="no-referrer">
 <title>Trener czytania — Solutor</title>
 <meta name="description" content="Ćwiczenia wzroku i uwagi przy czytaniu: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie (RSVP), widzenie peryferyjne, wyszukiwanie pojęć w tekście, podobne zestawy, nauka tekstów na pamięć i test tempa i zrozumienia. Wyniki tylko w Twojej przeglądarce.">
-<link rel="stylesheet" href="../wspolne.css?v=15">
-<link rel="stylesheet" href="czytanie.css?v=15">
+<link rel="stylesheet" href="../wspolne.css?v=16">
+<link rel="stylesheet" href="czytanie.css?v=16">
 </head>
 <body>
 
@@ -303,21 +303,7 @@
       <button type="button" id="r-od-nowa" class="przycisk">Od nowa</button>
     </div>
     <div class="poza-gra">
-      <div id="r-wlasny-blok" class="ramka odstep-gora" hidden>
-        <label class="pole" for="r-nazwa">Nazwa
-          <input type="text" id="r-nazwa" maxlength="60" autocomplete="off" spellcheck="false">
-        </label>
-        <label class="pole odstep-gora" for="r-tekst"><span id="r-tekst-etykieta">Wklejony tekst</span>
-          <textarea id="r-tekst" maxlength="20000" placeholder="Wklej tu artykuł, rozdział albo wiersz." spellcheck="false"></textarea>
-        </label>
-        <div class="akcje odstep-gora">
-          <button type="button" id="r-wklej" class="przycisk maly">Wklej ze schowka</button>
-          <button type="button" id="r-zapisz-moj" class="przycisk maly">Zapisz w „Moich tekstach”</button>
-          <button type="button" id="r-usun-tekst" class="przycisk maly ostrozny">Wyczyść</button>
-        </div>
-        <p id="r-komunikat" class="komunikat" role="status"></p>
-        <p id="r-moje-info" class="drobny"></p>
-      </div>
+      <div id="r-moje" class="moje-teksty odstep-gora"></div>
       <div class="naglowek-sekcji odstep-gora"><h3>Przeczytane teksty</h3><button type="button" id="r-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
       <ul id="r-historia" class="historia"></ul>
       <p class="porada">Patrz na czerwoną literę między kreskami. Przy tej metodzie nie da się wrócić wzrokiem do poprzedniego słowa, więc przy wysokim tempie zrozumienie zwykle spada. Po skończeniu spróbuj w dwóch zdaniach powiedzieć, o czym był tekst.</p>
@@ -459,7 +445,7 @@
         <label class="pole-wyboru" data-tryb="wyscig"><input type="checkbox" id="j-zaznacz" checked> Podkreślaj szukane słowa</label>
         <label class="pole-wyboru"><input type="checkbox" id="j-podpowiedz" checked> Podpowiedź po 10 s bez trafienia</label>
       </div>
-      <p class="drobny"><span id="j-tekst-info"></span> <button type="button" id="j-zmien-tekst" class="link-przycisk">Wklej albo popraw tekst</button></p>
+      <p class="drobny"><span id="j-tekst-info"></span></p>
     </div>
     <p id="j-wynik-koniec" class="wynik" role="status" hidden></p>
     <div id="j-start-blok" class="ramka ramka-biala start-blok">
@@ -473,6 +459,7 @@
       <button type="button" id="j-przeczytane" class="przycisk glowny" hidden>Przeczytane</button>
     </div>
     <div class="poza-gra">
+      <div id="j-moje" class="moje-teksty odstep-dol"></div>
       <div class="naglowek-sekcji"><h3>Ostatnie wyniki</h3><button type="button" id="j-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
       <ul id="j-historia" class="historia"></ul>
       <p class="porada">To ćwiczenie przeglądania tekstu w poszukiwaniu konkretnych słów, tak jak przy szukaniu odpowiedzi w podręczniku albo umowie. Najlepiej działa na tekście, który i tak masz przeczytać: wklej go w ćwiczeniu RSVP. W trybie „Cały fragment” wiersz zachowuje podział na wersy, a fragment dzieli się na strony mieszczące się na ekranie, więc nie trzeba przewijać.</p>
@@ -528,7 +515,7 @@
     <div id="n-start-blok" class="ramka ramka-biala start-blok">
       <p id="n-start-tekst"></p>
       <button type="button" id="n-start" class="przycisk glowny">Zacznij naukę</button>
-      <button type="button" id="n-do-rsvp" class="przycisk glowny" hidden>Przejdź do RSVP</button>
+      <button type="button" id="n-dodaj" class="przycisk glowny" hidden>Dodaj tekst</button>
     </div>
     <div class="kotwica">
       <div id="n-scena" class="tekst-scena pamiec-scena" hidden></div>
@@ -547,8 +534,7 @@
       <div><span class="etykieta">Pamiętane</span><strong id="n-w-dobrze">—</strong><span id="n-w-dobrze-pod" class="pod"></span></div>
     </div>
     <div class="poza-gra">
-      <div class="naglowek-sekcji"><h3>Twoje teksty</h3></div>
-      <ul id="n-lista" class="historia"></ul>
+      <div id="n-moje" class="moje-teksty"></div>
       <div class="naglowek-sekcji odstep-gora"><h3>Ostatnie sesje</h3><button type="button" id="n-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
       <ul id="n-historia" class="historia"></ul>
       <p class="porada">Ucz się po kilka–kilkanaście minut, a powtórki rób w dniach, które pokazuje lista — teksty z powtórką na dziś są na górze. Wpisywanie litery sprawdza program, więc nie oszukasz się przypadkiem. Gdy wolisz mówić na głos, włącz „Recytuję na głos”: powiedz podświetlony fragment, kliknij „Pokaż” i oceń się uczciwie — „Z błędem” także przy jednym przekręconym słowie.</p>
@@ -677,7 +663,7 @@
 
   <section class="ramka poza-gra odstep-gora" aria-labelledby="kopia-tytul">
     <h3 id="kopia-tytul">Twoje wyniki</h3>
-    <p class="drobny odstep-dol">Wyniki są tylko w tej przeglądarce. Żeby przenieść je na inne urządzenie albo zachować na zapas, zapisz kopię do pliku (razem z „Moimi tekstami”).</p>
+    <p class="drobny odstep-dol">Wyniki są tylko w tej przeglądarce. Żeby przenieść je na inne urządzenie albo zachować na zapas, zapisz kopię do pliku (razem z „Moimi tekstami” i postępem nauki na pamięć).</p>
     <div class="akcje">
       <button type="button" id="zapisz-plik" class="przycisk maly">Zapisz kopię do pliku</button>
       <button type="button" id="wczytaj-plik" class="przycisk maly">Wczytaj kopię z pliku</button>
@@ -693,16 +679,17 @@
   </footer>
 </main>
 
-<script src="wspolne.js?v=15"></script>
-<script src="schulte.js?v=15"></script>
-<script src="skaner.js?v=15"></script>
-<script src="rsvp.js?v=15"></script>
-<script src="peryferyjne.js?v=15"></script>
-<script src="pojecia.js?v=15"></script>
-<script src="pamiec.js?v=15"></script>
-<script src="podobne.js?v=15"></script>
-<script src="testy.js?v=15"></script>
-<script src="test.js?v=15"></script>
-<script src="start.js?v=15"></script>
+<script src="wspolne.js?v=16"></script>
+<script src="schulte.js?v=16"></script>
+<script src="skaner.js?v=16"></script>
+<script src="moje.js?v=16"></script>
+<script src="rsvp.js?v=16"></script>
+<script src="peryferyjne.js?v=16"></script>
+<script src="pojecia.js?v=16"></script>
+<script src="pamiec.js?v=16"></script>
+<script src="podobne.js?v=16"></script>
+<script src="testy.js?v=16"></script>
+<script src="test.js?v=16"></script>
+<script src="start.js?v=16"></script>
 </body>
 </html>

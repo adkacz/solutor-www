@@ -28,6 +28,8 @@
   const bezZnakow = (t) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l').replace(/Ł/g, 'l').toLowerCase();
   const pierwsza = (t) => { const m = t.match(/[\p{L}\p{N}]/u); return m ? bezZnakow(m[0]) : ''; };
   const pm = () => T.stan.pamiec;
+  // Przy wpisywaniu pierwszej litery poziom „pierwsze litery” nic by nie sprawdzał — jest tylko przy recytacji
+  const poziomDla = (x) => (x === 4 && !pm().opcje.glosno ? 5 : x);
   const moje = () => T.stan.tekst.moje;
   const tekst = (id) => moje().find((m) => m.id === id);
   const poczatekDnia = (ts) => { const d = new Date(ts); d.setHours(0, 0, 0, 0); return d.getTime(); };
@@ -81,37 +83,13 @@
   const opisPostepu = (p, n) => {
     if (!p || (!p.opanowane && !p.poziom && !p.powt)) return 'nie zaczęty';
     if (p.powt) return dzisiaj(p.powt.nastepna) ? 'opanowany · powtórka dziś' : `opanowany · powtórka ${dataTekst(p.powt.nastepna)}`;
-    return `${n > 1 ? `kawałki ${p.opanowane} z ${n}` : 'w nauce'}, poziom: ${KROTKO[p.poziom]}`;
+    return `${n > 1 ? `kawałki ${p.opanowane} z ${n}` : 'w nauce'}, poziom: ${KROTKO[poziomDla(p.poziom)]}`;
   };
 
   // ---------- ekran spoczynku ----------
   function wybierzDomyslny() {
     if (!tekst(pm().wybor)) pm().wybor = moje().length ? moje()[0].id : '';
     return pm().wybor;
-  }
-
-  function listaTekstow() {
-    const ul = $('n-lista');
-    ul.replaceChildren();
-    if (!moje().length) { ul.append(el('li', 'pusto', 'Nie masz jeszcze zapisanych tekstów.')); return; }
-    const kolejne = [...moje()].sort((a, b) => {
-      const pa = pm().teksty[a.id], pb = pm().teksty[b.id];
-      const da = pa && pa.powt && dzisiaj(pa.powt.nastepna) ? 0 : 1, db = pb && pb.powt && dzisiaj(pb.powt.nastepna) ? 0 : 1;
-      return da - db;
-    });
-    for (const m of kolejne) {
-      const p = pm().teksty[m.id];
-      const li = el('li');
-      const b = el('button', 'link-przycisk', m.nazwa);
-      b.type = 'button';
-      b.dataset.id = m.id;
-      const lewa = el('span');
-      lewa.append(b);
-      const opis = el('span', 'wartosc', opisPostepu(p, p ? p.kawalki : 0));
-      if (p && p.powt && dzisiaj(p.powt.nastepna)) opis.classList.add('pilne');
-      li.append(lewa, opis);
-      ul.append(li);
-    }
   }
 
   function spoczynek() {
@@ -134,9 +112,9 @@
     $('n-cel').textContent = '—';
     $('n-cel-pod').textContent = '';
     const start = $('n-start');
-    const doRsvp = $('n-do-rsvp');
+    const doRsvp = $('n-dodaj');
     if (!id) {
-      $('n-start-tekst').textContent = 'Najpierw zapisz tekst w „Moich tekstach”: zakładka RSVP › „Wklej nowy tekst” › nazwa › „Zapisz w »Moich tekstach«”.';
+      $('n-start-tekst').textContent = 'Dodaj tekst, którego chcesz się nauczyć — np. wiersz albo rolę.';
       start.hidden = true;
       doRsvp.hidden = false;
     } else {
@@ -144,11 +122,11 @@
       const kaw = podziel(m.tresc);
       const p = pm().teksty[id] && pm().teksty[id].kawalki === kaw.length ? pm().teksty[id] : null;
       start.hidden = !kaw.length;
-      doRsvp.hidden = !!kaw.length;
+      doRsvp.hidden = true;
       const n = kaw.length;
       const jakie = kaw.length && kaw[0].wiersz ? 'zwrotki albo grupy po 4 wersy' : 'kawałki po 2–3 zdania';
       if (!n) {
-        $('n-start-tekst').textContent = 'Ten tekst jest pusty. Popraw go w zakładce RSVP.';
+        $('n-start-tekst').textContent = 'Ten tekst jest pusty. Popraw go w „Moich tekstach” niżej.';
       } else if (p && p.powt) {
         const teraz = dzisiaj(p.powt.nastepna);
         start.textContent = teraz ? 'Powtórka' : 'Powtórz teraz';
@@ -163,7 +141,7 @@
       }
     }
     pokazWskazniki();
-    listaTekstow();
+    lista.odswiez();
   }
 
   // ---------- runda ----------
@@ -225,7 +203,7 @@
     } else if (p.opanowane < s.kawalki.length) {
       s.etap = 'kawalek';
       s.zakres = [p.opanowane, p.opanowane + 1];
-      s.poziom = p.poziom;
+      s.poziom = poziomDla(p.poziom);
     } else {
       return false;
     }
@@ -346,8 +324,8 @@
         if (s.etap === 'laczenie') {
           p.laczenie = false;
           T.odznaka(kotwica, 'Połączone!', 'premia');
-        } else if (p.poziom < 5) {
-          p.poziom++;
+        } else if (s.poziom < 5) {
+          p.poziom = poziomDla(s.poziom + 1);
           T.odznaka(kotwica, `Dalej: ${POZIOMY[p.poziom]}`);
         } else {
           p.poziom = 0;
@@ -474,9 +452,28 @@
     });
   }
 
+  // Lista „Moich tekstów”: powtórki na dziś na górze, obok postęp nauki
+  const czyPilne = (m) => { const p = pm().teksty[m.id]; return !!(p && p.powt && dzisiaj(p.powt.nastepna)); };
+  const lista = T.mojeTeksty($('n-moje'), {
+    prefiks: 'n',
+    wybrany: () => pm().wybor,
+    wybierz(id) {
+      if (s.aktywna) return;
+      pm().wybor = id;
+      T.zapisz();
+      $('n-wynik-koniec').hidden = true;
+      spoczynek();
+      $('n-start-blok').scrollIntoView({ block: 'nearest' });
+    },
+    opis: (m) => { const p = pm().teksty[m.id]; return opisPostepu(p, p ? p.kawalki : 0); },
+    pilne: czyPilne,
+    kolejnosc: (a, b) => Number(czyPilne(b)) - Number(czyPilne(a)),
+    poZmianie() { if (!s.aktywna && !modul.hidden) spoczynek(); },
+  });
+
   // ---------- zdarzenia ----------
   $('n-start').addEventListener('click', start);
-  $('n-do-rsvp').addEventListener('click', () => T.przelacz('rsvp'));
+  $('n-dodaj').addEventListener('click', () => lista.dodaj());
   $('n-dalej').addEventListener('click', () => {
     if (!s.aktywna || s.poziom !== 0) return;
     const p = postep(s.id, s.kawalki.length);
@@ -489,7 +486,9 @@
     const v = ev.target.value;
     ev.target.value = '';
     if (!s.aktywna) return;
-    const z = [...v].reverse().find((c) => /[\p{L}\p{N}]/u.test(c));
+    const litery = [...v].filter((c) => /[\p{L}\p{N}]/u.test(c));
+    // Stuknięta podpowiedź klawiatury wstawia całe słowo ze spacją — liczy się jego pierwsza litera
+    const z = litery.length > 1 && /\s$/.test(v) ? litery[0] : litery[litery.length - 1];
     if (z) odpowiedz(bezZnakow(z));
   });
   scena.addEventListener('click', () => { if (s.aktywna && !pm().opcje.glosno && s.poziom) $('n-wpis').focus({ preventScroll: true }); });
@@ -502,15 +501,6 @@
     T.zapisz();
     $('n-wynik-koniec').hidden = true;
     spoczynek();
-  });
-  $('n-lista').addEventListener('click', (ev) => {
-    const b = ev.target.closest('button[data-id]');
-    if (!b || s.aktywna || !tekst(b.dataset.id)) return;
-    pm().wybor = b.dataset.id;
-    T.zapisz();
-    $('n-wynik-koniec').hidden = true;
-    spoczynek();
-    $('n-start-blok').scrollIntoView({ block: 'nearest' });
   });
   $('n-rundy').addEventListener('change', (ev) => {
     const n = Number(ev.target.value);

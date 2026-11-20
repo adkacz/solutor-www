@@ -66,7 +66,8 @@ const T = (() => {
       skaner,
       rsvp: { rekord: 0, historia: [] },
       peryferyjne: { rozpietosc: 0, wynik: 0, historia: [] },
-      pojecia: { rekord: 0, poziom: 0, historia: [] },
+      // pojęcia: tryb „wyscig” (rekord, poziom, historia) albo „caly” — cały fragment: długość, porcja słów, historia
+      pojecia: { rekord: 0, poziom: 0, historia: [], tryb: 'wyscig', caly: { fragment: '80', porcja: 4, historia: [] } },
       // podobne zestawy: rekord i najwyższy poziom osobno dla cyfr i słów, poziom startowy następnej sesji
       podobne: { rekordy: { cyfry: { wynik: 0, poziom: 0 }, slowa: { wynik: 0, poziom: 0 } }, poziom: { cyfry: 1, slowa: 1 }, historia: [] },
       // test tempa i zrozumienia: wpisy z liczbą słów, czasem czytania (s) i dobrymi odpowiedziami
@@ -153,6 +154,14 @@ const T = (() => {
     s.pojecia.historia = lista(j.historia, (w) => wszystkie({
       kiedy: kiedyOk(w.kiedy), wynik: calk(w.wynik, 0, 1e9), poziom: calk(w.poziom, 1, 4), ukonczone: calk(w.ukonczone, 0, 1e6), rekord: w.rekord === true,
     }));
+    s.pojecia.tryb = j.tryb === 'caly' ? 'caly' : 'wyscig';
+    const jc = obiekt(j.caly);
+    s.pojecia.caly.fragment = ['40', '80', '200'].includes(jc.fragment) ? jc.fragment : '80';
+    s.pojecia.caly.porcja = calk(jc.porcja, 3, 6) || 4;
+    s.pojecia.caly.historia = lista(jc.historia, (w) => wszystkie({
+      kiedy: kiedyOk(w.kiedy), slowa: calk(w.slowa, 1, 1e5), czas: calk(w.czas, 1, 1e6), bledy: calk(w.bledy, 0, 1e6),
+      podp: calk(w.podp, 0, 1e6), czytanie: calk(w.czytanie, 1, 1e6), rekord: false,
+    }));
 
     const d = obiekt(o.podobne);
     for (const r of ['cyfry', 'slowa']) {
@@ -200,7 +209,7 @@ const T = (() => {
     if (historia.length > MAX_HISTORII) historia.length = MAX_HISTORII;
   }
   function liczbaWynikow(s) {
-    let n = s.schulte.historia.length + s.schulte.seria.historia.length + s.rsvp.historia.length + s.peryferyjne.historia.length + s.pojecia.historia.length + s.podobne.historia.length + s.test.historia.length;
+    let n = s.schulte.historia.length + s.schulte.seria.historia.length + s.rsvp.historia.length + s.peryferyjne.historia.length + s.pojecia.historia.length + s.pojecia.caly.historia.length + s.podobne.historia.length + s.test.historia.length;
     for (const w of WARIANTY) n += s.skaner[w].historia.length;
     return n;
   }

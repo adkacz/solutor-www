@@ -44,7 +44,8 @@ body:not(.w-grze) .tylko-w-grze { display: none !important; }
 .cel-blok { display: flex; align-items: center; gap: 4px 10px; flex-wrap: wrap; min-width: 0; flex: 1 1 auto; }
 .pasek-celu .przycisk { flex: 0 0 auto; }
 .cel { font-size: clamp(22px, 6.5vw, 30px); font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.2; }
-.cel-slowo { font-size: clamp(19px, 5.5vw, 26px); overflow-wrap: anywhere; }
+/* Szukane słowo tą samą grubością co tekst — kształt ma być ten sam, który oko znajdzie w tekście */
+.cel-slowo { font-size: clamp(19px, 5.5vw, 26px); font-weight: 400; overflow-wrap: anywhere; }
 .cel-pod { font-size: 13px; color: var(--steel); }
 .kropki { display: inline-flex; gap: 5px; flex-wrap: wrap; }
 .kropki span { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--ok); }
@@ -345,6 +346,10 @@ body.w-grze .tekst-scena {
 .slowo.znalezione { background: var(--ok-soft); color: var(--ok); border-bottom: 2px solid var(--ok); font-weight: 700; cursor: default; }
 .slowo.zle { background: var(--ember-soft); }
 .slowo.podpowiedz { background: #FDF1DC; outline: 2px solid var(--warn); }
+/* Cały fragment: odsłonięte słowa przygasają, ale dają się czytać; zwrotki wiersza z odstępem */
+.slowo.odkryte { color: var(--steel); border-bottom: 2px solid var(--ok-soft); cursor: default; }
+.znak { padding: 2px 2px; }
+.zwrotka { display: block; height: .7em; }
 
 /* Historia wyników */
 .naglowek-sekcji { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }

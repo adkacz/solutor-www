@@ -6,8 +6,8 @@
 <meta name="referrer" content="no-referrer">
 <title>Trener czytania — Solutor</title>
 <meta name="description" content="Ćwiczenia wzroku i uwagi przy czytaniu: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie (RSVP), widzenie peryferyjne, wyszukiwanie pojęć w tekście, podobne zestawy i test tempa i zrozumienia. Wyniki tylko w Twojej przeglądarce.">
-<link rel="stylesheet" href="../wspolne.css?v=12">
-<link rel="stylesheet" href="czytanie.css?v=12">
+<link rel="stylesheet" href="../wspolne.css?v=13">
+<link rel="stylesheet" href="czytanie.css?v=13">
 </head>
 <body>
 
@@ -400,21 +400,32 @@
   <section id="m-pojecia" class="modul" hidden aria-labelledby="j-tytul">
     <div class="poza-gra">
       <h2 id="j-tytul">Wyszukiwanie pojęć</h2>
-      <p class="opis">Z tekstu wybieram kilka ważnych słów. Znajdź je i klikaj w kolejności, w jakiej występują. Każdy poziom to dalszy i dłuższy fragment.</p>
+      <p class="opis">Dwa tryby. W wyścigu wybieram z tekstu kilka ważnych słów, a Ty klikasz je w kolejności, w jakiej występują — na czas, a każdy poziom to dalszy i dłuższy fragment. W trybie „Cały fragment” odsłaniasz porcjami wszystkie słowa fragmentu, bez limitu czasu, a na końcu czytasz go w całości.</p>
     </div>
     <div class="pasek-celu">
       <div class="cel-blok"><span class="etykieta">Szukaj</span> <strong id="j-cel" class="cel cel-slowo">—</strong> <span id="j-postep" class="cel-pod"></span></div>
       <button type="button" class="przycisk maly tylko-w-grze" data-przerwij="pojecia">Przerwij</button>
     </div>
-    <div class="wskazniki">
+    <div class="wskazniki" data-tryb="wyscig">
       <div><span class="etykieta">Czas</span><strong id="j-czas">60,0 s</strong><span id="j-bonus" class="pod">bonus +0/30 s</span></div>
       <div><span class="etykieta">Punkty</span><strong id="j-wynik">0</strong><span id="j-poziom" class="pod">poziom 1 z 4</span></div>
       <div><span class="etykieta">Rekord</span><strong id="j-rekord">0</strong><span id="j-rekord-pod" class="pod">najwyższy poziom: 0</span></div>
     </div>
-    <div class="pasek-czasu" aria-hidden="true"><div id="j-pasek"></div></div>
+    <div class="pasek-czasu" data-tryb="wyscig" aria-hidden="true"><div id="j-pasek"></div></div>
+    <div class="wskazniki" data-tryb="caly" hidden>
+      <div><span class="etykieta">Czas</span><strong id="j-c-czas">0 s</strong><span id="j-c-czas-pod" class="pod">bez limitu</span></div>
+      <div><span class="etykieta">Odsłonięte</span><strong id="j-c-odsl">0 z 0</strong><span id="j-c-strona" class="pod"></span></div>
+      <div><span class="etykieta">Pomyłki</span><strong id="j-c-bledy">0</strong><span id="j-c-podp" class="pod">podpowiedzi: 0</span></div>
+    </div>
     <div class="ramka ustawienia poza-gra">
       <div class="pola">
-        <label class="pole" for="j-start-poziom">Zacznij od
+        <label class="pole" for="j-tryb">Tryb
+          <select id="j-tryb">
+            <option value="wyscig">Wyścig (60 s, poziomy)</option>
+            <option value="caly">Cały fragment (bez limitu czasu)</option>
+          </select>
+        </label>
+        <label class="pole" for="j-start-poziom" data-tryb="wyscig">Zacznij od
           <select id="j-start-poziom">
             <option value="1">poziomu 1 (ok. 35 słów, 4 pojęcia)</option>
             <option value="2">poziomu 2 (ok. 65 słów, 5 pojęć)</option>
@@ -422,9 +433,24 @@
             <option value="4">poziomu 4 (ok. 140 słów, 7 pojęć)</option>
           </select>
         </label>
+        <label class="pole" for="j-fragment" data-tryb="caly" hidden>Fragment
+          <select id="j-fragment">
+            <option value="40">krótki (ok. 40 słów)</option>
+            <option value="80">średni (ok. 80 słów)</option>
+            <option value="200">długi (ok. 200 słów)</option>
+          </select>
+        </label>
+        <label class="pole" for="j-porcja" data-tryb="caly" hidden>Słów w porcji
+          <select id="j-porcja">
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </label>
       </div>
       <div class="przelaczniki">
-        <label class="pole-wyboru"><input type="checkbox" id="j-zaznacz" checked> Podkreślaj szukane słowa</label>
+        <label class="pole-wyboru" data-tryb="wyscig"><input type="checkbox" id="j-zaznacz" checked> Podkreślaj szukane słowa</label>
         <label class="pole-wyboru"><input type="checkbox" id="j-podpowiedz" checked> Podpowiedź po 10 s bez trafienia</label>
       </div>
       <p class="drobny"><span id="j-tekst-info"></span> <button type="button" id="j-zmien-tekst" class="link-przycisk">Zmień tekst</button></p>
@@ -437,18 +463,22 @@
     <div class="kotwica">
       <div id="j-scena" class="tekst-scena" hidden></div>
     </div>
+    <div class="akcje odstep-dol tylko-w-grze">
+      <button type="button" id="j-przeczytane" class="przycisk glowny" hidden>Przeczytane</button>
+    </div>
     <div class="poza-gra">
       <div class="naglowek-sekcji"><h3>Ostatnie wyniki</h3><button type="button" id="j-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
       <ul id="j-historia" class="historia"></ul>
-      <p class="porada">To ćwiczenie przeglądania tekstu w poszukiwaniu konkretnych słów, tak jak przy szukaniu odpowiedzi w podręczniku albo umowie. Najlepiej działa na tekście, który i tak masz przeczytać: wklej go w ćwiczeniu RSVP.</p>
+      <p class="porada">To ćwiczenie przeglądania tekstu w poszukiwaniu konkretnych słów, tak jak przy szukaniu odpowiedzi w podręczniku albo umowie. Najlepiej działa na tekście, który i tak masz przeczytać: wklej go w ćwiczeniu RSVP. W trybie „Cały fragment” wiersz zachowuje podział na wersy, a fragment dzieli się na strony mieszczące się na ekranie, więc nie trzeba przewijać.</p>
       <details class="w-tle">
         <summary>Co ćwiczysz i co o tym wiadomo</summary>
-        <p><b>Co ćwiczysz.</b> Szybkie odnajdywanie konkretnych informacji w tekście — jak w umowie, regulaminie, instrukcji albo podręczniku przed sprawdzianem.</p>
-        <p><b>Co wiadomo z badań.</b> Przeglądanie działa, gdy brakuje czasu. Gdy czasu starczało na przeczytanie połowy tekstu, osoby przeglądające cały tekst zapamiętały więcej najważniejszych myśli niż te, które czytały po kolei tylko część (Duggan i Payne 2009). Przeglądający nie rozkładali czasu równo; autorzy tłumaczą to tym, że przy fragmencie zostaje się, dopóki daje dużo nowych informacji, a potem przeskakuje dalej. To badanie dotyczyło przeglądania w poszukiwaniu głównych myśli. Szukanie z góry znanych słów, jak w tym ćwiczeniu, to pokrewna umiejętność — też uczy przeskakiwać wzrokiem po tekście, ale nie znamy badań nad dokładnie takim ćwiczeniem.</p>
+        <p><b>Co ćwiczysz.</b> Szybkie odnajdywanie konkretnych informacji w tekście — jak w umowie, regulaminie, instrukcji albo podręczniku przed sprawdzianem. W trybie „Cały fragment” szukasz po kolei każdego słowa, więc wzrok wiele razy przechodzi przez cały fragment, zanim przeczytasz go w całości.</p>
+        <p><b>Co wiadomo z badań.</b> Przeglądanie działa, gdy brakuje czasu. Gdy czasu starczało na przeczytanie połowy tekstu, osoby przeglądające cały tekst zapamiętały więcej najważniejszych myśli niż te, które czytały po kolei tylko część (Duggan i Payne 2009). Przeglądający nie rozkładali czasu równo; autorzy tłumaczą to tym, że przy fragmencie zostaje się, dopóki daje dużo nowych informacji, a potem przeskakuje dalej. To badanie dotyczyło przeglądania w poszukiwaniu głównych myśli. Szukanie z góry znanych słów, jak w tym ćwiczeniu, to pokrewna umiejętność — też uczy przeskakiwać wzrokiem po tekście, ale nie znamy badań nad dokładnie takim ćwiczeniem. Szukanie słowa to dla oczu inne zadanie niż czytanie: przy czytaniu wzrok dłużej zatrzymuje się na rzadkich słowach, a przy szukaniu z góry znanego słowa ta różnica znika (Rayner i Raney 1996). Dlatego tryb „Cały fragment” kończy się zwykłym przeczytaniem całości.</p>
         <p><b>Granica.</b> Przeglądanie nie poprawiło zapamiętania szczegółów ani wniosków (Duggan i Payne 2009). Znalezienie słowa to jeszcze nie zrozumienie zdania — gdy liczy się zrozumienie, czytaj uważnie (Rayner i in. 2016).</p>
         <p class="zrodla-tytul">Źródła</p>
         <ul class="zrodla">
           <li>Duggan G. B., Payne S. J. (2009). Text skimming: the process and effectiveness of foraging through text under time pressure. <i>Journal of Experimental Psychology: Applied</i>, 15, 228–242.</li>
+          <li>Rayner K., Raney G. E. (1996). Eye movement control in reading and visual search: effects of word frequency. <i>Psychonomic Bulletin &amp; Review</i>, 3, 245–248.</li>
           <li>Rayner K., Schotter E. R., Masson M. E. J., Potter M. C., Treiman R. (2016). So much to read, so little time: how do we read, and can speed reading help? <i>Psychological Science in the Public Interest</i>, 17, 4–34.</li>
         </ul>
       </details>
@@ -580,15 +610,15 @@
   </footer>
 </main>
 
-<script src="wspolne.js?v=12"></script>
-<script src="schulte.js?v=12"></script>
-<script src="skaner.js?v=12"></script>
-<script src="rsvp.js?v=12"></script>
-<script src="peryferyjne.js?v=12"></script>
-<script src="pojecia.js?v=12"></script>
-<script src="podobne.js?v=12"></script>
-<script src="testy.js?v=12"></script>
-<script src="test.js?v=12"></script>
-<script src="start.js?v=12"></script>
+<script src="wspolne.js?v=13"></script>
+<script src="schulte.js?v=13"></script>
+<script src="skaner.js?v=13"></script>
+<script src="rsvp.js?v=13"></script>
+<script src="peryferyjne.js?v=13"></script>
+<script src="pojecia.js?v=13"></script>
+<script src="podobne.js?v=13"></script>
+<script src="testy.js?v=13"></script>
+<script src="test.js?v=13"></script>
+<script src="start.js?v=13"></script>
 </body>
 </html>

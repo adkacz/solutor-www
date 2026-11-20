@@ -52,7 +52,9 @@
   // ---------- kopia w pliku ----------
   const opisWynikow = (s) => {
     const n = T.liczbaWynikow(s);
-    return `${n} ${T.odmiana(n, 'wynik', 'wyniki', 'wyników')}${s.tekst.wlasny ? ' i własny tekst' : ''}`;
+    const m = s.tekst.moje.length;
+    const teksty = [m ? `${m} ${T.odmiana(m, 'zapisany tekst', 'zapisane teksty', 'zapisanych tekstów')}` : '', s.tekst.wlasny ? 'wklejony tekst' : ''].filter(Boolean);
+    return [`${n} ${T.odmiana(n, 'wynik', 'wyniki', 'wyników')}`, ...teksty].join(', ').replace(/, ([^,]*)$/, ' i $1');
   };
   const dzis = () => {
     const d = new Date();
@@ -76,14 +78,14 @@
     const plik = ev.target.files && ev.target.files[0];
     ev.target.value = '';
     if (!plik) return;
-    if (plik.size > 1024 * 1024) { T.komunikat('To nie jest kopia wyników trenera (plik za duży).', true); return; }
+    if (plik.size > 2 * 1024 * 1024) { T.komunikat('To nie jest kopia wyników trenera (plik za duży).', true); return; }
     const czytnik = new FileReader();
     czytnik.onload = () => {
       let o;
       try { o = JSON.parse(czytnik.result); } catch (e) { o = null; }
       const nowy = o && o.aplikacja === 'solutor-czytanie' ? T.oczysc(o) : null;
       if (!nowy) { T.komunikat('Nie udało się odczytać pliku: to nie jest kopia wyników trenera.', true); return; }
-      const obecne = T.liczbaWynikow(T.stan) || T.stan.tekst.wlasny;
+      const obecne = T.liczbaWynikow(T.stan) || T.stan.tekst.wlasny || T.stan.tekst.moje.length;
       if (obecne && !confirm(`Zastąpić dane w tej przeglądarce (${opisWynikow(T.stan)}) danymi z pliku (${opisWynikow(nowy)})?`)) return;
       T.ustawStan(nowy);
       T.zapisz();
@@ -93,7 +95,7 @@
     czytnik.readAsText(plik);
   });
   $('wyczysc-wszystko').addEventListener('click', () => {
-    if (!T.liczbaWynikow(T.stan) && !T.stan.tekst.wlasny) { T.usunZapis(); T.komunikat('Nie ma żadnych zapisanych danych.'); return; }
+    if (!T.liczbaWynikow(T.stan) && !T.stan.tekst.wlasny && !T.stan.tekst.moje.length) { T.usunZapis(); T.komunikat('Nie ma żadnych zapisanych danych.'); return; }
     if (!confirm(`Usunąć z tej przeglądarki wszystkie dane trenera (${opisWynikow(T.stan)})? Tego nie da się cofnąć — jeśli chcesz, najpierw zapisz kopię do pliku.`)) return;
     T.ustawStan(T.domyslny());
     T.usunZapis();

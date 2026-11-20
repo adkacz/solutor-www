@@ -89,9 +89,8 @@
   function pokaz() {
     const caly = tryb() === 'caly';
     for (const e of modul.querySelectorAll('[data-tryb]')) e.hidden = e.dataset.tryb !== (caly ? 'caly' : 'wyscig');
-    const t = T.biezacyTekst();
     const n = tokeny().length;
-    $('j-tekst-info').textContent = `Tekst: ${t.nazwa}, ${n} ${T.odmiana(n, 'słowo', 'słowa', 'słów')}.`;
+    $('j-tekst-info').textContent = `Wybrany tekst: ${n} ${T.odmiana(n, 'słowo', 'słowa', 'słów')}.`;
     if (caly) { pokazCaly(); return; }
     const cel = g.kolejka[g.k];
     const z = T.stan.pojecia;
@@ -596,6 +595,13 @@
   $('j-start-poziom').addEventListener('change', () => { if (!g.aktywna) spoczynek(); });
   $('j-zaznacz').addEventListener('change', () => { if (g.aktywna && tryb() !== 'caly') rysuj(); });
   $('j-zmien-tekst').addEventListener('click', () => T.przelacz('rsvp'));
+  $('j-wybor-tekstu').addEventListener('change', (ev) => {
+    if (g.aktywna) return;
+    T.wybierzTekst(ev.target.value);
+    $('j-wynik-koniec').hidden = true;
+    etykietaStartu();
+    spoczynek();
+  });
   $('j-tryb').addEventListener('change', (ev) => {
     if (g.aktywna) return;
     T.stan.pojecia.tryb = ev.target.value === 'caly' ? 'caly' : 'wyscig';
@@ -635,6 +641,7 @@
 
   T.moduly.pojecia = {
     wejdz() {
+      T.odswiezWyboryTekstu();
       $('j-tryb').value = tryb();
       $('j-fragment').value = ustawCaly().fragment;
       $('j-porcja').value = String(ustawCaly().porcja);

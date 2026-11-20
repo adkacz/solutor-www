@@ -6,8 +6,8 @@
 <meta name="referrer" content="no-referrer">
 <title>Trener czytania — Solutor</title>
 <meta name="description" content="Ćwiczenia wzroku i uwagi przy czytaniu: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie (RSVP), widzenie peryferyjne, wyszukiwanie pojęć w tekście, podobne zestawy i test tempa i zrozumienia. Wyniki tylko w Twojej przeglądarce.">
-<link rel="stylesheet" href="../wspolne.css?v=13">
-<link rel="stylesheet" href="czytanie.css?v=13">
+<link rel="stylesheet" href="../wspolne.css?v=14">
+<link rel="stylesheet" href="czytanie.css?v=14">
 </head>
 <body>
 
@@ -283,9 +283,7 @@
           </select>
         </label>
         <label class="pole" for="r-wybor-tekstu">Tekst
-          <select id="r-wybor-tekstu">
-            <option value="wlasny">Własny tekst</option>
-          </select>
+          <select id="r-wybor-tekstu"></select>
         </label>
       </div>
       <div class="przelaczniki">
@@ -305,15 +303,19 @@
     </div>
     <div class="poza-gra">
       <div id="r-wlasny-blok" class="ramka odstep-gora" hidden>
-        <label class="pole" for="r-tekst">Własny tekst
-          <textarea id="r-tekst" maxlength="20000" placeholder="Wklej tu artykuł albo rozdział, który chcesz przeczytać." spellcheck="false"></textarea>
+        <label class="pole" for="r-nazwa">Nazwa
+          <input type="text" id="r-nazwa" maxlength="60" autocomplete="off" spellcheck="false">
+        </label>
+        <label class="pole odstep-gora" for="r-tekst"><span id="r-tekst-etykieta">Wklejony tekst</span>
+          <textarea id="r-tekst" maxlength="20000" placeholder="Wklej tu artykuł, rozdział albo wiersz." spellcheck="false"></textarea>
         </label>
         <div class="akcje odstep-gora">
           <button type="button" id="r-wklej" class="przycisk maly">Wklej ze schowka</button>
-          <button type="button" id="r-usun-tekst" class="przycisk maly ostrozny">Usuń tekst</button>
+          <button type="button" id="r-zapisz-moj" class="przycisk maly">Zapisz w „Moich tekstach”</button>
+          <button type="button" id="r-usun-tekst" class="przycisk maly ostrozny">Wyczyść</button>
         </div>
         <p id="r-komunikat" class="komunikat" role="status"></p>
-        <p class="drobny">Tekst zostaje tylko w tej przeglądarce (do 20 000 znaków). Ćwiczenie „Pojęcia” korzysta z tego samego tekstu.</p>
+        <p id="r-moje-info" class="drobny"></p>
       </div>
       <div class="naglowek-sekcji odstep-gora"><h3>Przeczytane teksty</h3><button type="button" id="r-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
       <ul id="r-historia" class="historia"></ul>
@@ -425,6 +427,9 @@
             <option value="caly">Cały fragment (bez limitu czasu)</option>
           </select>
         </label>
+        <label class="pole" for="j-wybor-tekstu">Tekst
+          <select id="j-wybor-tekstu"></select>
+        </label>
         <label class="pole" for="j-start-poziom" data-tryb="wyscig">Zacznij od
           <select id="j-start-poziom">
             <option value="1">poziomu 1 (ok. 35 słów, 4 pojęcia)</option>
@@ -453,7 +458,7 @@
         <label class="pole-wyboru" data-tryb="wyscig"><input type="checkbox" id="j-zaznacz" checked> Podkreślaj szukane słowa</label>
         <label class="pole-wyboru"><input type="checkbox" id="j-podpowiedz" checked> Podpowiedź po 10 s bez trafienia</label>
       </div>
-      <p class="drobny"><span id="j-tekst-info"></span> <button type="button" id="j-zmien-tekst" class="link-przycisk">Zmień tekst</button></p>
+      <p class="drobny"><span id="j-tekst-info"></span> <button type="button" id="j-zmien-tekst" class="link-przycisk">Wklej albo popraw tekst</button></p>
     </div>
     <p id="j-wynik-koniec" class="wynik" role="status" hidden></p>
     <div id="j-start-blok" class="ramka ramka-biala start-blok">
@@ -594,7 +599,7 @@
 
   <section class="ramka poza-gra odstep-gora" aria-labelledby="kopia-tytul">
     <h3 id="kopia-tytul">Twoje wyniki</h3>
-    <p class="drobny odstep-dol">Wyniki są tylko w tej przeglądarce. Żeby przenieść je na inne urządzenie albo zachować na zapas, zapisz kopię do pliku (razem z własnym tekstem).</p>
+    <p class="drobny odstep-dol">Wyniki są tylko w tej przeglądarce. Żeby przenieść je na inne urządzenie albo zachować na zapas, zapisz kopię do pliku (razem z „Moimi tekstami”).</p>
     <div class="akcje">
       <button type="button" id="zapisz-plik" class="przycisk maly">Zapisz kopię do pliku</button>
       <button type="button" id="wczytaj-plik" class="przycisk maly">Wczytaj kopię z pliku</button>
@@ -610,15 +615,15 @@
   </footer>
 </main>
 
-<script src="wspolne.js?v=13"></script>
-<script src="schulte.js?v=13"></script>
-<script src="skaner.js?v=13"></script>
-<script src="rsvp.js?v=13"></script>
-<script src="peryferyjne.js?v=13"></script>
-<script src="pojecia.js?v=13"></script>
-<script src="podobne.js?v=13"></script>
-<script src="testy.js?v=13"></script>
-<script src="test.js?v=13"></script>
-<script src="start.js?v=13"></script>
+<script src="wspolne.js?v=14"></script>
+<script src="schulte.js?v=14"></script>
+<script src="skaner.js?v=14"></script>
+<script src="rsvp.js?v=14"></script>
+<script src="peryferyjne.js?v=14"></script>
+<script src="pojecia.js?v=14"></script>
+<script src="podobne.js?v=14"></script>
+<script src="testy.js?v=14"></script>
+<script src="test.js?v=14"></script>
+<script src="start.js?v=14"></script>
 </body>
 </html>

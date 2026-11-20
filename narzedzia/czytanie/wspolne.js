@@ -7,6 +7,7 @@ const T = (() => {
   const KLUCZ = 'solutor.czytanie.v1';
   const MAX_HISTORII = 40;
   const MAX_TEKSTU = 20000;
+  const MAX_MOICH = 20, MAX_NAZWY = 60;   // „Moje teksty”: liczba zapisanych tekstów i długość nazwy
   const WARIANTY = ['litery', 'liczby', 'slowa'];
 
   const $ = (id) => document.getElementById(id);
@@ -72,7 +73,8 @@ const T = (() => {
       podobne: { rekordy: { cyfry: { wynik: 0, poziom: 0 }, slowa: { wynik: 0, poziom: 0 } }, poziom: { cyfry: 1, slowa: 1 }, historia: [] },
       // test tempa i zrozumienia: wpisy z liczbą słów, czasem czytania (s) i dobrymi odpowiedziami
       test: { historia: [] },
-      tekst: { wybor: '0', wlasny: '' },
+      // tekst: wybór ('0'–'9' wbudowany, 'wlasny' wklejony, 'm…' z „Moich tekstów”), wklejony tekst, zapisane teksty
+      tekst: { wybor: '0', wlasny: '', moje: [] },
     };
   }
   const liczba = (x, min, max) => (typeof x === 'number' && Number.isFinite(x) && x >= min && x <= max ? x : null);
@@ -182,8 +184,16 @@ const T = (() => {
     }));
 
     const t = obiekt(o.tekst);
-    if (typeof t.wybor === 'string' && /^(?:[0-9]|wlasny)$/.test(t.wybor)) s.tekst.wybor = t.wybor;
     if (typeof t.wlasny === 'string') s.tekst.wlasny = t.wlasny.slice(0, MAX_TEKSTU);
+    const idki = new Set();
+    for (const m of Array.isArray(t.moje) ? t.moje.slice(0, MAX_MOICH) : []) {
+      const x = obiekt(m);
+      if (typeof x.id !== 'string' || !/^m[0-9a-z]{1,16}$/.test(x.id) || idki.has(x.id)) continue;
+      if (typeof x.nazwa !== 'string' || !x.nazwa.trim() || typeof x.tresc !== 'string') continue;
+      idki.add(x.id);
+      s.tekst.moje.push({ id: x.id, nazwa: x.nazwa.trim().slice(0, MAX_NAZWY), tresc: x.tresc.slice(0, MAX_TEKSTU) });
+    }
+    if (typeof t.wybor === 'string' && (/^(?:[0-9]|wlasny)$/.test(t.wybor) || idki.has(t.wybor))) s.tekst.wybor = t.wybor;
     return s;
   }
 
@@ -299,7 +309,7 @@ const T = (() => {
   }
 
   return {
-    KLUCZ, MAX_TEKSTU, MAX_TEMP, WARIANTY, $, el, losowa, tasuj, wybierz, ulamek, kiedyTekst, odmiana,
+    KLUCZ, MAX_TEKSTU, MAX_MOICH, MAX_NAZWY, MAX_TEMP, WARIANTY, $, el, losowa, tasuj, wybierz, ulamek, kiedyTekst, odmiana,
     domyslny, oczysc, wczytaj, zapisz, usunZapis, dopisz, liczbaWynikow,
     get stan() { return stan; },
     ustawStan(nowy) { stan = nowy; },

@@ -12,6 +12,7 @@
     rsvp: ['m-rsvp', 'rsvp'],
     peryferyjne: ['m-peryferyjne', 'peryferyjne'],
     pojecia: ['m-pojecia', 'pojecia'],
+    pamiec: ['m-pamiec', 'pamiec'],
     podobne: ['m-podobne', 'podobne'],
     test: ['m-test', 'test'],
   };

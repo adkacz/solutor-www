@@ -229,7 +229,7 @@
     $('r-usun-tekst').textContent = m ? 'Usuń z „Moich tekstów”' : 'Wyczyść';
     const n = T.stan.tekst.moje.length;
     $('r-moje-info').textContent = `Moje teksty: ${n} z ${T.MAX_MOICH}. Teksty zostają tylko w tej przeglądarce (do ${T.MAX_TEKSTU.toLocaleString('pl-PL')} znaków każdy) ` +
-      'i trafiają do kopii w pliku. Ćwiczenie „Pojęcia” korzysta z tekstu wybranego tutaj.';
+      'i trafiają do kopii w pliku. „Pojęcia” korzystają z tekstu wybranego tutaj, a „Na pamięć” — z „Moich tekstów”.';
   }
 
   function zmienTresc(tekst) {
@@ -320,6 +320,7 @@
     if (m) {
       if (!confirm(`Usunąć „${m.nazwa}” z „Moich tekstów”? Tego nie da się cofnąć.`)) return;
       t.moje = t.moje.filter((x) => x !== m);
+      delete T.stan.pamiec.teksty[m.id];   // postęp nauki na pamięć tego tekstu
       t.wybor = 'wlasny';
       T.zapisz();
       odswiezWybory();

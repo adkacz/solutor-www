@@ -352,6 +352,21 @@ body.w-grze .tekst-scena {
 .znak { padding: 2px 2px; }
 .zwrotka { display: block; height: .7em; }
 
+/* Na pamięć: luki w miejscu ukrytych słów, bieżąca luka i bieżący wers */
+.pamiec-scena .wers { display: block; }
+.pamiec-scena .jedn { border-radius: 6px; }
+.pamiec-scena .jedn.biezaca { background: #FDF1DC; box-shadow: 0 0 0 4px #FDF1DC; }
+.luka { display: inline-block; height: 1.2em; vertical-align: -0.2em; border-bottom: 2px solid var(--steel); color: var(--steel); line-height: 1.2; }
+.luka.biezaca { border-bottom: 3px solid var(--ember); background: #FDF1DC; }
+.n-ok { color: var(--ok); }
+.n-zle { color: var(--ember); background: var(--ember-soft); border-radius: 4px; }
+.n-odsl { color: var(--ink); background: var(--bg); border-radius: 4px; }
+.n-mig { background: var(--ember-soft); }
+.cel-tekst { font-size: clamp(16px, 4.4vw, 19px); font-weight: 700; }
+.wpis-blok { margin: 0 0 10px; }
+.wpis-blok input { max-width: 240px; font-size: 18px; }
+.historia .wartosc.pilne { color: var(--ember); font-weight: 700; }
+
 /* Historia wyników */
 .naglowek-sekcji { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
 .naglowek-sekcji h3 { margin: 0; }

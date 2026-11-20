@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
 <title>Trener czytania — Solutor</title>
-<meta name="description" content="Ćwiczenia wzroku i uwagi przy czytaniu: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie (RSVP), widzenie peryferyjne, wyszukiwanie pojęć w tekście, podobne zestawy i test tempa i zrozumienia. Wyniki tylko w Twojej przeglądarce.">
-<link rel="stylesheet" href="../wspolne.css?v=14">
-<link rel="stylesheet" href="czytanie.css?v=14">
+<meta name="description" content="Ćwiczenia wzroku i uwagi przy czytaniu: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie (RSVP), widzenie peryferyjne, wyszukiwanie pojęć w tekście, podobne zestawy, nauka tekstów na pamięć i test tempa i zrozumienia. Wyniki tylko w Twojej przeglądarce.">
+<link rel="stylesheet" href="../wspolne.css?v=15">
+<link rel="stylesheet" href="czytanie.css?v=15">
 </head>
 <body>
 
@@ -15,7 +15,7 @@
   <div class="poza-gra">
     <nav class="okruszki" aria-label="Ścieżka"><a href="../../">Solutor.pl</a> › <a href="../">Narzędzia</a></nav>
     <h1>Trener czytania</h1>
-    <p class="podtytul">Ćwiczenia wzroku i uwagi: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie, widzenie peryferyjne, wyszukiwanie pojęć w tekście i odróżnianie podobnych zestawów, a do tego test tempa i zrozumienia.</p>
+    <p class="podtytul">Ćwiczenia wzroku i uwagi: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie, widzenie peryferyjne, wyszukiwanie pojęć w tekście i odróżnianie podobnych zestawów, a do tego nauka tekstów na pamięć i test tempa i zrozumienia.</p>
     <nav class="zakladki" aria-label="Ćwiczenia">
       <button type="button" data-modul="schulte">Tablica</button>
       <button type="button" data-modul="litery">Litery</button>
@@ -24,6 +24,7 @@
       <button type="button" data-modul="rsvp">RSVP</button>
       <button type="button" data-modul="peryferyjne">Peryferyjne</button>
       <button type="button" data-modul="pojecia">Pojęcia</button>
+      <button type="button" data-modul="pamiec">Na pamięć</button>
       <button type="button" data-modul="podobne">Podobne</button>
       <button type="button" data-modul="test">Test</button>
     </nav>
@@ -490,6 +491,83 @@
     </div>
   </section>
 
+  <!-- ============ Na pamięć ============ -->
+  <section id="m-pamiec" class="modul" hidden aria-labelledby="n-tytul">
+    <div class="poza-gra">
+      <h2 id="n-tytul">Na pamięć</h2>
+      <p class="opis">Nauka wiersza, roli albo przemówienia przez przypominanie, a nie wielokrotne czytanie. Tekst z „Moich tekstów” dzieli się na zwrotki albo kawałki po 2–3 zdania. Każdy najpierw czytasz, potem znika coraz więcej słów, aż powiesz go z pamięci. Opanowane kawałki łączysz, a cały tekst powtarzasz po 1, 3, 7, 14 i 30 dniach.</p>
+    </div>
+    <div class="pasek-celu">
+      <div class="cel-blok"><span class="etykieta">Teraz</span> <strong id="n-cel" class="cel cel-tekst">—</strong> <span id="n-cel-pod" class="cel-pod"></span></div>
+      <button type="button" class="przycisk maly tylko-w-grze" data-przerwij="pamiec">Przerwij</button>
+    </div>
+    <div id="n-wpis-blok" class="wpis-blok" hidden>
+      <label class="pole" for="n-wpis">Pierwsza litera ukrytego słowa (podkreślonego)
+        <input type="text" id="n-wpis" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="next">
+      </label>
+    </div>
+    <div class="ramka ustawienia poza-gra">
+      <div class="pola">
+        <label class="pole" for="n-tekst">Tekst
+          <select id="n-tekst"></select>
+        </label>
+        <label class="pole" for="n-rundy">Przejście dalej po
+          <select id="n-rundy">
+            <option value="1">1 czystej rundzie</option>
+            <option value="2">2 czystych rundach z rzędu</option>
+            <option value="3">3 czystych rundach z rzędu</option>
+          </select>
+        </label>
+      </div>
+      <div class="przelaczniki">
+        <label class="pole-wyboru"><input type="checkbox" id="n-glosno"> Recytuję na głos (zamiast wpisywać litery sam oceniam, czy pamiętałem)</label>
+      </div>
+      <p class="drobny"><button type="button" id="n-od-nowa" class="link-przycisk">Zacznij ten tekst od nowa</button></p>
+    </div>
+    <p id="n-wynik-koniec" class="wynik" role="status" hidden></p>
+    <div id="n-start-blok" class="ramka ramka-biala start-blok">
+      <p id="n-start-tekst"></p>
+      <button type="button" id="n-start" class="przycisk glowny">Zacznij naukę</button>
+      <button type="button" id="n-do-rsvp" class="przycisk glowny" hidden>Przejdź do RSVP</button>
+    </div>
+    <div class="kotwica">
+      <div id="n-scena" class="tekst-scena pamiec-scena" hidden></div>
+    </div>
+    <div class="akcje odstep-dol tylko-w-grze">
+      <button type="button" id="n-dalej" class="przycisk glowny" hidden>Przeczytane — dalej</button>
+    </div>
+    <div id="n-glosno-blok" class="akcje odstep-dol" hidden>
+      <button type="button" id="n-pokaz" class="przycisk glowny">Pokaż</button>
+      <button type="button" id="n-dobrze" class="przycisk glowny" hidden>Bez błędu</button>
+      <button type="button" id="n-zle" class="przycisk ostrozny" hidden>Z błędem</button>
+    </div>
+    <div class="wskazniki">
+      <div><span class="etykieta">Kawałek</span><strong id="n-w-kawalek">—</strong><span id="n-w-kawalek-pod" class="pod"></span></div>
+      <div><span class="etykieta">Ukryte</span><strong id="n-w-poziom">—</strong><span id="n-w-poziom-pod" class="pod"></span></div>
+      <div><span class="etykieta">Pamiętane</span><strong id="n-w-dobrze">—</strong><span id="n-w-dobrze-pod" class="pod"></span></div>
+    </div>
+    <div class="poza-gra">
+      <div class="naglowek-sekcji"><h3>Twoje teksty</h3></div>
+      <ul id="n-lista" class="historia"></ul>
+      <div class="naglowek-sekcji odstep-gora"><h3>Ostatnie sesje</h3><button type="button" id="n-wyczysc" class="przycisk maly ostrozny">Wyczyść</button></div>
+      <ul id="n-historia" class="historia"></ul>
+      <p class="porada">Ucz się po kilka–kilkanaście minut, a powtórki rób w dniach, które pokazuje lista — teksty z powtórką na dziś są na górze. Wpisywanie litery sprawdza program, więc nie oszukasz się przypadkiem. Gdy wolisz mówić na głos, włącz „Recytuję na głos”: powiedz podświetlony fragment, kliknij „Pokaż” i oceń się uczciwie — „Z błędem” także przy jednym przekręconym słowie.</p>
+      <details class="w-tle">
+        <summary>Co ćwiczysz i co o tym wiadomo</summary>
+        <p><b>Co ćwiczysz.</b> Uczenie się tekstu na pamięć — wiersza, roli, przemówienia, modlitwy czy definicji — przez przypominanie sobie brakujących słów zamiast czytania tekstu w kółko.</p>
+        <p><b>Co wiadomo z badań.</b> Próby przypomnienia uczą trwalej niż ponowne czytanie: osoby, które po przeczytaniu tekstu próbowały go sobie przypomnieć, po tygodniu pamiętały więcej niż te, które czytały go jeszcze raz, choć 5 minut po nauce było odwrotnie (Roediger i Karpicke 2006). Powtórki rozłożone w czasie dają trwalszy efekt niż ta sama nauka naraz (Cepeda i in. 2006). Przypominanie i rozkładanie powtórek należą do najlepiej udokumentowanych sposobów uczenia się (Dunlosky i in. 2013). Własna ocena „pamiętam” bywa zbyt łaskawa i przez to ucząc się kończy naukę za wcześnie (Dunlosky i Rawson 2012) — dlatego domyślnie wpisujesz pierwszą literę, a sprawdza ją program.</p>
+        <p><b>Granica.</b> Ćwiczysz pamięć tego konkretnego tekstu — badania nie pokazują, że uczenie się tekstów na pamięć poprawia pamięć do innych rzeczy.</p>
+        <p class="zrodla-tytul">Źródła</p>
+        <ul class="zrodla">
+          <li>Cepeda N. J., Pashler H., Vul E., Wixted J. T., Rohrer D. (2006). Distributed practice in verbal recall tasks: a review and quantitative synthesis. <i>Psychological Bulletin</i>, 132, 354–380.</li>
+          <li>Dunlosky J., Rawson K. A. (2012). Overconfidence produces underachievement: inaccurate self evaluations undermine students’ learning and retention. <i>Learning and Instruction</i>, 22, 271–280.</li>
+          <li>Dunlosky J., Rawson K. A., Marsh E. J., Nathan M. J., Willingham D. T. (2013). Improving students’ learning with effective learning techniques: promising directions from cognitive and educational psychology. <i>Psychological Science in the Public Interest</i>, 14, 4–58.</li>
+          <li>Roediger H. L., Karpicke J. D. (2006). Test-enhanced learning: taking memory tests improves long-term retention. <i>Psychological Science</i>, 17, 249–255.</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
   <!-- ============ Podobne zestawy ============ -->
   <section id="m-podobne" class="modul" hidden aria-labelledby="d-tytul">
     <div class="poza-gra">
@@ -615,15 +693,16 @@
   </footer>
 </main>
 
-<script src="wspolne.js?v=14"></script>
-<script src="schulte.js?v=14"></script>
-<script src="skaner.js?v=14"></script>
-<script src="rsvp.js?v=14"></script>
-<script src="peryferyjne.js?v=14"></script>
-<script src="pojecia.js?v=14"></script>
-<script src="podobne.js?v=14"></script>
-<script src="testy.js?v=14"></script>
-<script src="test.js?v=14"></script>
-<script src="start.js?v=14"></script>
+<script src="wspolne.js?v=15"></script>
+<script src="schulte.js?v=15"></script>
+<script src="skaner.js?v=15"></script>
+<script src="rsvp.js?v=15"></script>
+<script src="peryferyjne.js?v=15"></script>
+<script src="pojecia.js?v=15"></script>
+<script src="pamiec.js?v=15"></script>
+<script src="podobne.js?v=15"></script>
+<script src="testy.js?v=15"></script>
+<script src="test.js?v=15"></script>
+<script src="start.js?v=15"></script>
 </body>
 </html>

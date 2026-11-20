@@ -75,6 +75,10 @@ const T = (() => {
       test: { historia: [] },
       // tekst: wybór ('0'–'9' wbudowany, 'wlasny' wklejony, 'm…' z „Moich tekstów”), wklejony tekst, zapisane teksty
       tekst: { wybor: '0', wlasny: '', moje: [] },
+      // na pamięć: opcje, ostatnio wybrany tekst, postęp każdego z „Moich tekstów” (po id) i historia sesji
+      // postęp: kawalki — ich liczba przy nauce, opanowane — ile kawałków, poziom 0–5 bieżącego, laczenie — runda
+      // łącząca ostatnie kawałki, czyste — czyste rundy z rzędu, powt — { idx odstępu, nastepna: termin } po opanowaniu
+      pamiec: { opcje: { rundy: 1, glosno: false }, wybor: '', teksty: {}, historia: [] },
     };
   }
   const liczba = (x, min, max) => (typeof x === 'number' && Number.isFinite(x) && x >= min && x <= max ? x : null);
@@ -194,6 +198,30 @@ const T = (() => {
       s.tekst.moje.push({ id: x.id, nazwa: x.nazwa.trim().slice(0, MAX_NAZWY), tresc: x.tresc.slice(0, MAX_TEKSTU) });
     }
     if (typeof t.wybor === 'string' && (/^(?:[0-9]|wlasny)$/.test(t.wybor) || idki.has(t.wybor))) s.tekst.wybor = t.wybor;
+
+    const pm = obiekt(o.pamiec);
+    const op = obiekt(pm.opcje);
+    s.pamiec.opcje = { rundy: calk(op.rundy, 1, 3) || 1, glosno: op.glosno === true };
+    if (typeof pm.wybor === 'string' && idki.has(pm.wybor)) s.pamiec.wybor = pm.wybor;
+    for (const [id, v] of Object.entries(obiekt(pm.teksty))) {
+      if (!idki.has(id)) continue;   // postęp usuniętego tekstu nie wraca
+      const x = obiekt(v);
+      const pw = obiekt(x.powt);
+      const e = {
+        kawalki: calk(x.kawalki, 1, 10000), opanowane: calk(x.opanowane, 0, 10000), poziom: calk(x.poziom, 0, 5),
+        laczenie: x.laczenie === true, czyste: calk(x.czyste, 0, 3) || 0,
+        powt: x.powt ? wszystkie({ idx: calk(pw.idx, 0, 4), nastepna: kiedyOk(pw.nastepna) }) : null,
+      };
+      if (e.kawalki === null || e.opanowane === null || e.poziom === null || e.opanowane > e.kawalki) continue;
+      s.pamiec.teksty[id] = e;
+    }
+    s.pamiec.historia = lista(pm.historia, (w) => {
+      const e = wszystkie({
+        kiedy: kiedyOk(w.kiedy), id: typeof w.id === 'string' && /^m[0-9a-z]{1,16}$/.test(w.id) ? w.id : null,
+        powtorka: w.powtorka === true, ukryte: calk(w.ukryte, 1, 1e6), dobrze: calk(w.dobrze, 0, 1e6), rekord: false,
+      });
+      return e && e.dobrze <= e.ukryte ? e : null;
+    });
     return s;
   }
 
@@ -219,7 +247,7 @@ const T = (() => {
     if (historia.length > MAX_HISTORII) historia.length = MAX_HISTORII;
   }
   function liczbaWynikow(s) {
-    let n = s.schulte.historia.length + s.schulte.seria.historia.length + s.rsvp.historia.length + s.peryferyjne.historia.length + s.pojecia.historia.length + s.pojecia.caly.historia.length + s.podobne.historia.length + s.test.historia.length;
+    let n = s.schulte.historia.length + s.schulte.seria.historia.length + s.rsvp.historia.length + s.peryferyjne.historia.length + s.pojecia.historia.length + s.pojecia.caly.historia.length + s.pamiec.historia.length + s.podobne.historia.length + s.test.historia.length;
     for (const w of WARIANTY) n += s.skaner[w].historia.length;
     return n;
   }

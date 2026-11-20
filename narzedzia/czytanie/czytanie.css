@@ -249,7 +249,7 @@ body.w-grze .plansza-ramka {
 .sterowanie { margin-bottom: 14px; }
 .sterowanie .przycisk { flex: 1 1 0; padding-left: 8px; padding-right: 8px; }
 .sterowanie .glowny { flex-grow: 1.4; }
-textarea {
+textarea, input[type="text"] {
   width: 100%;
   min-height: 150px;
   padding: 10px 12px;
@@ -260,7 +260,8 @@ textarea {
   font: 400 16px/1.5 var(--font-body);
   resize: vertical;
 }
-textarea:focus-visible { outline: 3px solid var(--ember); outline-offset: 2px; }
+textarea:focus-visible, input[type="text"]:focus-visible { outline: 3px solid var(--ember); outline-offset: 2px; }
+input[type="text"] { min-height: 44px; padding: 8px 12px; }
 
 .peryf-scena { display: flex; align-items: center; justify-content: center; min-height: clamp(140px, 32vw, 190px); }
 .peryf-linia { position: absolute; top: 50%; left: 50%; height: 2px; background: rgba(245, 247, 246, .18); transform: translate(-50%, -50%); transition: width .3s ease; }

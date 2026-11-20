@@ -365,7 +365,13 @@ body.w-grze .tekst-scena {
 .cel-tekst { font-size: clamp(16px, 4.4vw, 19px); font-weight: 700; }
 .wpis-blok { margin: 0 0 10px; }
 .wpis-blok input { max-width: 240px; font-size: 18px; }
-.historia .wartosc.pilne { color: var(--ember); font-weight: 700; }
+.historia .wartosc .pilne { color: var(--ember); font-weight: 700; }
+
+/* Moje teksty: lista z „Popraw”, formularz otwierany przyciskiem „Dodaj tekst” */
+.moje-lista li.wybrany { background: var(--bg); }
+.moj-formularz { margin: 0 0 10px; }
+.moj-formularz-tytul { margin: 0 0 8px; font-weight: 700; color: var(--ink); }
+.moj-formularz .komunikat:empty { display: none; }
 
 /* Historia wyników */
 .naglowek-sekcji { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }

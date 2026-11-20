@@ -144,7 +144,7 @@
     const zaKrotki = tokeny().length < MIN_SLOW;
     $('j-start').disabled = zaKrotki;
     $('j-start-tekst').textContent = zaKrotki
-      ? `Tekst jest za krótki (potrzeba co najmniej ${MIN_SLOW} słów). Wybierz albo wklej tekst w ćwiczeniu RSVP.`
+      ? `Tekst jest za krótki (potrzeba co najmniej ${MIN_SLOW} słów). Wybierz inny albo dodaj własny w „Moich tekstach” niżej.`
       : tryb() === 'caly'
         ? 'Bez limitu czasu. Klikaj wskazane słowo wszędzie, gdzie występuje na stronie. Gdy odsłonisz cały fragment, przeczytasz go w całości.'
         : 'Masz 60 sekund. Pomyłka zabiera 1 s, a poziom ukończony w 10 s dodaje 5 s.';
@@ -594,13 +594,20 @@
   $('j-przeczytane').addEventListener('click', koniecCaly);
   $('j-start-poziom').addEventListener('change', () => { if (!g.aktywna) spoczynek(); });
   $('j-zaznacz').addEventListener('change', () => { if (g.aktywna && tryb() !== 'caly') rysuj(); });
-  $('j-zmien-tekst').addEventListener('click', () => T.przelacz('rsvp'));
-  $('j-wybor-tekstu').addEventListener('change', (ev) => {
+  function wybierzTekst(id) {
     if (g.aktywna) return;
-    T.wybierzTekst(ev.target.value);
+    T.wybierzTekst(id);
     $('j-wynik-koniec').hidden = true;
     etykietaStartu();
     spoczynek();
+  }
+  $('j-wybor-tekstu').addEventListener('change', (ev) => { wybierzTekst(ev.target.value); lista.odswiez(); });
+  const lista = T.mojeTeksty($('j-moje'), {
+    prefiks: 'j',
+    wybrany: () => T.stan.tekst.wybor,
+    wybierz: wybierzTekst,
+    opis: (m) => { const n = m.tresc.split(/\s+/).filter(Boolean).length; return `${n} ${T.odmiana(n, 'słowo', 'słowa', 'słów')}`; },
+    poZmianie() { if (!g.aktywna && !modul.hidden) { etykietaStartu(); spoczynek(); } },
   });
   $('j-tryb').addEventListener('change', (ev) => {
     if (g.aktywna) return;
@@ -642,6 +649,7 @@
   T.moduly.pojecia = {
     wejdz() {
       T.odswiezWyboryTekstu();
+      lista.odswiez();
       $('j-tryb').value = tryb();
       $('j-fragment').value = ustawCaly().fragment;
       $('j-porcja').value = String(ustawCaly().porcja);

@@ -1,6 +1,6 @@
 /* Trener czytania — RSVP: tekst po jednym słowie (albo po kilka) w stałym miejscu, z literą skupienia (ORP).
-   Tu też wybór tekstu i „Moje teksty” (zapisane pod nazwą, tylko w tej przeglądarce i w kopii do pliku);
-   z wybranego tekstu korzysta ćwiczenie „Pojęcia” (T.biezacyTekst). Nazwy i treści tylko przez textContent. */
+   Tu też wybór tekstu (wbudowane albo „Moje teksty”, moje.js); z wybranego tekstu korzysta ćwiczenie „Pojęcia”
+   (T.biezacyTekst). Nazwy i treści tylko przez textContent. */
 'use strict';
 
 (() => {
@@ -24,12 +24,10 @@
   const modul = $('m-rsvp');
   const scena = $('r-scena');
   const r = { slowa: [], i: 0, bazowe: 350, tempo: 350, porcja: 1, przyspieszaj: true, sesja: false, gra: false, startGry: 0, czasGry: 0, zegar: null };
-  let zegarZapisu = null;
 
   const mojTekst = () => T.stan.tekst.moje.find((m) => m.id === T.stan.tekst.wybor);
   function biezacyTekst() {
     const t = T.stan.tekst;
-    if (t.wybor === 'wlasny') return { nazwa: 'wklejony tekst', tresc: t.wlasny };
     const m = mojTekst();
     if (m) return { nazwa: `„${m.nazwa}”`, tresc: m.tresc };
     const p = TEKSTY[Number(t.wybor)] || TEKSTY[0];
@@ -37,7 +35,7 @@
   }
   T.biezacyTekst = biezacyTekst;
 
-  // Listy wyboru tekstu (tu i w „Pojęciach”): wbudowane, „Moje teksty”, na końcu wklejenie nowego
+  // Listy wyboru tekstu (tu i w „Pojęciach”): wbudowane i „Moje teksty”
   const WYBORY = ['r-wybor-tekstu', 'j-wybor-tekstu'];
   function odswiezWybory() {
     for (const id of WYBORY) {
@@ -51,14 +49,11 @@
         for (const m of T.stan.tekst.moje) { const o = el('option', '', m.nazwa); o.value = m.id; grupa.append(o); }
         s.append(grupa);
       }
-      const w = el('option', '', 'Wklej nowy tekst');
-      w.value = 'wlasny';
-      s.append(w);
       s.value = T.stan.tekst.wybor;
     }
   }
   function wybierzTekst(wybor) {
-    const ok = wybor === 'wlasny' || TEKSTY[Number(wybor)] || T.stan.tekst.moje.some((m) => m.id === wybor);
+    const ok = TEKSTY[Number(wybor)] || T.stan.tekst.moje.some((m) => m.id === wybor);
     T.stan.tekst.wybor = ok ? wybor : '0';
     T.zapisz();
     odswiezWybory();
@@ -79,7 +74,7 @@
     const box = $('r-slowo');
     let lewa = '', srodek = '', prawa = '';
     if (!r.slowa.length) {
-      prawa = T.stan.tekst.wybor === 'wlasny' ? 'Wklej tekst poniżej' : '';
+      prawa = '';
     } else {
       const od = Math.min(r.i, r.slowa.length - 1);
       const kawalek = r.slowa.slice(od, od + r.porcja).join(' ');
@@ -132,11 +127,10 @@
     if (!r.sesja) r.tempo = r.bazowe;
   }
 
-  function zaladujTekst(wymus) {
+  function zaladujTekst() {
     const t = biezacyTekst();
     r.slowa = t.tresc.trim() ? t.tresc.trim().split(/\s+/) : [];
     $('r-wybor-tekstu').value = T.stan.tekst.wybor;
-    pokazEdycje(wymus);
     odNowa();
   }
 
@@ -211,70 +205,6 @@
     if (bylaSesja) T.trybGry(false, scena);
   }
 
-  // Pole edycji: przy „Wklej nowy tekst” — wklejony tekst i zapis pod nazwą; przy moim tekście — jego nazwa i treść
-  let wypelniony = null;   // tekst, którym ostatnio wypełniono pola — przy pisaniu ich nie nadpisujemy
-  function pokazEdycje(wymus) {
-    const m = mojTekst();
-    const wklejony = T.stan.tekst.wybor === 'wlasny';
-    $('r-wlasny-blok').hidden = !wklejony && !m;
-    if (!wklejony && !m) return;
-    $('r-tekst-etykieta').textContent = m ? 'Treść' : 'Wklejony tekst';
-    if (wymus || wypelniony !== T.stan.tekst.wybor) {
-      $('r-tekst').value = m ? m.tresc : T.stan.tekst.wlasny;
-      $('r-nazwa').value = m ? m.nazwa : '';
-      wypelniony = T.stan.tekst.wybor;
-    }
-    $('r-nazwa').placeholder = m ? '' : 'np. Inwokacja — żeby zapisać w „Moich tekstach”';
-    $('r-zapisz-moj').hidden = !!m;
-    $('r-usun-tekst').textContent = m ? 'Usuń z „Moich tekstów”' : 'Wyczyść';
-    const n = T.stan.tekst.moje.length;
-    $('r-moje-info').textContent = `Moje teksty: ${n} z ${T.MAX_MOICH}. Teksty zostają tylko w tej przeglądarce (do ${T.MAX_TEKSTU.toLocaleString('pl-PL')} znaków każdy) ` +
-      'i trafiają do kopii w pliku. „Pojęcia” korzystają z tekstu wybranego tutaj, a „Na pamięć” — z „Moich tekstów”.';
-  }
-
-  function zmienTresc(tekst) {
-    const m = mojTekst();
-    if (m) m.tresc = tekst.slice(0, T.MAX_TEKSTU);
-    else T.stan.tekst.wlasny = tekst.slice(0, T.MAX_TEKSTU);
-    clearTimeout(zegarZapisu);
-    zegarZapisu = setTimeout(T.zapisz, 400);
-    zaladujTekst();
-  }
-
-  function zapiszJakoMoj() {
-    const t = T.stan.tekst;
-    const tresc = t.wlasny;
-    if (!tresc.trim()) { T.komunikat('Najpierw wklej tekst.', true, 'r-komunikat'); return; }
-    if (t.moje.length >= T.MAX_MOICH) {
-      T.komunikat(`Masz już ${T.MAX_MOICH} zapisanych tekstów — usuń któryś, żeby dodać nowy.`, true, 'r-komunikat');
-      return;
-    }
-    // Bez nazwy: pierwsze słowa tekstu; powtórzona nazwa dostaje numer
-    let nazwa = $('r-nazwa').value.trim().slice(0, T.MAX_NAZWY) || tresc.trim().split(/\s+/).slice(0, 5).join(' ').slice(0, T.MAX_NAZWY);
-    const nazwy = new Set(t.moje.map((m) => m.nazwa));
-    if (nazwy.has(nazwa)) {
-      let n = 2;
-      while (nazwy.has(`${nazwa} (${n})`)) n++;
-      nazwa = `${nazwa} (${n})`;
-    }
-    const id = `m${Date.now().toString(36)}${T.losowa(1296).toString(36)}`;
-    t.moje.push({ id, nazwa, tresc });
-    const poprzedni = t.wybor;
-    t.wlasny = '';
-    t.wybor = id;
-    clearTimeout(zegarZapisu);
-    if (!T.zapisz()) {   // brak miejsca: wszystko wraca do stanu sprzed zapisu
-      t.moje.pop();
-      t.wlasny = tresc;
-      t.wybor = poprzedni;
-      return;
-    }
-    $('r-nazwa').value = '';
-    odswiezWybory();
-    zaladujTekst();
-    T.komunikat(`Zapisano w „Moich tekstach” jako „${nazwa}”.`, false, 'r-komunikat');
-  }
-
   const wybor = $('r-wybor-tekstu');
 
   $('r-graj').addEventListener('click', graj);
@@ -288,51 +218,16 @@
   ['r-tempo-wybor', 'r-porcja', 'r-przyspieszaj'].forEach((id) => $(id).addEventListener('change', () => { czytajUstawienia(); pokazSlowo(); pokaz(); }));
   wybor.addEventListener('change', () => {
     wybierzTekst(wybor.value);
-    $('r-komunikat').textContent = '';
     zaladujTekst();
+    lista.odswiez();
     $('r-wynik').hidden = true;
   });
-  $('r-tekst').addEventListener('input', (ev) => zmienTresc(ev.target.value));
-  $('r-nazwa').addEventListener('change', () => {
-    const m = mojTekst();
-    if (!m) return;
-    const nazwa = $('r-nazwa').value.trim().slice(0, T.MAX_NAZWY);
-    if (!nazwa) { $('r-nazwa').value = m.nazwa; return; }
-    m.nazwa = nazwa;
-    T.zapisz();
-    odswiezWybory();
-  });
-  $('r-zapisz-moj').addEventListener('click', zapiszJakoMoj);
-  $('r-wklej').addEventListener('click', async () => {
-    try {
-      const t = await navigator.clipboard.readText();
-      if (!t.trim()) { T.komunikat('Schowek jest pusty.', true, 'r-komunikat'); return; }
-      $('r-tekst').value = t.slice(0, T.MAX_TEKSTU);
-      zmienTresc($('r-tekst').value);
-      T.komunikat(t.length > T.MAX_TEKSTU ? `Wklejono pierwsze ${T.MAX_TEKSTU} znaków.` : 'Wklejono.', false, 'r-komunikat');
-    } catch (e) {
-      T.komunikat('Przeglądarka nie dała dostępu do schowka. Przytrzymaj pole tekstowe i wybierz „Wklej”.', true, 'r-komunikat');
-    }
-  });
-  $('r-usun-tekst').addEventListener('click', () => {
-    const t = T.stan.tekst;
-    const m = mojTekst();
-    if (m) {
-      if (!confirm(`Usunąć „${m.nazwa}” z „Moich tekstów”? Tego nie da się cofnąć.`)) return;
-      t.moje = t.moje.filter((x) => x !== m);
-      delete T.stan.pamiec.teksty[m.id];   // postęp nauki na pamięć tego tekstu
-      t.wybor = 'wlasny';
-      T.zapisz();
-      odswiezWybory();
-      zaladujTekst();
-      T.komunikat(`Usunięto „${m.nazwa}”.`, false, 'r-komunikat');
-      return;
-    }
-    if (!t.wlasny) return;
-    if (!confirm('Wyczyścić wklejony tekst?')) return;
-    $('r-tekst').value = '';
-    zmienTresc('');
-    T.zapisz();
+  const lista = T.mojeTeksty($('r-moje'), {
+    prefiks: 'r',
+    wybrany: () => T.stan.tekst.wybor,
+    wybierz(id) { wybierzTekst(id); zaladujTekst(); $('r-wynik').hidden = true; },
+    opis: (m) => { const n = m.tresc.split(/\s+/).filter(Boolean).length; return `${n} ${T.odmiana(n, 'słowo', 'słowa', 'słów')}`; },
+    poZmianie() { if (!modul.hidden && !r.sesja) zaladujTekst(); },
   });
   $('r-wyczysc').addEventListener('click', () => {
     if (!T.stan.rsvp.historia.length && !T.stan.rsvp.rekord) return;
@@ -347,7 +242,8 @@
   T.moduly.rsvp = {
     wejdz() {
       odswiezWybory();
-      zaladujTekst(true);
+      lista.odswiez();
+      zaladujTekst();
       historia();
     },
     wyjdz() { pauza(); r.sesja = false; },

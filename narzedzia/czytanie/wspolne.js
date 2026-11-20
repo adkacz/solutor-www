@@ -73,7 +73,8 @@ const T = (() => {
       podobne: { rekordy: { cyfry: { wynik: 0, poziom: 0 }, slowa: { wynik: 0, poziom: 0 } }, poziom: { cyfry: 1, slowa: 1 }, historia: [] },
       // test tempa i zrozumienia: wpisy z liczbą słów, czasem czytania (s) i dobrymi odpowiedziami
       test: { historia: [] },
-      // tekst: wybór ('0'–'9' wbudowany, 'wlasny' wklejony, 'm…' z „Moich tekstów”), wklejony tekst, zapisane teksty
+      // tekst: wybór ('0'–'9' wbudowany, 'm…' z „Moich tekstów”), wlasny — dawny wklejony tekst (przy wczytaniu
+      // przenoszony do „Moich tekstów”; zostaje tylko, gdy nie było miejsca), zapisane teksty
       tekst: { wybor: '0', wlasny: '', moje: [] },
       // na pamięć: opcje, ostatnio wybrany tekst, postęp każdego z „Moich tekstów” (po id) i historia sesji
       // postęp: kawalki — ich liczba przy nauce, opanowane — ile kawałków, poziom 0–5 bieżącego, laczenie — runda
@@ -197,7 +198,20 @@ const T = (() => {
       idki.add(x.id);
       s.tekst.moje.push({ id: x.id, nazwa: x.nazwa.trim().slice(0, MAX_NAZWY), tresc: x.tresc.slice(0, MAX_TEKSTU) });
     }
-    if (typeof t.wybor === 'string' && (/^(?:[0-9]|wlasny)$/.test(t.wybor) || idki.has(t.wybor))) s.tekst.wybor = t.wybor;
+    // Wklejony tekst bez nazwy (do 21.11.2026) przechodzi do „Moich tekstów” jako „Wklejony tekst”
+    let wklejony = null;
+    if (s.tekst.wlasny.trim() && s.tekst.moje.length < MAX_MOICH) {
+      wklejony = 'mwklejony';
+      for (let n = 2; idki.has(wklejony); n++) wklejony = `mwklejony${n}`;
+      const nazwy = new Set(s.tekst.moje.map((m) => m.nazwa));
+      let nazwa = 'Wklejony tekst';
+      for (let n = 2; nazwy.has(nazwa); n++) nazwa = `Wklejony tekst (${n})`;
+      s.tekst.moje.push({ id: wklejony, nazwa, tresc: s.tekst.wlasny });
+      idki.add(wklejony);
+      s.tekst.wlasny = '';
+    }
+    if (t.wybor === 'wlasny' && wklejony) s.tekst.wybor = wklejony;
+    else if (typeof t.wybor === 'string' && (/^[0-9]$/.test(t.wybor) || idki.has(t.wybor))) s.tekst.wybor = t.wybor;
 
     const pm = obiekt(o.pamiec);
     const op = obiekt(pm.opcje);

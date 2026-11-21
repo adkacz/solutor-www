@@ -360,6 +360,7 @@ body.w-grze .tekst-scena {
 .luka.biezaca { border-bottom: 3px solid var(--ember); background: #FDF1DC; }
 .n-ok { color: var(--ok); }
 .n-zle { color: var(--ember); background: var(--ember-soft); border-radius: 4px; }
+.n-wpisano { font-size: 0.7em; vertical-align: super; margin-left: 2px; text-decoration: line-through; }
 .n-odsl { color: var(--ink); background: var(--bg); border-radius: 4px; }
 .n-mig { background: var(--ember-soft); }
 .cel-tekst { font-size: clamp(16px, 4.4vw, 19px); font-weight: 700; }

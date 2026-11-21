@@ -96,6 +96,7 @@
     s.aktywna = false;
     s.czeka = false;
     clearTimeout(s.nastepny);
+    scena.style.maxHeight = '';
     scena.hidden = true;
     $('n-wpis-blok').hidden = true;
     $('n-glosno-blok').hidden = true;
@@ -232,7 +233,7 @@
       : glosno ? 'Powiedz podświetlony fragment' : 'Wpisz pierwszą literę';
     if (!czytanie && !s.kolejka.length) { koniecRundy(); return; }
     if (!czytanie && glosno) nastepnaJednostka(true);
-    if (!czytanie && !glosno) { zaznaczBiezace(); $('n-wpis').focus({ preventScroll: true }); }
+    if (!czytanie && !glosno) { zaznaczBiezace(); $('n-wpis').focus({ preventScroll: true }); dopasujDoKlawiatury(); }
     pokazWskazniki();
   }
 
@@ -247,6 +248,19 @@
   function przewin(e) {
     const r = e.getBoundingClientRect(), sr = scena.getBoundingClientRect();
     if (r.top < sr.top + 8 || r.bottom > sr.bottom - 8) scena.scrollTop += r.top - sr.top - scena.clientHeight / 3;
+  }
+
+  // Klawiatura ekranowa: Chrome na Androidzie nie zmniejsza strony, tylko przykrywa jej dół, więc scena liczona
+  // od wysokości ekranu (CSS: 100svh) chowała bieżącą lukę pod klawiaturą. Gdy klawiatura jest otwarta
+  // (widoczna część wyraźnie niższa od okna), scena kończy się tuż nad nią, a bieżąca luka jest przewijana w widok.
+  function dopasujDoKlawiatury() {
+    const vv = window.visualViewport;
+    const otwarta = vv && s.aktywna && document.activeElement === $('n-wpis') && vv.height < window.innerHeight * 0.85;
+    if (!otwarta) { scena.style.maxHeight = ''; return; }
+    const dolWidoku = vv.offsetTop + vv.height;
+    scena.style.maxHeight = `${Math.max(96, Math.floor(dolWidoku - scena.getBoundingClientRect().top - 8))}px`;
+    const luka = scena.querySelector('.luka.biezaca');
+    if (luka) przewin(luka);
   }
 
   function odpowiedz(litera) {
@@ -492,6 +506,13 @@
     if (z) odpowiedz(bezZnakow(z));
   });
   scena.addEventListener('click', () => { if (s.aktywna && !pm().opcje.glosno && s.poziom) $('n-wpis').focus({ preventScroll: true }); });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', dopasujDoKlawiatury);
+    window.visualViewport.addEventListener('scroll', dopasujDoKlawiatury);
+  }
+  // Po schowaniu klawiatury (blur) scena wraca do wysokości z CSS; chwila zwłoki — klawiatura chowa się z animacją
+  $('n-wpis').addEventListener('focus', () => setTimeout(dopasujDoKlawiatury, 350));
+  $('n-wpis').addEventListener('blur', () => setTimeout(dopasujDoKlawiatury, 350));
   $('n-pokaz').addEventListener('click', () => { if (s.aktywna && !s.czeka) pokazJednostke(); });
   $('n-dobrze').addEventListener('click', () => ocenJednostke(true));
   $('n-zle').addEventListener('click', () => ocenJednostke(false));

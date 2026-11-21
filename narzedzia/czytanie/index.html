@@ -2,12 +2,12 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
 <meta name="referrer" content="no-referrer">
 <title>Trener czytania — Solutor</title>
 <meta name="description" content="Ćwiczenia wzroku i uwagi przy czytaniu: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie (RSVP), widzenie peryferyjne, wyszukiwanie pojęć w tekście, podobne zestawy, nauka tekstów na pamięć i test tempa i zrozumienia. Wyniki tylko w Twojej przeglądarce.">
-<link rel="stylesheet" href="../wspolne.css?v=17">
-<link rel="stylesheet" href="czytanie.css?v=17">
+<link rel="stylesheet" href="../wspolne.css?v=18">
+<link rel="stylesheet" href="czytanie.css?v=18">
 </head>
 <body>
 
@@ -488,9 +488,11 @@
       <div class="cel-blok"><span class="etykieta">Teraz</span> <strong id="n-cel" class="cel cel-tekst">—</strong> <span id="n-cel-pod" class="cel-pod"></span></div>
       <button type="button" class="przycisk maly tylko-w-grze" data-przerwij="pamiec">Przerwij</button>
     </div>
+    <!-- Pole typu „hasło” tylko po to, żeby klawiatura ekranowa nie podpowiadała ani nie zapamiętywała liter
+         (Gboard i inne pomijają autocomplete/autocorrect="off"); pole czyści się po każdej literze -->
     <div id="n-wpis-blok" class="wpis-blok" hidden>
       <label class="pole" for="n-wpis">Pierwsza litera ukrytego słowa (podkreślonego)
-        <input type="text" id="n-wpis" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="next">
+        <input type="password" id="n-wpis" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="next">
       </label>
     </div>
     <div class="ramka ustawienia poza-gra">
@@ -679,17 +681,17 @@
   </footer>
 </main>
 
-<script src="wspolne.js?v=17"></script>
-<script src="schulte.js?v=17"></script>
-<script src="skaner.js?v=17"></script>
-<script src="moje.js?v=17"></script>
-<script src="rsvp.js?v=17"></script>
-<script src="peryferyjne.js?v=17"></script>
-<script src="pojecia.js?v=17"></script>
-<script src="pamiec.js?v=17"></script>
-<script src="podobne.js?v=17"></script>
-<script src="testy.js?v=17"></script>
-<script src="test.js?v=17"></script>
-<script src="start.js?v=17"></script>
+<script src="wspolne.js?v=18"></script>
+<script src="schulte.js?v=18"></script>
+<script src="skaner.js?v=18"></script>
+<script src="moje.js?v=18"></script>
+<script src="rsvp.js?v=18"></script>
+<script src="peryferyjne.js?v=18"></script>
+<script src="pojecia.js?v=18"></script>
+<script src="pamiec.js?v=18"></script>
+<script src="podobne.js?v=18"></script>
+<script src="testy.js?v=18"></script>
+<script src="test.js?v=18"></script>
+<script src="start.js?v=18"></script>
 </body>
 </html>

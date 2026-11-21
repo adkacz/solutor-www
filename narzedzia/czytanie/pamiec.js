@@ -233,7 +233,7 @@
       : glosno ? 'Powiedz podświetlony fragment' : 'Wpisz pierwszą literę';
     if (!czytanie && !s.kolejka.length) { koniecRundy(); return; }
     if (!czytanie && glosno) nastepnaJednostka(true);
-    if (!czytanie && !glosno) { zaznaczBiezace(); $('n-wpis').focus({ preventScroll: true }); dopasujDoKlawiatury(); }
+    if (!czytanie && !glosno) { zaznaczBiezace(); $('n-wpis').focus({ preventScroll: true }); dopasujDoKlawiatury(); sledzKlawiature(); }
     pokazWskazniki();
   }
 
@@ -250,17 +250,38 @@
     if (r.top < sr.top + 8 || r.bottom > sr.bottom - 8) scena.scrollTop += r.top - sr.top - scena.clientHeight / 3;
   }
 
-  // Klawiatura ekranowa: Chrome na Androidzie nie zmniejsza strony, tylko przykrywa jej dół, więc scena liczona
-  // od wysokości ekranu (CSS: 100svh) chowała bieżącą lukę pod klawiaturą. Gdy klawiatura jest otwarta
-  // (widoczna część wyraźnie niższa od okna), scena kończy się tuż nad nią, a bieżąca luka jest przewijana w widok.
+  // Klawiatura ekranowa. Strona prosi przeglądarkę, żeby zmniejszała się razem z klawiaturą (meta viewport
+  // interactive-widget=resizes-content w index.html). Gdy przeglądarka tego nie umie i tylko przykrywa dół strony,
+  // scena kończy się tuż nad widoczną częścią (visualViewport). Za każdym razem od zera: zdjęcie ograniczenia,
+  // pomiar, ewentualnie nowe ograniczenie — wszystko w jednej klatce, bez mrugania. Bieżąca luka zawsze w widoku.
   function dopasujDoKlawiatury() {
+    scena.style.maxHeight = '';
     const vv = window.visualViewport;
-    const otwarta = vv && s.aktywna && document.activeElement === $('n-wpis') && vv.height < window.innerHeight * 0.85;
-    if (!otwarta) { scena.style.maxHeight = ''; return; }
-    const dolWidoku = vv.offsetTop + vv.height;
-    scena.style.maxHeight = `${Math.max(96, Math.floor(dolWidoku - scena.getBoundingClientRect().top - 8))}px`;
+    if (!s.aktywna || document.activeElement !== $('n-wpis')) return;
+    if (vv) {
+      const dolWidoku = vv.offsetTop + vv.height;
+      const r = scena.getBoundingClientRect();
+      if (r.bottom > dolWidoku - 8) scena.style.maxHeight = `${Math.max(96, Math.floor(dolWidoku - r.top - 8))}px`;
+    }
     const luka = scena.querySelector('.luka.biezaca');
     if (luka) przewin(luka);
+  }
+  // Klawiatura wysuwa się z animacją, a Chrome po jej otwarciu sam przewija stronę do pola — sygnały przychodzą
+  // w różnej kolejności albo przed końcem animacji (21.11.2026: raz scena została za wysoka, dopiero ponowne
+  // przywołanie klawiatury pomogło). Dlatego po stuknięciu w pole przez 1,5 s liczymy w każdej klatce,
+  // a poza tym przy każdej zmianie widoku i przewinięciu strony.
+  let sledzDo = 0, zaplanowane = false;
+  function sledzKlawiature() {
+    const bylo = sledzDo > performance.now();
+    sledzDo = performance.now() + 1500;
+    if (bylo) return;
+    const krok = () => { dopasujDoKlawiatury(); if (performance.now() < sledzDo) requestAnimationFrame(krok); };
+    requestAnimationFrame(krok);
+  }
+  function zaplanujDopasowanie() {
+    if (zaplanowane) return;
+    zaplanowane = true;
+    requestAnimationFrame(() => { zaplanowane = false; dopasujDoKlawiatury(); });
   }
 
   function odpowiedz(litera) {
@@ -507,11 +528,15 @@
   });
   scena.addEventListener('click', () => { if (s.aktywna && !pm().opcje.glosno && s.poziom) $('n-wpis').focus({ preventScroll: true }); });
   if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', dopasujDoKlawiatury);
-    window.visualViewport.addEventListener('scroll', dopasujDoKlawiatury);
+    window.visualViewport.addEventListener('resize', zaplanujDopasowanie);
+    window.visualViewport.addEventListener('scroll', zaplanujDopasowanie);
   }
+  window.addEventListener('resize', zaplanujDopasowanie);
+  window.addEventListener('scroll', zaplanujDopasowanie, { passive: true });
+  // Stuknięcie w pole, które już ma fokus (klawiatura schowana przyciskiem wstecz), otwiera klawiaturę bez „focus”
+  $('n-wpis').addEventListener('pointerdown', sledzKlawiature);
   // Po schowaniu klawiatury (blur) scena wraca do wysokości z CSS; chwila zwłoki — klawiatura chowa się z animacją
-  $('n-wpis').addEventListener('focus', () => setTimeout(dopasujDoKlawiatury, 350));
+  $('n-wpis').addEventListener('focus', sledzKlawiature);
   $('n-wpis').addEventListener('blur', () => setTimeout(dopasujDoKlawiatury, 350));
   $('n-pokaz').addEventListener('click', () => { if (s.aktywna && !s.czeka) pokazJednostke(); });
   $('n-dobrze').addEventListener('click', () => ocenJednostke(true));

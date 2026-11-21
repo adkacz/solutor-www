@@ -365,6 +365,7 @@ body.w-grze .tekst-scena {
 .cel-tekst { font-size: clamp(16px, 4.4vw, 19px); font-weight: 700; }
 .wpis-blok { margin: 0 0 10px; }
 .wpis-blok input { max-width: 240px; font-size: 18px; }
+.wpis-blok input::-ms-reveal { display: none; } /* Edge: bez „oka” w polu typu hasło (Na pamięć) */
 .historia .wartosc .pilne { color: var(--ember); font-weight: 700; }
 
 /* Moje teksty: lista z „Popraw”, formularz otwierany przyciskiem „Dodaj tekst” */

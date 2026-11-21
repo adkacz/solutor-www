@@ -25,8 +25,10 @@
     sesja: { ukryte: 0, dobrze: 0 }, nastepny: null,
   };
 
-  const bezZnakow = (t) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l').replace(/Ł/g, 'l').toLowerCase();
-  const pierwsza = (t) => { const m = t.match(/[\p{L}\p{N}]/u); return m ? bezZnakow(m[0]) : ''; };
+  // NFKD, nie NFD: rozkłada też znaki z PDF-ów i stron (ligatura „ﬁ” › „fi”, litery „pełnej szerokości”),
+  // inaczej słowo „ﬁlm” czekało na literę „ﬁ” i każde wpisane „f” było błędem
+  const bezZnakow = (t) => t.normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l').replace(/Ł/g, 'l').toLowerCase();
+  const pierwsza = (t) => { const m = t.match(/[\p{L}\p{N}]/u); return m ? bezZnakow(m[0]).charAt(0) : ''; };
   const pm = () => T.stan.pamiec;
   // Przy wpisywaniu pierwszej litery poziom „pierwsze litery” nic by nie sprawdzał — jest tylko przy recytacji
   const poziomDla = (x) => (x === 4 && !pm().opcje.glosno ? 5 : x);
@@ -168,6 +170,8 @@
     if (!w.ukryte || w.stan) {
       span.textContent = w.t;
       if (w.stan) span.classList.add(w.stan === 'ok' ? 'n-ok' : 'n-zle');
+      // Przy błędzie widać, jaką literę program dostał — wiadomo, czy to sąsiedni klawisz, czy błąd programu
+      if (w.stan === 'zle' && w.wpisano) span.append(el('span', 'n-wpisano', w.wpisano));
       return;
     }
     const luka = el('span', 'luka', s.poziom === 4 ? w.rdzen[0] : '');
@@ -218,7 +222,7 @@
     const n = Math.ceil(s.perm.length * UKRYTE[s.poziom]);
     const ukryj = new Set(s.poziom >= 4 ? s.perm : s.perm.slice(0, n));
     for (const i of s.zle) ukryj.add(i);   // słowa z błędem z poprzedniej rundy znów są ukryte
-    for (const w of s.slowa) { w.ukryte = ukryj.has(w.i); w.stan = ''; }
+    for (const w of s.slowa) { w.ukryte = ukryj.has(w.i); w.stan = ''; w.wpisano = ''; }
     s.kolejka = s.slowa.filter((w) => w.ukryte);
     s.k = 0;
     s.u = 0;
@@ -284,11 +288,12 @@
     requestAnimationFrame(() => { zaplanowane = false; dopasujDoKlawiatury(); });
   }
 
-  function odpowiedz(litera) {
+  function odpowiedz(znak) {
     const w = s.kolejka[s.k];
     if (!w || s.czeka) return;
-    const ok = litera === w.l;
+    const ok = bezZnakow(znak).charAt(0) === w.l;
     w.stan = ok ? 'ok' : 'zle';
+    w.wpisano = ok ? '' : znak.toLowerCase();
     if (!ok) { T.migniecie(spanSlowa(w), 'n-mig', 350); }
     rysujSlowo(spanSlowa(w), w);
     s.k++;
@@ -517,14 +522,26 @@
     T.zapisz();
     nowaRunda();
   });
-  $('n-wpis').addEventListener('input', (ev) => {
-    const v = ev.target.value;
-    ev.target.value = '';
+  function przyjmij(v) {
     if (!s.aktywna) return;
     const litery = [...v].filter((c) => /[\p{L}\p{N}]/u.test(c));
     // Stuknięta podpowiedź klawiatury wstawia całe słowo ze spacją — liczy się jego pierwsza litera
     const z = litery.length > 1 && /\s$/.test(v) ? litery[0] : litery[litery.length - 1];
-    if (z) odpowiedz(bezZnakow(z));
+    if (z) odpowiedz(z);
+  }
+  // Litera prosto z naciśnięcia klawisza, bez wpuszczania jej do pola: pole jest zawsze puste, więc klawiatura nie ma
+  // czego powtórzyć. Wcześniej litera trafiała do pola, a po jego wyczyszczeniu niektóre klawiatury wysyłały ją
+  // jeszcze raz i liczyła się przy następnej luce (21.11.2026: „poprawna litera liczona jako błąd”).
+  $('n-wpis').addEventListener('beforeinput', (ev) => {
+    if (ev.inputType !== 'insertText' || ev.isComposing || ev.data == null || !ev.cancelable) return;
+    ev.preventDefault();
+    przyjmij(ev.data);
+  });
+  // Zapas: to, czego nie da się zatrzymać (składanie słowa przez klawiaturę, stuknięta podpowiedź)
+  $('n-wpis').addEventListener('input', (ev) => {
+    const v = ev.target.value;
+    ev.target.value = '';
+    przyjmij(v);
   });
   scena.addEventListener('click', () => { if (s.aktywna && !pm().opcje.glosno && s.poziom) $('n-wpis').focus({ preventScroll: true }); });
   if (window.visualViewport) {

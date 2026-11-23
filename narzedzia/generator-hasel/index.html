@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'">
 <title>Generator haseł ze słów — Solutor</title>
 <meta name="description" content="Hasło główne do menedżera haseł z losowych polskich słów: łatwe do zapamiętania, z uczciwie policzoną siłą. Losowanie w Twojej przeglądarce, nic nie jest wysyłane. Karta ratunkowa do wydruku.">
 <link rel="stylesheet" href="../wspolne.css">
-<link rel="stylesheet" href="styl.css">
+<link rel="stylesheet" href="styl.css?v=2">
 </head>
 <body>
 
@@ -35,11 +36,11 @@
     <table class="czasy">
       <caption>Średni czas odgadnięcia, gdy atakujący zna tę listę słów i&nbsp;sposób losowania</caption>
       <tr>
-        <th scope="row">Ktoś ukradł zaszyfrowany sejf menedżera haseł i&nbsp;ma 100 mocnych kart graficznych <span class="przypis">(ok. 1&nbsp;mln prób/s, ustawienia domyślne Bitwardena)</span></th>
+        <th scope="row">Ktoś ukradł zaszyfrowany sejf menedżera haseł i&nbsp;ma 100 mocnych kart graficznych <span class="przypis">(ok. 1,9&nbsp;mln prób/s, ustawienia domyślne Bitwardena)</span></th>
         <td id="czas-sejf" class="mono">—</td>
       </tr>
       <tr>
-        <th scope="row">To samo hasło wyciekło z bazy serwisu, który zapisał je szybkim skrótem <span class="przypis">(ok. 100&nbsp;mld prób/s)</span></th>
+        <th scope="row">To samo hasło wyciekło z bazy serwisu, który zapisał je szybkim skrótem <span class="przypis">(te same karty, SHA-1: ok. 7&nbsp;bln prób/s)</span></th>
         <td id="czas-szybki" class="mono">—</td>
       </tr>
     </table>
@@ -51,8 +52,8 @@
       <select id="liczba">
         <option value="4">4 słowa</option>
         <option value="5">5 słów</option>
-        <option value="6" selected>6 słów (zalecane)</option>
-        <option value="7">7 słów</option>
+        <option value="6" selected>6 słów (domyślnie)</option>
+        <option value="7">7 słów (większy zapas)</option>
         <option value="8">8 słów</option>
       </select>
     </label>
@@ -89,13 +90,36 @@
   <section class="wyjasnienie">
     <h2>Jak tego używać</h2>
     <ul>
-      <li><strong>Do czego:</strong> jedno hasło, które trzeba pamiętać: hasło główne do menedżera haseł (np. Bitwarden, KeePassXC) albo do komputera. Hasła do sklepów, banków i&nbsp;poczty niech generuje sam menedżer: losowe i&nbsp;inne dla każdego serwisu.</li>
+      <li><strong>Do czego:</strong> jedno hasło, które trzeba pamiętać: hasło główne do menedżera haseł (np. Bitwarden, KeePassXC) albo do komputera. Nie używaj go nigdzie indziej. Hasła do sklepów, banków i&nbsp;poczty niech generuje sam menedżer: losowe i&nbsp;inne dla każdego serwisu.</li>
       <li><strong>Nie poprawiaj słów na własne</strong> i&nbsp;nie dopisuj nic „od siebie”. Siła bierze się wyłącznie z&nbsp;losowania. Słowo wybrane przez człowieka jest dużo łatwiejsze do odgadnięcia.</li>
+      <li><strong>Nie losuj do skutku.</strong> Weź jeden z&nbsp;pierwszych wyników. Wybieranie „najładniejszego” hasła zmniejsza siłę: wybór spośród 1000 losowań może kosztować tyle, co jedno słowo.</li>
       <li><strong>Wielkie litery na początku każdego słowa</strong> nie dodają siły, bo to stała zasada i&nbsp;atakujący też ją zna. Pomagają tylko tam, gdzie serwis wymaga wielkiej litery. Siłę dodaje dopiero losowy wybór słów z&nbsp;wielką literą albo kolejne słowo.</li>
-      <li><strong>Po skopiowaniu</strong> skopiuj potem coś innego. Historia schowka w&nbsp;Windows (Win+V) i&nbsp;synchronizacja schowka między urządzeniami potrafią zapamiętać hasło.</li>
+      <li><strong>Schowek:</strong> najbezpieczniej przepisz hasło ręcznie. Jeśli je skopiujesz, a&nbsp;w&nbsp;Windows masz włączoną historię schowka, naciśnij Win+V, przy haśle wybierz „…” i&nbsp;Usuń. Skopiowanie czegoś innego nie usuwa hasła z&nbsp;historii, a&nbsp;synchronizacja może przenieść je na inne urządzenia.</li>
       <li><strong>Prywatność:</strong> słowa losuje Twoja przeglądarka (<code>crypto.getRandomValues</code>). Strona nie wysyła niczego i&nbsp;nie używa ciasteczek: możesz odłączyć internet i&nbsp;losować dalej. Kod jest jawny: <a href="https://github.com/adkacz/solutor-www/tree/main/narzedzia/generator-hasel">GitHub</a>.</li>
     </ul>
     <p class="drobny">Czasy są przybliżone i&nbsp;pokazują rząd wielkości. Siła liczona jest uczciwie: z&nbsp;założeniem, że atakujący zna listę <span id="liczba-slow">924</span> słów i&nbsp;cały sposób losowania (jest jawny w&nbsp;kodzie tej strony).</p>
+    <details class="zrodla">
+      <summary>Skąd te liczby</summary>
+      <h3>Jak liczona jest siła</h3>
+      <p>Lista ma 924 różne słowa, więc jedno losowe słowo to log<sub>2</sub>(924) ≈ 9,85 bita. Losowa cyfra przy losowym słowie dodaje log<sub>2</sub>(10 × n), gdzie n to liczba słów, a&nbsp;wielkie litery w&nbsp;losowych słowach log<sub>2</sub>(2<sup>n</sup> − 1). Separator i&nbsp;wielka litera na początku każdego słowa nie dodają nic. Domyślne hasło ma 6 × 9,85 + log<sub>2</sub>(60) ≈ 65 bitów. Średni czas to połowa wszystkich możliwości podzielona przez liczbę prób na sekundę.</p>
+      <h3>Skąd szybkość ataku</h3>
+      <p>To nie jest nasz pomiar, tylko publiczny test programu hashcat na karcie RTX 5090. Sejf Bitwardena (PBKDF2-SHA256, 600&nbsp;000 iteracji): ok. 19&nbsp;tys. prób/s na kartę, czyli ok. 1,9&nbsp;mln przy 100 kartach. Szybki skrót SHA-1: ok. 70&nbsp;mld prób/s na kartę, czyli ok. 7&nbsp;bln przy 100 kartach. Przy jeszcze słabszym MD5 czasy byłyby ok. 3 razy krótsze. Test zakłada krótsze hasła niż te z&nbsp;generatora, więc prawdziwy atak będzie raczej wolniejszy, ale nie liczymy tego na korzyść hasła.</p>
+      <h3>Co znaczą oceny</h3>
+      <p>Organizacja EFF ocenia, że 64 bity z&nbsp;losowych słów chronią przed przestępcą, a&nbsp;77 bitów przed niemal każdym poza najbardziej zdeterminowanymi służbami państwowymi. Stąd progi: poniżej 64 bitów „za mała”, od 64 „dobra”, od 77 „bardzo dobra”. Z&nbsp;losową cyfrą 6 słów to 65 bitów, 7 słów to 75, a&nbsp;8 słów to 85. EFF zaleca co najmniej 6 słów, ale ze swojej listy 7776 słów, co daje 77 bitów. Nasza lista jest krótsza, więc te same 6 słów daje mniej.</p>
+      <h3>Źródła</h3>
+      <ul>
+        <li><a href="https://gist.github.com/Chick3nman/09bac0775e6393468c2925c1e1363d5c">Hashcat: test karty RTX 5090</a></li>
+        <li><a href="https://bitwarden.com/help/kdf-algorithms/">Bitwarden: ustawienia szyfrowania hasła głównego</a></li>
+        <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html">OWASP: przechowywanie haseł</a></li>
+        <li><a href="https://pages.nist.gov/800-63-4/sp800-63b.html">NIST SP 800-63B-4: zasady dla haseł</a></li>
+        <li><a href="https://www.eff.org/dice">EFF: hasła z&nbsp;losowych słów</a></li>
+        <li><a href="https://ssd.eff.org/module/animated-overview-how-make-super-secure-password-using-dice">EFF: ile słów przed jakim atakującym</a></li>
+        <li><a href="https://passwordresearch.com/papers/paper243.html">Bonneau i&nbsp;Shutova (2012): frazy wybierane przez ludzi</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues">MDN: crypto.getRandomValues</a></li>
+        <li><a href="https://support.microsoft.com/en-us/windows/using-the-clipboard-30375039-ce71-9fe4-5b30-21b7aab6b13f">Microsoft: schowek w&nbsp;Windows</a></li>
+      </ul>
+      <p class="drobny">Stan na 23.11.2026. Linki otwierają strony źródeł dopiero po kliknięciu.</p>
+    </details>
   </section>
 </main>
 
@@ -137,6 +161,6 @@
   </div>
 </section>
 
-<script src="generator.js"></script>
+<script src="generator.js?v=2"></script>
 </body>
 </html>

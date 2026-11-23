@@ -100,12 +100,15 @@ const SLOWA = [
   "zupa","zwierzak","zygzak","zysk"
 ];
 
-// Scenariusze ataku (rząd wielkości, nie pomiar):
-// - sejf menedżera haseł: Bitwarden domyślnie PBKDF2-SHA256, 600 000 iteracji — jedna mocna karta graficzna
-//   to rząd 10 tys. prób/s, 100 kart ok. 1 mln prób/s;
-// - hasło zapisane przez serwis szybkim skrótem (np. niesolony SHA-1/MD5) i farma kart: ok. 1e11 prób/s.
-const PROBY_SEJF = 1e6;
-const PROBY_SZYBKI = 1e11;
+// Scenariusze ataku (rząd wielkości, publiczny test hashcata na RTX 5090, źródła w sekcji „Skąd te liczby”):
+// - sejf menedżera haseł: Bitwarden domyślnie PBKDF2-SHA256, 600 000 iteracji — ok. 19 tys. prób/s na kartę,
+//   100 kart ok. 1,9 mln prób/s;
+// - hasło zapisane przez serwis szybkim skrótem SHA-1: ok. 70 mld prób/s na kartę, 100 kart ok. 7 bln prób/s.
+const PROBY_SEJF = 1.9e6;
+const PROBY_SZYBKI = 7e12;
+// Progi oceny według EFF: 64 bity chronią przed przestępcą, 77 przed niemal każdym atakującym.
+const PROG_DOBRA = 64;
+const PROG_BARDZO_DOBRA = 77;
 
 const stan = {
   slowa: [],        // wylosowane słowa (małe litery)
@@ -214,16 +217,19 @@ function pokazSile() {
   const ocena = $('ocena');
   const rada = $('podpowiedz');
   rada.classList.remove('dobrze');
-  if (b < 50) {
+  if (b < PROG_DOBRA) {
     pasek.style.backgroundColor = 'var(--ember)';
     ocena.textContent = 'Siła: za mała na hasło główne';
-    rada.textContent = 'Dodaj słowo: każde kolejne słowo to prawie 10 bitów, czyli ok. 900 razy więcej możliwości.';
-  } else if (b < 60) {
-    pasek.style.backgroundColor = 'var(--warn)';
-    ocena.textContent = 'Siła: dobra';
     rada.textContent = $('cyfra').checked
-      ? 'Na hasło główne wystarczy. Kolejne słowo da duży zapas.'
-      : 'Na hasło główne wystarczy. Losowa cyfra albo kolejne słowo dadzą duży zapas.';
+      ? 'Dodaj słowo: każde kolejne słowo to prawie 10 bitów, czyli ok. 900 razy więcej możliwości.'
+      : 'Włącz losową cyfrę albo dodaj słowo: każde kolejne słowo to ok. 900 razy więcej możliwości.';
+  } else if (b < PROG_BARDZO_DOBRA) {
+    pasek.style.backgroundColor = 'var(--ok)';
+    ocena.textContent = 'Siła: dobra';
+    rada.classList.add('dobrze');
+    rada.textContent = $('cyfra').checked
+      ? 'Dobre hasło główne. Kolejne słowo da większy zapas.'
+      : 'Dobre hasło główne. Losowa cyfra albo kolejne słowo dadzą większy zapas.';
   } else {
     pasek.style.backgroundColor = 'var(--ok)';
     ocena.textContent = 'Siła: bardzo dobra';

@@ -6,8 +6,8 @@
 <meta name="referrer" content="no-referrer">
 <title>Trener czytania — Solutor</title>
 <meta name="description" content="Ćwiczenia wzroku i uwagi przy czytaniu: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie (RSVP), widzenie peryferyjne, wyszukiwanie pojęć w tekście, podobne zestawy, nauka tekstów na pamięć i test tempa i zrozumienia. Wyniki tylko w Twojej przeglądarce.">
-<link rel="stylesheet" href="../wspolne.css?v=19">
-<link rel="stylesheet" href="czytanie.css?v=19">
+<link rel="stylesheet" href="../wspolne.css?v=20">
+<link rel="stylesheet" href="czytanie.css?v=20">
 </head>
 <body>
 
@@ -16,18 +16,22 @@
     <nav class="okruszki" aria-label="Ścieżka"><a href="../../">Solutor.pl</a> › <a href="../">Narzędzia</a></nav>
     <h1>Trener czytania</h1>
     <p class="podtytul">Ćwiczenia wzroku i uwagi: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie, widzenie peryferyjne, wyszukiwanie pojęć w tekście i odróżnianie podobnych zestawów, a do tego nauka tekstów na pamięć i test tempa i zrozumienia.</p>
-    <nav class="zakladki" aria-label="Ćwiczenia">
-      <button type="button" data-modul="schulte">Tablica</button>
-      <button type="button" data-modul="litery">Litery</button>
-      <button type="button" data-modul="liczby">Liczby</button>
-      <button type="button" data-modul="slowa">Słowa</button>
-      <button type="button" data-modul="rsvp">RSVP</button>
-      <button type="button" data-modul="peryferyjne">Peryferyjne</button>
-      <button type="button" data-modul="pojecia">Pojęcia</button>
-      <button type="button" data-modul="pamiec">Na pamięć</button>
-      <button type="button" data-modul="podobne">Podobne</button>
-      <button type="button" data-modul="test">Test</button>
-    </nav>
+    <div id="nawigacja">
+      <nav class="zakladki" aria-label="Grupy ćwiczeń">
+        <button type="button" data-grupa="rozgrzewka">Rozgrzewka</button>
+        <button type="button" data-grupa="czytanie">Czytanie</button>
+        <button type="button" data-grupa="nauka">Nauka</button>
+        <button type="button" data-grupa="test">Test</button>
+      </nav>
+      <nav id="podzakladki" class="podzakladki" aria-label="Ćwiczenia w grupie">
+        <button type="button" data-w="rozgrzewka" data-cw="schulte">Tablica</button>
+        <button type="button" data-w="rozgrzewka" data-cw="szukanie">Szukanie</button>
+        <button type="button" data-w="rozgrzewka" data-cw="peryferyjne">Kąt oka</button>
+        <button type="button" data-w="rozgrzewka" data-cw="podobne">Takie same?</button>
+        <button type="button" data-w="czytanie" data-cw="rsvp">Słowo po słowie</button>
+        <button type="button" data-w="czytanie" data-cw="pojecia">Pojęcia</button>
+      </nav>
+    </div>
   </div>
 
   <!-- ============ Tablica Schultego ============ -->
@@ -185,6 +189,11 @@
   <!-- ============ Wyszukiwanie liter, liczb i słów ============ -->
   <section id="m-skaner" class="modul" hidden aria-labelledby="k-tytul">
     <div class="poza-gra">
+      <div id="k-warianty" class="warianty" role="group" aria-label="Czego szukasz">
+        <button type="button" data-modul="litery">Litery</button>
+        <button type="button" data-modul="liczby">Liczby</button>
+        <button type="button" data-modul="slowa">Słowa</button>
+      </div>
       <h2 id="k-tytul">Wyszukiwanie liter</h2>
       <p id="k-opis" class="opis"></p>
     </div>
@@ -681,17 +690,17 @@
   </footer>
 </main>
 
-<script src="wspolne.js?v=19"></script>
-<script src="schulte.js?v=19"></script>
-<script src="skaner.js?v=19"></script>
-<script src="moje.js?v=19"></script>
-<script src="rsvp.js?v=19"></script>
-<script src="peryferyjne.js?v=19"></script>
-<script src="pojecia.js?v=19"></script>
-<script src="pamiec.js?v=19"></script>
-<script src="podobne.js?v=19"></script>
-<script src="testy.js?v=19"></script>
-<script src="test.js?v=19"></script>
-<script src="start.js?v=19"></script>
+<script src="wspolne.js?v=20"></script>
+<script src="schulte.js?v=20"></script>
+<script src="skaner.js?v=20"></script>
+<script src="moje.js?v=20"></script>
+<script src="rsvp.js?v=20"></script>
+<script src="peryferyjne.js?v=20"></script>
+<script src="pojecia.js?v=20"></script>
+<script src="pamiec.js?v=20"></script>
+<script src="podobne.js?v=20"></script>
+<script src="testy.js?v=20"></script>
+<script src="test.js?v=20"></script>
+<script src="start.js?v=20"></script>
 </body>
 </html>

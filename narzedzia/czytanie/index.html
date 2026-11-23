@@ -6,8 +6,8 @@
 <meta name="referrer" content="no-referrer">
 <title>Trener czytania — Solutor</title>
 <meta name="description" content="Ćwiczenia wzroku i uwagi przy czytaniu: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie (RSVP), widzenie peryferyjne, wyszukiwanie pojęć w tekście, podobne zestawy, nauka tekstów na pamięć i test tempa i zrozumienia. Wyniki tylko w Twojej przeglądarce.">
-<link rel="stylesheet" href="../wspolne.css?v=20">
-<link rel="stylesheet" href="czytanie.css?v=20">
+<link rel="stylesheet" href="../wspolne.css?v=21">
+<link rel="stylesheet" href="czytanie.css?v=21">
 </head>
 <body>
 
@@ -18,18 +18,19 @@
     <p class="podtytul">Ćwiczenia wzroku i uwagi: tablica Schultego, wyszukiwanie liter, liczb i słów, czytanie słowo po słowie, widzenie peryferyjne, wyszukiwanie pojęć w tekście i odróżnianie podobnych zestawów, a do tego nauka tekstów na pamięć i test tempa i zrozumienia.</p>
     <div id="nawigacja">
       <nav class="zakladki" aria-label="Grupy ćwiczeń">
-        <button type="button" data-grupa="rozgrzewka">Rozgrzewka</button>
-        <button type="button" data-grupa="czytanie">Czytanie</button>
-        <button type="button" data-grupa="nauka">Nauka</button>
-        <button type="button" data-grupa="test">Test</button>
+        <button type="button" data-grupa="rozgrzewka"><svg class="ikona" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3c.5 3.5 5 5.5 5 11a6 6 0 0 1-12 0c0-2.8 1.4-4.6 3-6 .2 1.5.8 2.4 1.6 2.8C10.5 8 11.4 5 13 3z"/><circle class="akcent" cx="12" cy="15" r="1.25" fill="currentColor"/></svg><span>Rozgrzewka</span></button>
+        <button type="button" data-grupa="czytanie"><svg class="ikona" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10 5 7 4.5 3 5v13c4-.5 7 0 9 1.5"/><path d="M12 6.5c2-1.5 5-2 9-1.5v13c-4-.5-7 0-9 1.5"/><line x1="12" y1="6.5" x2="12" y2="19.5"/><path class="akcent" d="M15.5 5.4V11l1.25-1 1.25 1V5.1"/></svg><span>Czytanie</span></button>
+        <button type="button" data-grupa="nauka"><svg class="ikona" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="21" x2="12" y2="11"/><path d="M12 13c0-3.5-2.5-6-7-6 0 3.5 2.5 6 7 6z"/><path class="akcent" d="M12 11c0-4 2.5-7 7-7 0 4-2.5 7-7 7z"/><line x1="8" y1="21" x2="16" y2="21"/></svg><span>Nauka</span></button>
+        <button type="button" data-grupa="test"><svg class="ikona" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13.5" r="7.5"/><line x1="10" y1="3" x2="14" y2="3"/><line x1="12" y1="3" x2="12" y2="6"/><line x1="18" y1="6.75" x2="19.5" y2="5.25"/><polyline class="akcent" points="8.75 13.75 11 16 15.25 11.5"/></svg><span>Test</span></button>
       </nav>
       <nav id="podzakladki" class="podzakladki" aria-label="Ćwiczenia w grupie">
-        <button type="button" data-w="rozgrzewka" data-cw="schulte">Tablica</button>
-        <button type="button" data-w="rozgrzewka" data-cw="szukanie">Szukanie</button>
-        <button type="button" data-w="rozgrzewka" data-cw="peryferyjne">Kąt oka</button>
-        <button type="button" data-w="rozgrzewka" data-cw="podobne">Takie same?</button>
-        <button type="button" data-w="czytanie" data-cw="rsvp">Słowo po słowie</button>
-        <button type="button" data-w="czytanie" data-cw="pojecia">Pojęcia</button>
+        <button type="button" data-w="rozgrzewka" data-cw="schulte"><svg class="ikona" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3h2.5q1 0 1 1v2.5q0 1-1 1h-2.5q-1 0-1-1v-2.5q0-1 1-1zM10.75 3h2.5q1 0 1 1v2.5q0 1-1 1h-2.5q-1 0-1-1v-2.5q0-1 1-1zM17.5 3h2.5q1 0 1 1v2.5q0 1-1 1h-2.5q-1 0-1-1v-2.5q0-1 1-1zM4 9.75h2.5q1 0 1 1v2.5q0 1-1 1h-2.5q-1 0-1-1v-2.5q0-1 1-1zM17.5 9.75h2.5q1 0 1 1v2.5q0 1-1 1h-2.5q-1 0-1-1v-2.5q0-1 1-1zM4 16.5h2.5q1 0 1 1v2.5q0 1-1 1h-2.5q-1 0-1-1v-2.5q0-1 1-1zM10.75 16.5h2.5q1 0 1 1v2.5q0 1-1 1h-2.5q-1 0-1-1v-2.5q0-1 1-1zM17.5 16.5h2.5q1 0 1 1v2.5q0 1-1 1h-2.5q-1 0-1-1v-2.5q0-1 1-1z"/><rect class="akcent" x="9.75" y="9.75" width="4.5" height="4.5" rx="1" fill="currentColor"/></svg><span>Tablica</span></button>
+        <button type="button" data-w="rozgrzewka" data-cw="szukanie"><svg class="ikona" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.25" y1="15.25" x2="20.5" y2="20.5"/><circle class="akcent" cx="10.5" cy="10.5" r="1.25" fill="currentColor"/></svg><span>Szukanie</span></button>
+        <button type="button" data-w="rozgrzewka" data-cw="peryferyjne"><svg class="ikona" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 9.5c1.9-3.3 4.4-5 7.5-5s5.6 1.7 7.5 5c-1.9 3.3-4.4 5-7.5 5s-5.6-1.7-7.5-5z"/><circle cx="12" cy="9.5" r="1" fill="currentColor"/><g class="akcent"><path d="M10 19H3.5M6 16.75 3.5 19 6 21.25"/><path d="M14 19h6.5M18 16.75 20.5 19 18 21.25"/></g></svg><span>Kąt oka</span></button>
+        <button type="button" data-w="rozgrzewka" data-cw="podobne"><svg class="ikona" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="7.5" height="14" rx="2"/><rect x="13.5" y="5" width="7.5" height="14" rx="2"/><path d="M5.25 9h3M5.25 12h3M5.25 15h3M15.75 9h3M15.75 12h3"/><circle class="akcent" cx="17.25" cy="15" r="1" fill="currentColor"/></svg><span>Takie same?</span></button>
+        <button type="button" data-w="czytanie" data-cw="rsvp"><svg class="ikona" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9V7a2 2 0 0 1 2-2h2M17 5h2a2 2 0 0 1 2 2v2M21 15v2a2 2 0 0 1-2 2h-2M7 19H5a2 2 0 0 1-2-2v-2"/><line x1="7.5" y1="14" x2="16.5" y2="14"/><line class="akcent" x1="12" y1="8.5" x2="12" y2="10.5"/></svg><span>Słowo po słowie</span></button>
+        <button type="button" data-w="czytanie" data-cw="pojecia"><svg class="ikona" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="6.5" x2="20" y2="6.5"/><path d="M4 12h2.5M18 12h2"/><line x1="4" y1="17.5" x2="14" y2="17.5"/><rect class="akcent" x="9.5" y="10.75" width="5.5" height="2.5" rx="1" fill="currentColor"/></svg><span>Pojęcia</span></button>
+        <button type="button" data-w="nauka" data-cw="pamiec"><svg class="ikona" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 8h7M8.5 12h7M8.5 16h2"/><path class="akcent" d="M13 16h.01M15.5 16h.01"/></svg><span>Na pamięć</span></button>
       </nav>
     </div>
   </div>
@@ -690,17 +691,17 @@
   </footer>
 </main>
 
-<script src="wspolne.js?v=20"></script>
-<script src="schulte.js?v=20"></script>
-<script src="skaner.js?v=20"></script>
-<script src="moje.js?v=20"></script>
-<script src="rsvp.js?v=20"></script>
-<script src="peryferyjne.js?v=20"></script>
-<script src="pojecia.js?v=20"></script>
-<script src="pamiec.js?v=20"></script>
-<script src="podobne.js?v=20"></script>
-<script src="testy.js?v=20"></script>
-<script src="test.js?v=20"></script>
-<script src="start.js?v=20"></script>
+<script src="wspolne.js?v=21"></script>
+<script src="schulte.js?v=21"></script>
+<script src="skaner.js?v=21"></script>
+<script src="moje.js?v=21"></script>
+<script src="rsvp.js?v=21"></script>
+<script src="peryferyjne.js?v=21"></script>
+<script src="pojecia.js?v=21"></script>
+<script src="pamiec.js?v=21"></script>
+<script src="podobne.js?v=21"></script>
+<script src="testy.js?v=21"></script>
+<script src="test.js?v=21"></script>
+<script src="start.js?v=21"></script>
 </body>
 </html>

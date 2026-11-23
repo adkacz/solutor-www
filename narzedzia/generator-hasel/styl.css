@@ -52,6 +52,17 @@
 .wyjasnienie li { margin-bottom: 8px; font-size: 15px; }
 .wyjasnienie a { color: var(--ember); }
 code { font-family: var(--font-mono); font-size: 13px; background: var(--bg); padding: 1px 4px; border-radius: 4px; }
+.po-ludzku { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+.po-ludzku p { margin: 0 0 10px; font-size: 15px; }
+.po-ludzku ul { margin-bottom: 10px; }
+.zrodla { margin-top: 14px; padding: 0 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+.zrodla[open] { padding-bottom: 10px; }
+.zrodla summary { padding: 12px 0; font-weight: 600; color: var(--ink); cursor: pointer; }
+.zrodla summary:focus-visible { outline: 3px solid var(--ember); outline-offset: 2px; border-radius: 4px; }
+.zrodla h3 { margin: 12px 0 4px; font-size: 15px; }
+.zrodla p { margin: 0 0 8px; font-size: 14px; }
+.zrodla ul { margin: 0 0 8px; }
+.zrodla li { margin-bottom: 3px; font-size: 14px; }
 
 @media (max-width: 560px) {
   .opcje { grid-template-columns: 1fr; }
@@ -62,6 +73,15 @@ code { font-family: var(--font-mono); font-size: 13px; background: var(--bg); pa
 
 /* Karta ratunkowa: tylko na wydruku */
 .karta-ratunkowa { display: none; }
+.tylko-czytnik {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 @media print {
   .karta { display: none !important; }
   .karta-ratunkowa {
@@ -82,7 +102,7 @@ code { font-family: var(--font-mono); font-size: 13px; background: var(--bg); pa
   .kr-linia { border-bottom: 1px dashed #000; height: 30px; }
   .kr-haslo {
     border: 2px solid #000;
-    min-height: 56px;
+    min-height: 84px;
     padding: 14px;
     text-align: center;
     font-family: var(--font-mono);

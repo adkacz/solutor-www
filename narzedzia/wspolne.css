@@ -106,10 +106,23 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--ok); fle
 
 /* Spis narzędzi (narzedzia/index.html) */
 .spis { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-.spis a { display: block; padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: var(--text); background: var(--panel); }
+.spis a { display: grid; grid-template-columns: 46px minmax(0, 1fr); column-gap: 14px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: var(--text); background: var(--panel); }
 .spis a:hover { border-color: var(--ember); background: var(--ember-soft); }
 .spis strong { display: block; font-size: 18px; color: var(--ink); margin-bottom: 2px; }
 .spis span { font-size: 15px; color: var(--steel); }
+.spis-ikona {
+  grid-row: 1 / span 2;
+  box-sizing: border-box;
+  width: 46px;
+  height: 46px;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+  transition: background-color .15s;
+}
+.spis-ikona .akcent { color: var(--ember); stroke: currentColor; }
+.spis a:hover .spis-ikona { background: var(--panel); }
 
 /* Stopka narzędzia */
 .stopka-narzedzia {
@@ -124,6 +137,11 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--ok); fle
 @media (max-width: 560px) {
   body { padding: 16px 12px 40px; }
   .karta { padding: 20px 16px; }
+  /* Na telefonie ikona stoi przy tytule, a opis ma całą szerokość karty. */
+  .spis a { padding: 14px; column-gap: 12px; align-items: center; }
+  .spis-ikona { grid-row: 1; }
+  .spis strong { margin-bottom: 0; line-height: 1.25; }
+  .spis span { grid-column: 1 / -1; margin-top: 8px; }
 }
 @media print {
   body { background: #fff; padding: 0; color: #000; }

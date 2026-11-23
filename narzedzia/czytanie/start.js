@@ -17,24 +17,66 @@
     test: ['m-test', 'test'],
   };
   const SEKCJE = [...new Set(Object.values(CWICZENIA).map((c) => c[0]))];
+  // Układ zakładek: grupy › pozycje w drugim rzędzie. „Szukanie” to Litery, Liczby i Słowa (przełącznik w ćwiczeniu).
+  const GRUPY = {
+    rozgrzewka: ['schulte', 'szukanie', 'peryferyjne', 'podobne'],
+    czytanie: ['rsvp', 'pojecia'],
+    nauka: ['pamiec'],
+    test: ['test'],
+  };
+  const SZUKANIE = ['litery', 'liczby', 'slowa'];
+  const pozycja = (n) => (SZUKANIE.includes(n) ? 'szukanie' : n);
+  const grupaCwiczenia = (n) => Object.keys(GRUPY).find((g) => GRUPY[g].includes(pozycja(n)));
+  let naw = T.wczytajNawigacje();
+  const zPozycji = (p) => (p === 'szukanie' ? naw.grupy.szukanie || 'litery' : p);
+  const zGrupy = (g) => {
+    const z = naw.grupy[g];
+    return z && grupaCwiczenia(z) === g ? z : zPozycji(GRUPY[g][0]);
+  };
   let biezace = null;
   const modul = () => (biezace ? T.moduly[CWICZENIA[biezace][1]] : null);
 
-  function przelacz(nazwa) {
-    if (!CWICZENIA[nazwa]) nazwa = 'schulte';
+  function pokazZakladki(nazwa) {
+    const g = grupaCwiczenia(nazwa), p = pozycja(nazwa);
+    document.querySelectorAll('.zakladki button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.grupa === g)));
+    document.querySelectorAll('#podzakladki button').forEach((b) => {
+      b.hidden = b.dataset.w !== g;
+      b.setAttribute('aria-pressed', String(b.dataset.cw === p));
+    });
+    $('podzakladki').hidden = GRUPY[g].length < 2;
+    document.querySelectorAll('#k-warianty button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.modul === nazwa)));
+  }
+  function zapamietaj(nazwa) {
+    const g = grupaCwiczenia(nazwa);
+    naw.ostatnie = nazwa;
+    if (GRUPY[g].length > 1) naw.grupy[g] = nazwa;
+    if (SZUKANIE.includes(nazwa)) naw.grupy.szukanie = nazwa;
+    T.zapiszNawigacje(naw);
+  }
+
+  // pamietaj = false, gdy to nie wybór użytkownika (start, po wczytaniu albo usunięciu danych)
+  function przelacz(nazwa, pamietaj = true) {
+    if (!CWICZENIA[nazwa]) nazwa = naw.ostatnie;
     if (modul()) modul().wyjdz();
     T.trybGry(false);
     for (const id of SEKCJE) $(id).hidden = id !== CWICZENIA[nazwa][0];
-    document.querySelectorAll('.zakladki button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.modul === nazwa)));
+    pokazZakladki(nazwa);
     biezace = nazwa;
     modul().wejdz(nazwa);
+    if (pamietaj) zapamietaj(nazwa);
     if (location.hash !== `#${nazwa}`) {
       try { history.replaceState(null, '', `#${nazwa}`); } catch (e) { /* np. podgląd z pliku */ }
     }
   }
   T.przelacz = przelacz;
 
-  document.querySelector('.zakladki').addEventListener('click', (ev) => {
+  $('nawigacja').addEventListener('click', (ev) => {
+    const g = ev.target.closest('button[data-grupa]');
+    if (g) { przelacz(zGrupy(g.dataset.grupa)); return; }
+    const c = ev.target.closest('button[data-cw]');
+    if (c) przelacz(zPozycji(c.dataset.cw));
+  });
+  $('k-warianty').addEventListener('click', (ev) => {
     const b = ev.target.closest('button[data-modul]');
     if (b) przelacz(b.dataset.modul);
   });
@@ -90,21 +132,22 @@
       if (obecne && !confirm(`Zastąpić dane w tej przeglądarce (${opisWynikow(T.stan)}) danymi z pliku (${opisWynikow(nowy)})?`)) return;
       T.ustawStan(nowy);
       T.zapisz();
-      przelacz(biezace);
+      przelacz(biezace, false);
       T.komunikat(`Wczytano: ${opisWynikow(nowy)}.`);
     };
     czytnik.readAsText(plik);
   });
   $('wyczysc-wszystko').addEventListener('click', () => {
-    if (!T.liczbaWynikow(T.stan) && !T.stan.tekst.wlasny && !T.stan.tekst.moje.length) { T.usunZapis(); T.komunikat('Nie ma żadnych zapisanych danych.'); return; }
+    if (!T.liczbaWynikow(T.stan) && !T.stan.tekst.wlasny && !T.stan.tekst.moje.length) { T.usunZapis(); naw = T.wczytajNawigacje(); T.komunikat('Nie ma żadnych zapisanych danych.'); return; }
     if (!confirm(`Usunąć z tej przeglądarki wszystkie dane trenera (${opisWynikow(T.stan)})? Tego nie da się cofnąć — jeśli chcesz, najpierw zapisz kopię do pliku.`)) return;
     T.ustawStan(T.domyslny());
     T.usunZapis();
-    przelacz(biezace);
+    naw = T.wczytajNawigacje();
+    przelacz(biezace, false);
     T.komunikat('Dane usunięte.');
   });
 
   // ---------- start ----------
   T.wczytaj();
-  przelacz(location.hash.slice(1));
+  przelacz(location.hash.slice(1), false);
 })();

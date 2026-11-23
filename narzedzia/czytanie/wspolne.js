@@ -5,6 +5,7 @@
 
 const T = (() => {
   const KLUCZ = 'solutor.czytanie.v1';
+  const KLUCZ_NAWIGACJI = 'solutor.czytanie.nawigacja';
   const MAX_HISTORII = 40;
   const MAX_TEKSTU = 20000;
   const MAX_MOICH = 20, MAX_NAZWY = 60;   // „Moje teksty”: liczba zapisanych tekstów i długość nazwy
@@ -255,7 +256,26 @@ const T = (() => {
       return false;
     }
   }
-  function usunZapis() { try { localStorage.removeItem(KLUCZ); } catch (e) { /* nic */ } }
+  function usunZapis() {
+    try { localStorage.removeItem(KLUCZ); localStorage.removeItem(KLUCZ_NAWIGACJI); } catch (e) { /* nic */ }
+  }
+
+  // Pamięć zakładek osobno od wyników: przełączenie zakładki w starej karcie nie może nadpisać nowszych wyników.
+  const NAZWY_CWICZEN = ['schulte', 'litery', 'liczby', 'slowa', 'rsvp', 'peryferyjne', 'pojecia', 'pamiec', 'podobne', 'test'];
+  const PAMIETANE_GRUPY = ['rozgrzewka', 'czytanie', 'szukanie'];
+  function wczytajNawigacje() {
+    const n = { ostatnie: 'schulte', grupy: {} };
+    try {
+      const o = obiekt(JSON.parse(localStorage.getItem(KLUCZ_NAWIGACJI)));
+      if (NAZWY_CWICZEN.includes(o.ostatnie)) n.ostatnie = o.ostatnie;
+      const gr = obiekt(o.grupy);
+      for (const k of PAMIETANE_GRUPY) if (NAZWY_CWICZEN.includes(gr[k])) n.grupy[k] = gr[k];
+    } catch (e) { /* tryb prywatny albo uszkodzony zapis — od pierwszego ćwiczenia */ }
+    return n;
+  }
+  function zapiszNawigacje(n) {
+    try { localStorage.setItem(KLUCZ_NAWIGACJI, JSON.stringify(n)); } catch (e) { /* nic: to tylko wygoda */ }
+  }
   function dopisz(historia, wpis) {
     historia.unshift(wpis);
     if (historia.length > MAX_HISTORII) historia.length = MAX_HISTORII;
@@ -352,7 +372,7 @@ const T = (() => {
 
   return {
     KLUCZ, MAX_TEKSTU, MAX_MOICH, MAX_NAZWY, MAX_TEMP, WARIANTY, $, el, losowa, tasuj, wybierz, ulamek, kiedyTekst, odmiana,
-    domyslny, oczysc, wczytaj, zapisz, usunZapis, dopisz, liczbaWynikow,
+    domyslny, oczysc, wczytaj, zapisz, usunZapis, wczytajNawigacje, zapiszNawigacje, dopisz, liczbaWynikow,
     get stan() { return stan; },
     ustawStan(nowy) { stan = nowy; },
     pokazHistorie, komunikat, odznaka, migniecie, trybGry, ustawPlansze, szerokosc,

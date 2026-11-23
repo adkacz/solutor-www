@@ -195,7 +195,10 @@ function czas(sekundy) {
   if (sekundy < 3600) return `ok. ${Math.round(sekundy / 60)} min`;
   if (sekundy < 86400) return `ok. ${Math.round(sekundy / 3600)} godz.`;
   const dni = sekundy / 86400;
-  if (dni < 60) return `ok. ${Math.round(dni)} dni`;
+  if (dni < 60) {
+    const d = Math.round(dni);
+    return d === 1 ? 'ok. 1 dnia' : `ok. ${d} dni`;
+  }
   const l = dni / 365.25;
   if (l < 2) return `ok. ${Math.round(dni / 30.44)} mies.`;
   if (l < 1e3) return `ok. ${Math.round(l)} ${lat(l)}`;
@@ -228,27 +231,45 @@ function pokazSile() {
     ocena.textContent = 'Siła: dobra';
     rada.classList.add('dobrze');
     rada.textContent = $('cyfra').checked
-      ? 'Dobre hasło główne. Kolejne słowo da większy zapas.'
-      : 'Dobre hasło główne. Losowa cyfra albo kolejne słowo dadzą większy zapas.';
+      ? 'Dobre jako hasło główne do menedżera (nie do zwykłych serwisów). Kolejne słowo da większy zapas.'
+      : 'Dobre jako hasło główne do menedżera (nie do zwykłych serwisów). Losowa cyfra albo kolejne słowo dadzą większy zapas.';
   } else {
     pasek.style.backgroundColor = 'var(--ok)';
     ocena.textContent = 'Siła: bardzo dobra';
     rada.classList.add('dobrze');
-    rada.textContent = 'Dobre hasło główne. Nie poprawiaj słów na własne: siła bierze się wyłącznie z losowania.';
+    rada.textContent = 'Bardzo dobre hasło główne. Nie poprawiaj słów na własne: siła bierze się wyłącznie z losowania.';
   }
 }
 
 function pokaz() {
   const h = haslo();
   const pole = $('haslo');
-  pole.textContent = stan.ukryte ? '•'.repeat(Math.min(h.length, 28)) : h;
+  pole.textContent = stan.ukryte ? '•'.repeat(24) : h;
   pole.classList.toggle('ukryte', stan.ukryte);
-  $('kr-haslo').textContent = $('pusta-karta').checked ? '' : h;
-  $('kr-data').textContent = new Date().toLocaleDateString('pl-PL');
+  if (stan.ukryte) {
+    pole.setAttribute('role', 'img');
+    pole.setAttribute('aria-label', 'Hasło ukryte');
+  } else {
+    pole.removeAttribute('role');
+    pole.removeAttribute('aria-label');
+  }
+  $('kr-haslo').textContent = '';   // kopia hasła na karcie powstaje dopiero przy druku
   pokazSile();
   const k = $('kopiuj');
   k.textContent = 'Kopiuj';
   k.classList.remove('zrobione');
+}
+
+// Bez czyszczenia po „afterprint”: na części telefonów zdarzenie przychodzi przed wydrukiem i karta byłaby pusta.
+function wypelnijKarte() {
+  $('kr-haslo').textContent = $('pusta-karta').checked ? '' : haslo();
+  $('kr-data').textContent = new Date().toLocaleDateString('pl-PL');
+}
+
+// Czytnik ekranu dostaje informację o nowym losowaniu, ale nie samo hasło.
+function ogloszNowe() {
+  const k = $('komunikat');
+  k.textContent = k.textContent.endsWith('.') ? 'Wylosowano nowe słowa' : 'Wylosowano nowe słowa.';
 }
 
 async function kopiuj() {
@@ -272,10 +293,20 @@ function ukryj() {
 
 document.addEventListener('DOMContentLoaded', () => {
   $('liczba-slow').textContent = String(SLOWA.length);
-  $('losuj').addEventListener('click', nowe);
+  // GitHub Pages nie pozwala ustawić nagłówka frame-ancestors, więc odmawiamy działania w obcej ramce.
+  let wRamce = false;
+  try { wRamce = window.top !== window.self; } catch (e) { wRamce = true; }
+  if (wRamce) {
+    $('haslo').textContent = 'Generator nie działa wewnątrz innej strony. Otwórz go bezpośrednio na solutor.pl.';
+    ['losuj', 'kopiuj', 'ukryj', 'drukuj', 'liczba', 'wielkie', 'separator', 'cyfra', 'pusta-karta']
+      .forEach((id) => { $(id).disabled = true; });
+    return;
+  }
+  $('losuj').addEventListener('click', () => { nowe(); ogloszNowe(); });
   $('kopiuj').addEventListener('click', kopiuj);
   $('ukryj').addEventListener('click', ukryj);
-  $('drukuj').addEventListener('click', () => { pokaz(); window.print(); });
+  $('drukuj').addEventListener('click', () => { wypelnijKarte(); window.print(); });
+  window.addEventListener('beforeprint', wypelnijKarte);
   $('liczba').addEventListener('change', zmianaLiczby);
   ['wielkie', 'separator', 'cyfra', 'pusta-karta'].forEach((id) => $(id).addEventListener('change', pokaz));
   nowe();

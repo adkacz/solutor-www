@@ -73,6 +73,15 @@ code { font-family: var(--font-mono); font-size: 13px; background: var(--bg); pa
 
 /* Karta ratunkowa: tylko na wydruku */
 .karta-ratunkowa { display: none; }
+.tylko-czytnik {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 @media print {
   .karta { display: none !important; }
   .karta-ratunkowa {
@@ -93,7 +102,7 @@ code { font-family: var(--font-mono); font-size: 13px; background: var(--bg); pa
   .kr-linia { border-bottom: 1px dashed #000; height: 30px; }
   .kr-haslo {
     border: 2px solid #000;
-    min-height: 56px;
+    min-height: 84px;
     padding: 14px;
     text-align: center;
     font-family: var(--font-mono);

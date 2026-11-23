@@ -6,9 +6,9 @@
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'">
 <title>Generator haseł ze słów — Solutor</title>
-<meta name="description" content="Hasło główne do menedżera haseł z losowych polskich słów: łatwe do zapamiętania, z uczciwie policzoną siłą. Losowanie w Twojej przeglądarce, nic nie jest wysyłane. Karta ratunkowa do wydruku.">
+<meta name="description" content="Hasło główne do menedżera haseł z losowych polskich słów: łatwe do zapamiętania, z uczciwie policzoną siłą. Losowanie w Twojej przeglądarce, hasło nie jest nigdzie wysyłane. Karta ratunkowa do wydruku.">
 <link rel="stylesheet" href="../wspolne.css">
-<link rel="stylesheet" href="styl.css?v=2">
+<link rel="stylesheet" href="styl.css?v=3">
 </head>
 <body>
 
@@ -18,8 +18,10 @@
   <p class="podtytul">Hasło główne do menedżera haseł z losowych polskich słów: łatwe do zapamiętania i&nbsp;przepisania, trudne do odgadnięcia. Słowa bez polskich znaków, więc wpiszesz je na każdej klawiaturze.</p>
 
   <div class="haslo-wiersz">
-    <output id="haslo" class="haslo" aria-live="polite">Losuję...</output>
+    <div id="haslo" class="haslo">Losuję...</div>
   </div>
+  <p id="komunikat" class="tylko-czytnik" role="status"></p>
+  <noscript><p class="podpowiedz">Ten generator działa wyłącznie w&nbsp;Twojej przeglądarce i&nbsp;wymaga włączonego JavaScriptu.</p></noscript>
 
   <div class="akcje odstep">
     <button id="losuj" class="przycisk glowny" type="button">Wylosuj nowe słowa</button>
@@ -90,12 +92,12 @@
   <section class="wyjasnienie">
     <h2>Jak tego używać</h2>
     <ul>
-      <li><strong>Do czego:</strong> jedno hasło, które trzeba pamiętać: hasło główne do menedżera haseł (np. Bitwarden, KeePassXC) albo do komputera. Nie używaj go nigdzie indziej. Hasła do sklepów, banków i&nbsp;poczty niech generuje sam menedżer: losowe i&nbsp;inne dla każdego serwisu.</li>
+      <li><strong>Do czego:</strong> jedno hasło, które trzeba pamiętać: hasło główne do menedżera haseł (np. Bitwarden, KeePassXC). Nie używaj go nigdzie indziej: ani w&nbsp;serwisach, ani do logowania do komputera. Hasła do sklepów, banków i&nbsp;poczty niech generuje sam menedżer: losowe i&nbsp;inne dla każdego serwisu.</li>
       <li><strong>Nie poprawiaj słów na własne</strong> i&nbsp;nie dopisuj nic „od siebie”. Siła bierze się wyłącznie z&nbsp;losowania. Słowo wybrane przez człowieka jest dużo łatwiejsze do odgadnięcia.</li>
       <li><strong>Nie losuj do skutku.</strong> Weź jeden z&nbsp;pierwszych wyników. Wybieranie „najładniejszego” hasła zmniejsza siłę: wybór spośród 1000 losowań może kosztować tyle, co jedno słowo.</li>
-      <li><strong>Wielkie litery na początku każdego słowa</strong> nie dodają siły, bo to stała zasada i&nbsp;atakujący też ją zna. Pomagają tylko tam, gdzie serwis wymaga wielkiej litery. Siłę dodaje dopiero losowy wybór słów z&nbsp;wielką literą albo kolejne słowo.</li>
-      <li><strong>Schowek:</strong> najbezpieczniej przepisz hasło ręcznie. Jeśli je skopiujesz, a&nbsp;w&nbsp;Windows masz włączoną historię schowka, naciśnij Win+V, przy haśle wybierz „…” i&nbsp;Usuń. Skopiowanie czegoś innego nie usuwa hasła z&nbsp;historii, a&nbsp;synchronizacja może przenieść je na inne urządzenia.</li>
-      <li><strong>Prywatność:</strong> słowa losuje Twoja przeglądarka (<code>crypto.getRandomValues</code>). Strona nie wysyła niczego i&nbsp;nie używa ciasteczek: możesz odłączyć internet i&nbsp;losować dalej. Kod jest jawny: <a href="https://github.com/adkacz/solutor-www/tree/main/narzedzia/generator-hasel">GitHub</a>.</li>
+      <li><strong>Wielkie litery na początku każdego słowa</strong> nie dodają siły, bo to stała zasada i&nbsp;atakujący też ją zna. Pomagają tylko tam, gdzie serwis wymaga wielkiej litery. Siłę dodaje dopiero losowy wybór słów z&nbsp;wielką literą albo kolejne słowo, a&nbsp;kolejne słowo daje więcej i&nbsp;zwykle łatwiej je zapamiętać.</li>
+      <li><strong>Schowek:</strong> najbezpieczniej przepisz hasło ręcznie. Jeśli je skopiujesz, a&nbsp;w&nbsp;Windows masz włączoną historię schowka, naciśnij Win+V, przy haśle wybierz „…” i&nbsp;Usuń. Skopiowanie czegoś innego nie usuwa hasła z&nbsp;historii, a&nbsp;synchronizacja może przenieść je na inne urządzenia. Na Androidzie historię schowka mają też klawiatury (np. Gboard, Samsung), a&nbsp;urządzenia Apple mogą przenosić schowek między sobą, więc na telefonie tym bardziej przepisz hasło ręcznie.</li>
+      <li><strong>Prywatność:</strong> słowa losuje Twoja przeglądarka (<code>crypto.getRandomValues</code>). Po wczytaniu strona nie łączy się z&nbsp;internetem i&nbsp;nie używa ciasteczek: możesz odłączyć sieć i&nbsp;losować dalej. Samo otwarcie adresu widzi serwer hostingu, a&nbsp;zainstalowane rozszerzenia przeglądarki mogą mieć dostęp do otwartych stron. Kod jest jawny: <a href="https://github.com/adkacz/solutor-www/tree/main/narzedzia/generator-hasel" target="_blank" rel="noopener noreferrer">GitHub</a>.</li>
     </ul>
     <p class="drobny">Czasy są przybliżone i&nbsp;pokazują rząd wielkości. Siła liczona jest uczciwie: z&nbsp;założeniem, że atakujący zna listę <span id="liczba-slow">924</span> słów i&nbsp;cały sposób losowania (jest jawny w&nbsp;kodzie tej strony).</p>
     <div class="po-ludzku">
@@ -106,37 +108,35 @@
       <ul>
         <li><strong>Lotto:</strong> odgadnięcie hasła za pierwszym razem jest ok. 190&nbsp;tys. razy trudniejsze niż trafienie szóstki dwa razy z&nbsp;rzędu.</li>
         <li><strong>Gwiazdy:</strong> Droga Mleczna ma 100–400&nbsp;mld gwiazd. Ustawień kłódki jest tyle, co gwiazd w&nbsp;ponad 90&nbsp;milionach takich galaktyk.</li>
-        <li><strong>Piasek:</strong> naukowcy z&nbsp;Uniwersytetu Hawajskiego oszacowali ziarna na wszystkich plażach i&nbsp;pustyniach świata na ok. 7,5 tryliona. Ustawień kłódki jest ok. 5 razy więcej, choć to zgrubny szacunek, a&nbsp;inne bywają wyższe.</li>
       </ul>
       <p>Myślniki i&nbsp;wielkie litery na początku każdego słowa są jak kolor kłódki. Wygląda inaczej, ale złodziej wie o&nbsp;tym z&nbsp;góry, więc nie ma przez to ani jednej próby więcej.</p>
       <p><strong>Bit</strong> to jedno podwojenie pracy złodzieja. Jedno słowo to prawie 10 podwojeń, a&nbsp;całe hasło 65.</p>
-      <p>Złodziej może trafić za pierwszym razem albo dopiero przy ostatnim ustawieniu, więc średnio sprawdzi połowę. Czas zależy od tego, jak szybko może kręcić kółkami. W&nbsp;menedżerze haseł każda próba wymaga jakby 600&nbsp;000 obrotów korbą, a&nbsp;w&nbsp;źle zabezpieczonym serwisie kółka kręcą się niemal bez oporu. Dlatego to samo hasło wytrzyma w&nbsp;sejfie ok. 311&nbsp;tys. lat, a&nbsp;w&nbsp;takim serwisie ok. miesiąca. I&nbsp;dlatego nie wolno używać go nigdzie indziej.</p>
+      <p>Złodziej może trafić za pierwszym razem albo dopiero przy ostatnim ustawieniu, więc średnio sprawdzi połowę. Czas zależy od tego, jak szybko może kręcić kółkami. W&nbsp;menedżerze haseł każda próba wymaga jakby 600&nbsp;000 obrotów korbą, a&nbsp;w&nbsp;źle zabezpieczonym serwisie kółka kręcą się niemal bez oporu. Dlatego to samo hasło wytrzyma w&nbsp;sejfie ok. 311&nbsp;tys. lat, a&nbsp;w&nbsp;takim serwisie ok. miesiąca. Nawet 1% szansy na trafienie złodziej osiągnie w&nbsp;sejfie dopiero po ok. 6&nbsp;tys. lat, ale w&nbsp;takim serwisie już po ok. 15 godzinach. I&nbsp;dlatego nie wolno używać go nigdzie indziej.</p>
     </div>
     <details class="zrodla">
       <summary>Wersja techniczna: wzory i&nbsp;źródła</summary>
       <h3>Jak liczona jest siła</h3>
       <p>Lista ma 924 różne słowa, więc jedno losowe słowo to log<sub>2</sub>(924) ≈ 9,85 bita. Losowa cyfra przy losowym słowie dodaje log<sub>2</sub>(10 × n), gdzie n to liczba słów, a&nbsp;wielkie litery w&nbsp;losowych słowach log<sub>2</sub>(2<sup>n</sup> − 1). Separator i&nbsp;wielka litera na początku każdego słowa nie dodają nic. Domyślne hasło ma 6 × 9,85 + log<sub>2</sub>(60) ≈ 65 bitów. Średni czas to połowa wszystkich możliwości podzielona przez liczbę prób na sekundę.</p>
       <h3>Skąd szybkość ataku</h3>
-      <p>To nie jest nasz pomiar, tylko publiczny test programu hashcat na karcie RTX 5090. Sejf Bitwardena (PBKDF2-SHA256, 600&nbsp;000 iteracji): ok. 19&nbsp;tys. prób/s na kartę, czyli ok. 1,9&nbsp;mln przy 100 kartach. Szybki skrót SHA-1: ok. 70&nbsp;mld prób/s na kartę, czyli ok. 7&nbsp;bln przy 100 kartach. Przy jeszcze słabszym MD5 czasy byłyby ok. 3 razy krótsze. Test zakłada krótsze hasła niż te z&nbsp;generatora, więc prawdziwy atak będzie raczej wolniejszy, ale nie liczymy tego na korzyść hasła.</p>
+      <p>To nie jest nasz pomiar, tylko publiczny test programu hashcat na karcie RTX 5090. Sejf Bitwardena (PBKDF2-SHA256, 600&nbsp;000 iteracji): ok. 19&nbsp;tys. prób/s na kartę, czyli ok. 1,9&nbsp;mln przy 100 kartach. Szybki skrót SHA-1: ok. 70&nbsp;mld prób/s na kartę, czyli ok. 7&nbsp;bln przy 100 kartach. Przy jeszcze słabszym MD5 czasy byłyby ok. 3 razy krótsze. Przy szybkich skrótach test zakłada krótsze hasła niż te z&nbsp;generatora, więc prawdziwy atak może być wolniejszy. Przy PBKDF2 długość hasła prawie nie wpływa na tempo. Nie liczymy tego na korzyść hasła.</p>
       <h3>Co znaczą oceny</h3>
       <p>Organizacja EFF ocenia, że 64 bity z&nbsp;losowych słów chronią przed przestępcą, a&nbsp;77 bitów przed niemal każdym poza najbardziej zdeterminowanymi służbami państwowymi. Stąd progi: poniżej 64 bitów „za mała”, od 64 „dobra”, od 77 „bardzo dobra”. Z&nbsp;losową cyfrą 6 słów to 65 bitów, 7 słów to 75, a&nbsp;8 słów to 85. EFF zaleca co najmniej 6 słów, ale ze swojej listy 7776 słów, co daje 77 bitów. Nasza lista jest krótsza, więc te same 6 słów daje mniej.</p>
       <h3>Źródła</h3>
       <ul>
-        <li><a href="https://gist.github.com/Chick3nman/09bac0775e6393468c2925c1e1363d5c">Hashcat: test karty RTX 5090</a></li>
-        <li><a href="https://bitwarden.com/help/kdf-algorithms/">Bitwarden: ustawienia szyfrowania hasła głównego</a></li>
-        <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html">OWASP: przechowywanie haseł</a></li>
-        <li><a href="https://pages.nist.gov/800-63-4/sp800-63b.html">NIST SP 800-63B-4: zasady dla haseł</a></li>
-        <li><a href="https://www.eff.org/dice">EFF: hasła z&nbsp;losowych słów</a></li>
-        <li><a href="https://ssd.eff.org/module/animated-overview-how-make-super-secure-password-using-dice">EFF: ile słów przed jakim atakującym</a></li>
-        <li><a href="https://passwordresearch.com/papers/paper243.html">Bonneau i&nbsp;Shutova (2012): frazy wybierane przez ludzi</a></li>
-        <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues">MDN: crypto.getRandomValues</a></li>
-        <li><a href="https://support.microsoft.com/en-us/windows/using-the-clipboard-30375039-ce71-9fe4-5b30-21b7aab6b13f">Microsoft: schowek w&nbsp;Windows</a></li>
-        <li><a href="https://www.wprost.pl/10005885">Wprost: szansa na szóstkę w&nbsp;Lotto</a></li>
-        <li><a href="https://imagine.gsfc.nasa.gov/science/objects/milkyway1.html">NASA: Droga Mleczna</a></li>
-        <li><a href="https://www.universetoday.com/articles/how-many-stars-are-in-the-milky-way-2">Universe Today: szacunki liczby gwiazd</a></li>
-        <li><a href="https://www.npr.org/sections/krulwich/2012/09/17/161096233/which-is-greater-the-number-of-sand-grains-on-earth-or-stars-in-the-sky">NPR: szacunek liczby ziaren piasku</a></li>
+        <li><a href="https://gist.github.com/Chick3nman/09bac0775e6393468c2925c1e1363d5c" target="_blank" rel="noopener noreferrer">Hashcat: test karty RTX 5090</a></li>
+        <li><a href="https://bitwarden.com/help/kdf-algorithms/" target="_blank" rel="noopener noreferrer">Bitwarden: ustawienia szyfrowania hasła głównego</a></li>
+        <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP: przechowywanie haseł</a></li>
+        <li><a href="https://pages.nist.gov/800-63-4/sp800-63b.html" target="_blank" rel="noopener noreferrer">NIST SP 800-63B-4: zasady dla haseł</a></li>
+        <li><a href="https://www.eff.org/dice" target="_blank" rel="noopener noreferrer">EFF: hasła z&nbsp;losowych słów</a></li>
+        <li><a href="https://ssd.eff.org/module/animated-overview-how-make-super-secure-password-using-dice" target="_blank" rel="noopener noreferrer">EFF: ile słów przed jakim atakującym</a></li>
+        <li><a href="https://passwordresearch.com/papers/paper243.html" target="_blank" rel="noopener noreferrer">Bonneau i&nbsp;Shutova (2012): frazy wybierane przez ludzi</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues" target="_blank" rel="noopener noreferrer">MDN: crypto.getRandomValues</a></li>
+        <li><a href="https://support.microsoft.com/en-us/windows/using-the-clipboard-30375039-ce71-9fe4-5b30-21b7aab6b13f" target="_blank" rel="noopener noreferrer">Microsoft: schowek w&nbsp;Windows</a></li>
+        <li><a href="https://www.wprost.pl/10005885" target="_blank" rel="noopener noreferrer">Wprost: szansa na szóstkę w&nbsp;Lotto</a></li>
+        <li><a href="https://imagine.gsfc.nasa.gov/science/objects/milkyway1.html" target="_blank" rel="noopener noreferrer">NASA: Droga Mleczna</a></li>
+        <li><a href="https://www.universetoday.com/articles/how-many-stars-are-in-the-milky-way-2" target="_blank" rel="noopener noreferrer">Universe Today: szacunki liczby gwiazd</a></li>
       </ul>
-      <p class="drobny">Stan na 23.11.2026. Linki otwierają strony źródeł dopiero po kliknięciu.</p>
+      <p class="drobny">Stan na 23.11.2026. Linki otwierają strony źródeł w&nbsp;nowej karcie, dopiero po kliknięciu.</p>
     </details>
   </section>
 </main>
@@ -175,10 +175,11 @@
     • zainstaluj ten sam menedżer haseł albo wejdź na jego stronę,<br>
     • zaloguj się adresem z&nbsp;punktu 2 i&nbsp;hasłem z&nbsp;punktu 3,<br>
     • jeśli nie masz drugiego składnika logowania (telefonu, klucza), użyj kodu z&nbsp;punktu 4.<br>
-    Po zalogowaniu wrócą wszystkie hasła zapisane w&nbsp;menedżerze.
+    Po zalogowaniu wrócą wszystkie hasła zapisane w&nbsp;menedżerze w&nbsp;chmurze (np. Bitwarden).
+    Menedżer lokalny (np. KeePassXC) nie ma konta w&nbsp;chmurze: wtedy potrzebujesz też osobnej kopii pliku z&nbsp;bazą haseł.
   </div>
 </section>
 
-<script src="generator.js?v=2"></script>
+<script src="generator.js?v=3"></script>
 </body>
 </html>

@@ -451,6 +451,10 @@ details.w-tle .zrodla li { margin: 0 0 4px; overflow-wrap: anywhere; }
   .podzakladki button { flex-direction: row; gap: 6px; }
 }
 
+@media (max-width: 310px) {
+  .zakladki { grid-template-columns: 1fr 1fr; }
+}
+
 /* Tablica Schultego: seria */
 .seria-pasek { display: inline-flex; align-items: center; gap: 8px; }
 .podsumowanie { text-align: left; font-weight: 400; }

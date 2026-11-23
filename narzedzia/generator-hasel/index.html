@@ -98,8 +98,16 @@
       <li><strong>Prywatność:</strong> słowa losuje Twoja przeglądarka (<code>crypto.getRandomValues</code>). Strona nie wysyła niczego i&nbsp;nie używa ciasteczek: możesz odłączyć internet i&nbsp;losować dalej. Kod jest jawny: <a href="https://github.com/adkacz/solutor-www/tree/main/narzedzia/generator-hasel">GitHub</a>.</li>
     </ul>
     <p class="drobny">Czasy są przybliżone i&nbsp;pokazują rząd wielkości. Siła liczona jest uczciwie: z&nbsp;założeniem, że atakujący zna listę <span id="liczba-slow">924</span> słów i&nbsp;cały sposób losowania (jest jawny w&nbsp;kodzie tej strony).</p>
+    <div class="po-ludzku">
+      <h2>Skąd te liczby: kłódka ze słowami</h2>
+      <p>Wyobraź sobie kłódkę rowerową z&nbsp;szyfrem. Ma sześć kółek, a&nbsp;na każdym zamiast cyfr są 924 słowa. Złodziej zna wszystkie słowa i&nbsp;wie, jak kłódka działa. Nie wie tylko, jak ustawiono kółka, i&nbsp;to jedno jest całym zabezpieczeniem.</p>
+      <p>Każde kolejne kółko mnoży liczbę ustawień przez 924. Jedno kółko to 924 próby, dwa to już ok. 850&nbsp;tys., a&nbsp;sześć to ok. 622 biliardy. Losowa cyfra działa jak mała dodatkowa rolka: mnoży wynik jeszcze przez 60, bo trzeba odgadnąć i&nbsp;cyfrę, i&nbsp;słowo, przy którym stoi. Razem to ok. 37 trylionów ustawień.</p>
+      <p>Myślniki i&nbsp;wielkie litery na początku każdego słowa są jak kolor kłódki. Wygląda inaczej, ale złodziej wie o&nbsp;tym z&nbsp;góry, więc nie ma przez to ani jednej próby więcej.</p>
+      <p><strong>Bit</strong> to jedno podwojenie pracy złodzieja. Jedno słowo to prawie 10 podwojeń, a&nbsp;całe hasło 65.</p>
+      <p>Złodziej może trafić za pierwszym razem albo dopiero przy ostatnim ustawieniu, więc średnio sprawdzi połowę. Czas zależy od tego, jak szybko może kręcić kółkami. W&nbsp;menedżerze haseł każda próba wymaga jakby 600&nbsp;000 obrotów korbą, a&nbsp;w&nbsp;źle zabezpieczonym serwisie kółka kręcą się niemal bez oporu. Dlatego to samo hasło wytrzyma w&nbsp;sejfie ok. 311&nbsp;tys. lat, a&nbsp;w&nbsp;takim serwisie ok. miesiąca. I&nbsp;dlatego nie wolno używać go nigdzie indziej.</p>
+    </div>
     <details class="zrodla">
-      <summary>Skąd te liczby</summary>
+      <summary>Wersja techniczna: wzory i&nbsp;źródła</summary>
       <h3>Jak liczona jest siła</h3>
       <p>Lista ma 924 różne słowa, więc jedno losowe słowo to log<sub>2</sub>(924) ≈ 9,85 bita. Losowa cyfra przy losowym słowie dodaje log<sub>2</sub>(10 × n), gdzie n to liczba słów, a&nbsp;wielkie litery w&nbsp;losowych słowach log<sub>2</sub>(2<sup>n</sup> − 1). Separator i&nbsp;wielka litera na początku każdego słowa nie dodają nic. Domyślne hasło ma 6 × 9,85 + log<sub>2</sub>(60) ≈ 65 bitów. Średni czas to połowa wszystkich możliwości podzielona przez liczbę prób na sekundę.</p>
       <h3>Skąd szybkość ataku</h3>

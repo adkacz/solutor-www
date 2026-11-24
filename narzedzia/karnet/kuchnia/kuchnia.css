@@ -1,0 +1,265 @@
+/* Karnet dla kuchni — prototyp. Tylko to, czego nie ma w ../../wspolne.css */
+body { padding-top: 16px; }
+
+/* Pasek demo u góry */
+.demo-pasek {
+  max-width: 1280px;
+  margin: 0 auto 14px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+.demo-opis { display: flex; flex-direction: column; }
+.demo-opis span { font-size: 13px; color: #C9D4D8; }
+.demo-sterowanie { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.demo-zegar { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.demo-zegar select { width: auto; min-height: 36px; padding: 4px 8px; font-size: 15px; }
+.demo-pasek .przycisk.maly { background: transparent; color: #fff; border-color: #5D7380; }
+.demo-pasek .przycisk.maly:hover { border-color: #fff; }
+
+/* Przełącznik telefonów (na wąskim ekranie widać jeden telefon naraz) */
+.przelacznik { max-width: 520px; margin: 0 auto 12px; display: flex; gap: 6px; }
+.przelacznik button {
+  position: relative;
+  flex: 1 1 0;
+  padding: 10px 6px;
+  font: 600 14px var(--font-body);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+  min-height: 44px;
+}
+.przelacznik button[aria-selected="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.znaczek {
+  position: absolute;
+  top: -7px;
+  right: -5px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--ember);
+  color: #fff;
+  font-size: 12px;
+  line-height: 22px;
+  text-align: center;
+}
+
+/* Telefony */
+.telefony { display: grid; gap: 16px; max-width: 1280px; margin: 0 auto; }
+.telefon {
+  display: none;
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 14px 16px 20px;
+}
+.telefon.widoczny { display: block; }
+.telefon-gora {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--steel);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+@media (min-width: 1100px) {
+  .przelacznik { display: none; }
+  .telefony { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+  .telefon { display: block; max-width: none; }
+}
+
+/* Dymki: powiadomienie na chwilę, u góry telefonu. Zerowa wysokość: dymek unosi się nad treścią
+   i jej nie przesuwa (znikający dymek przesuwał przyciski pod palcem i stuknięcie trafiało w sąsiedni). */
+.dymki { position: sticky; top: 8px; z-index: 3; height: 0; overflow: visible; pointer-events: none; }
+.dymek {
+  background: var(--ink);
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  box-shadow: 0 4px 14px rgba(22, 35, 43, .18);
+}
+
+/* Wspólne elementy w telefonie */
+.telefon h2 { font-size: 18px; margin: 0 0 4px; }
+.telefon h3 { font-size: 15px; margin: 18px 0 8px; }
+.kod.duzy { display: block; font-size: 30px; text-align: center; margin: 6px 0 10px; }
+.kod { font-family: var(--font-mono); font-weight: 700; letter-spacing: .06em; color: var(--ink); }
+.licznik {
+  background: var(--ok-soft);
+  border: 2px solid var(--ok);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  margin: 12px 0;
+}
+.licznik.minus { background: var(--ember-soft); border-color: var(--ember); }
+.licznik-liczba { font-size: 40px; font-weight: 800; color: var(--ink); line-height: 1.1; }
+.licznik-pod { font-size: 13px; color: var(--steel); }
+.uwaga {
+  background: #FFF6E0;
+  border: 1px solid #EBCB85;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  margin: 8px 0;
+}
+.uwaga.ok { background: var(--ok-soft); border-color: #A9D4BC; }
+.uwaga.zla { background: var(--ember-soft); border-color: #F0B9A5; }
+
+/* Zakładki w telefonie kuchni */
+.zakladki { display: flex; gap: 6px; margin-bottom: 12px; }
+.zakladki button {
+  position: relative;
+  flex: 1 1 0;
+  padding: 8px 4px;
+  font: 600 14px var(--font-body);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--bg);
+  color: var(--ink);
+  cursor: pointer;
+  min-height: 40px;
+}
+.zakladki button[aria-selected="true"] { background: var(--panel); border-color: var(--ink); }
+
+/* Podsumowanie dnia */
+.liczby { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 8px 0 12px; }
+.liczby div { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 6px; text-align: center; }
+.liczby b { display: block; font-size: 24px; color: var(--ink); line-height: 1.2; }
+.liczby span { font-size: 12px; color: var(--steel); }
+
+/* Wiersze list (wydawka, klienci, wpłaty) */
+.lista { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 12px; }
+.lista > li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.lista > li:last-child { border-bottom: 0; }
+.lista .kto { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.lista .imie { font-weight: 700; color: var(--ink); overflow-wrap: anywhere; }
+.lista .meta { font-size: 12.5px; color: var(--steel); }
+.lista .meta.zla { color: var(--ember); font-weight: 600; }
+.lista .przyciski { display: flex; gap: 6px; flex: none; }
+.lista li.wydany { background: var(--ok-soft); }
+.lista li.nieobecny .imie { text-decoration: line-through; color: var(--steel); }
+.lista li.pusto { justify-content: center; color: var(--steel); font-size: 14px; }
+.lista li.formularz { flex-wrap: wrap; background: var(--bg); }
+.przycisk.wydaj { flex: none; min-width: 92px; background: var(--ok); color: #fff; border-color: var(--ok); }
+.przycisk.wydaj:hover { background: #18643F; }
+.znak-apki {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--steel);
+  vertical-align: 1px;
+}
+
+/* Pomocnicze (zamiast stylów w atrybutach) */
+.telefon [hidden] { display: none; }
+.pelny { flex-basis: 100%; }
+.na-prawo { justify-content: flex-end; }
+.bez-marginesu { margin: 0; }
+.drobny.nad { margin: 0 0 8px; }
+
+/* Dni klienta */
+.dzien-stan { font-size: 13px; color: var(--steel); }
+.dzien-stan.nie { color: var(--ember); font-weight: 600; }
+.dzien-stan.tak { color: var(--ok); font-weight: 600; }
+
+/* Formularze w telefonie */
+.formularz-wiersz { display: flex; gap: 8px; align-items: end; flex-wrap: wrap; }
+.formularz-wiersz .pole { flex: 1 1 140px; }
+.formularz-wiersz .przycisk { flex: 0 0 auto; }
+
+/* Świeża zmiana: krótki błysk, żeby było widać, co właśnie przyszło */
+@keyframes blysk { from { background-color: #FFE9A8; } to { background-color: transparent; } }
+.blysk { animation: blysk 3s ease-out; }
+.telefon .przycisk[disabled] { opacity: .45; cursor: not-allowed; }
+.telefon .przycisk.szeroki { width: 100%; margin-top: 10px; }
+
+.demo-stopka { max-width: 780px; margin: 22px auto 0; }
+.demo-stopka p { margin: 8px 0 0; }
+
+@media (max-width: 560px) {
+  body { padding: 12px 10px 40px; }
+  .telefon { padding: 12px 12px 18px; border-radius: 18px; }
+  .lista > li { padding: 10px; }
+  .przycisk.wydaj { min-width: 80px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .blysk { animation: none; }
+}
+
+/* Szefowa ma cztery zakładki: na wąskim telefonie mniejsze litery */
+.zakladki button { font-size: 13px; padding: 8px 2px; }
+
+/* Zamówienie: zupa / drugie / jak / dni */
+.edytor {
+  flex-basis: 100%;
+  display: grid;
+  gap: 10px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  margin: 8px 0;
+}
+.edytor-dnia { display: grid; gap: 6px; }
+.wybor-dan { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.dni { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; min-width: 0; }
+.dni legend { font-size: 14px; font-weight: 600; color: var(--ink); padding: 0; margin-bottom: 4px; }
+.telefon .pole-wyboru input { width: 20px; height: 20px; margin: 0; accent-color: var(--ink); }
+.rzad-przyciskow { display: flex; gap: 8px; margin-top: 8px; }
+.rzad-przyciskow .przycisk { flex: 1 1 0; }
+.rzad-przyciskow.na-prawo .przycisk { flex: 0 0 auto; }
+.stale { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+.stale p { font-size: 15px; }
+
+/* Cennik */
+.cennik-siatka { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 6px 8px; align-items: center; margin-bottom: 10px; }
+.cennik-siatka .naglowek { font-size: 12px; font-weight: 600; color: var(--steel); }
+.cennik-siatka .grupa { font-size: 14px; font-weight: 600; color: var(--ink); }
+.cennik-siatka input { min-width: 0; width: 100%; padding: 8px; }
+
+/* Zestawienie dla księgowości i cennik w tabeli */
+table.zestawienie { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0; }
+table.zestawienie caption { text-align: left; font-weight: 700; color: var(--ink); padding-bottom: 6px; }
+table.zestawienie th, table.zestawienie td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+table.zestawienie th { font-size: 12px; color: var(--steel); }
+table.zestawienie .kwota { text-align: right; white-space: nowrap; }
+table.zestawienie tfoot td { font-weight: 700; border-bottom: 0; }
+
+@media print {
+  body.druk * { visibility: hidden; }
+  body.druk .zestawienie, body.druk .zestawienie * { visibility: visible; }
+  body.druk .zestawienie { position: absolute; left: 0; top: 0; width: 100%; }
+}
+.edytor-dnia .przyciski, .rzad-przyciskow.przyciski { display: flex; gap: 8px; }
+.lista li.wolny .imie, .lista li.wolny .meta { color: var(--steel); }

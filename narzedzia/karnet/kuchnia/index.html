@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
+<title>Karnet dla kuchni — prototyp — Solutor</title>
+<meta name="description" content="Prototyp: karnet obiadowy widziany z dwóch stron — klienta i kuchni. Zmyślone dane, nic nie jest wysyłane.">
+<link rel="stylesheet" href="../../wspolne.css">
+<link rel="stylesheet" href="kuchnia.css">
+</head>
+<body>
+
+<header class="demo-pasek">
+  <div class="demo-opis">
+    <strong>Prototyp: Karnet dla kuchni</strong>
+    <span>Zmyślone dane. Trzy telefony na jednym ekranie, nic nie jest wysyłane.</span>
+  </div>
+  <div class="demo-sterowanie">
+    <label class="demo-zegar" for="zegar">Godzina w demo
+      <select id="zegar">
+        <option value="">jak teraz</option>
+        <option value="07:40">7:40</option>
+        <option value="08:50">8:50</option>
+        <option value="09:15">9:15</option>
+        <option value="12:10">12:10</option>
+      </select>
+    </label>
+    <button id="od-nowa" class="przycisk maly" type="button">Od nowa</button>
+    <button id="od-nowa-parowanie" class="przycisk maly" type="button">Od nowa, z parowaniem</button>
+  </div>
+</header>
+
+<nav class="przelacznik" role="tablist" aria-label="Który telefon">
+  <button type="button" role="tab" data-telefon="klient">Adam (klient)<span class="znaczek" hidden></span></button>
+  <button type="button" role="tab" data-telefon="szefowa">Szefowa<span class="znaczek" hidden></span></button>
+  <button type="button" role="tab" data-telefon="kuchnia">Telefon kuchni<span class="znaczek" hidden></span></button>
+</nav>
+
+<main class="telefony">
+  <section class="telefon" id="tel-klient" aria-label="Telefon klienta">
+    <div class="telefon-gora"><span>Telefon klienta (Adam)</span><span class="godz"></span></div>
+    <div class="dymki" aria-live="polite"></div>
+    <div class="tresc"></div>
+  </section>
+  <section class="telefon" id="tel-szefowa" aria-label="Telefon szefowej kuchni">
+    <div class="telefon-gora"><span>Telefon szefowej</span><span class="godz"></span></div>
+    <div class="dymki" aria-live="polite"></div>
+    <div class="tresc"></div>
+  </section>
+  <section class="telefon" id="tel-kuchnia" aria-label="Telefon kuchni">
+    <div class="telefon-gora"><span>Telefon kuchni (dla kucharek)</span><span class="godz"></span></div>
+    <div class="dymki" aria-live="polite"></div>
+    <div class="tresc"></div>
+  </section>
+</main>
+
+<footer class="stopka-narzedzia demo-stopka">
+  <nav class="okruszki" aria-label="Ścieżka"><a href="../../../">Solutor.pl</a> › <a href="../../">Narzędzia</a> › <a href="../">Karnet</a></nav>
+  <p><strong>Jak to ma działać naprawdę.</strong> Każdy telefon ma własną aplikację (ikona na ekranie głównym, bez sklepu i bez logowania).
+    Kuchnia wysyła klientom link, aplikacja klienta tworzy losowy kod, a kuchnia porównuje go z kodem podanym przez SMS albo osobiście
+    i nadaje mu nazwę, którą widzi tylko ona. Wpłaty, obiady i nieobecności idą między telefonami zaszyfrowane kluczami z telefonów:
+    serwer Solutora przekazuje je dalej, ale nie umie ich przeczytać.</p>
+  <p>W tym prototypie wszystko dzieje się w jednej przeglądarce, na zmyślonych danych. Kod jest jawny:
+    <a href="https://github.com/adkacz/solutor-www/tree/main/narzedzia/karnet/kuchnia">GitHub</a>.</p>
+</footer>
+
+<script src="kuchnia.js"></script>
+</body>
+</html>

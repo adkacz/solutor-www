@@ -216,3 +216,50 @@ body { padding-top: 16px; }
 @media (prefers-reduced-motion: reduce) {
   .blysk { animation: none; }
 }
+
+/* Szefowa ma cztery zakładki: na wąskim telefonie mniejsze litery */
+.zakladki button { font-size: 13px; padding: 8px 2px; }
+
+/* Zamówienie: zupa / drugie / jak / dni */
+.edytor {
+  flex-basis: 100%;
+  display: grid;
+  gap: 10px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  margin: 8px 0;
+}
+.edytor-dnia { display: grid; gap: 6px; }
+.wybor-dan { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.dni { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; min-width: 0; }
+.dni legend { font-size: 14px; font-weight: 600; color: var(--ink); padding: 0; margin-bottom: 4px; }
+.telefon .pole-wyboru input { width: 20px; height: 20px; margin: 0; accent-color: var(--ink); }
+.rzad-przyciskow { display: flex; gap: 8px; margin-top: 8px; }
+.rzad-przyciskow .przycisk { flex: 1 1 0; }
+.rzad-przyciskow.na-prawo .przycisk { flex: 0 0 auto; }
+.stale { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+.stale p { font-size: 15px; }
+
+/* Cennik */
+.cennik-siatka { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 6px 8px; align-items: center; margin-bottom: 10px; }
+.cennik-siatka .naglowek { font-size: 12px; font-weight: 600; color: var(--steel); }
+.cennik-siatka .grupa { font-size: 14px; font-weight: 600; color: var(--ink); }
+.cennik-siatka input { min-width: 0; width: 100%; padding: 8px; }
+
+/* Zestawienie dla księgowości i cennik w tabeli */
+table.zestawienie { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0; }
+table.zestawienie caption { text-align: left; font-weight: 700; color: var(--ink); padding-bottom: 6px; }
+table.zestawienie th, table.zestawienie td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+table.zestawienie th { font-size: 12px; color: var(--steel); }
+table.zestawienie .kwota { text-align: right; white-space: nowrap; }
+table.zestawienie tfoot td { font-weight: 700; border-bottom: 0; }
+
+@media print {
+  body.druk * { visibility: hidden; }
+  body.druk .zestawienie, body.druk .zestawienie * { visibility: visible; }
+  body.druk .zestawienie { position: absolute; left: 0; top: 0; width: 100%; }
+}
+.edytor-dnia .przyciski, .rzad-przyciskow.przyciski { display: flex; gap: 8px; }
+.lista li.wolny .imie, .lista li.wolny .meta { color: var(--steel); }

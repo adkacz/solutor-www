@@ -189,7 +189,7 @@ function pokazKafelki(r) {
       } else {
         const k = el('button', 'kafelek');
         k.type = 'button';
-        k.title = 'Odhacz wykorzystanie (data z pola „Data” poniżej)';
+        k.title = 'Wykorzystaj (data z pola „Data” poniżej)';
         k.append(el('span', 'nr', `#${nr}`), el('span', 'stan', 'wolny'));
         k.addEventListener('click', odhacz);
         box.append(k);
@@ -244,8 +244,8 @@ function odhacz() {
   const r = rozlicz();
   const data = poprawnaData($('odhacz-data').value) ? $('odhacz-data').value : dzis();
   if (stan.wpisy.some((w) => w.typ === 'uzycie' && w.data === data)
-      && !confirm(`${dataPelna(data)} jest już odhaczone. Odhaczyć kolejne tego samego dnia?`)) return;
-  if (r.zostalo <= 0 && !confirm('W karnecie nic nie zostało. Odhaczyć na minus (rozliczy się przy następnej wpłacie)?')) return;
+      && !confirm(`${dataPelna(data)} ma już wykorzystanie. Zapisać kolejne tego samego dnia?`)) return;
+  if (r.zostalo <= 0 && !confirm('W karnecie nic nie zostało. Wykorzystać na minus (rozliczy się przy następnej wpłacie)?')) return;
   stan.wpisy.push({
     id: nowyId(), typ: 'uzycie', data, kwota: 0, ile: 1,
     notatka: $('odhacz-notatka').value.trim().slice(0, 80), kiedy: Date.now(),
@@ -270,7 +270,7 @@ function usun(id) {
   if (!w) return;
   const pytanie = w.typ === 'wplata'
     ? `Usunąć wpłatę ${zl(w.kwota)} z ${dataPelna(w.data)}?`
-    : `Cofnąć odhaczenie z ${dataPelna(w.data)}?`;
+    : `Cofnąć wykorzystanie z ${dataPelna(w.data)}?`;
   if (!confirm(pytanie)) return;
   stan.wpisy = stan.wpisy.filter((x) => x.id !== id);
   zapisz();

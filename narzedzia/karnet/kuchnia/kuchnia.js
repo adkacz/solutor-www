@@ -159,6 +159,14 @@
     return s;
   }
 
+  // Pusta kuchnia: same ceny, zero klientów i wpłat — do pokazania od „pierwszego klienta”.
+  function pustyStan() {
+    var s = nowyStan(true);
+    s.klienci = []; s.prosby = []; s.wplaty = []; s.zmiany = []; s.naliczenia = []; s.wydania = [];
+    s.cennik = [s.cennik[0]];
+    return s;
+  }
+
   function poprawny(o) {
     return o && o.wersja === 2 && o.klientApka && ['klienci', 'prosby', 'wplaty', 'zmiany', 'naliczenia', 'wydania', 'cennik']
       .every(function (k) { return Array.isArray(o[k]); }) && o.cennik.length > 0;
@@ -168,7 +176,7 @@
       var t = localStorage.getItem(KLUCZ);
       if (t) { var o = JSON.parse(t); if (poprawny(o)) return o; }
     } catch (e) { /* brak pamięci przeglądarki: demo działa do zamknięcia karty */ }
-    return nowyStan(false);
+    return /(^|&)pusta(=|&|$)/.test(location.search.slice(1)) ? pustyStan() : nowyStan(false);
   }
   function zapisz() { try { localStorage.setItem(KLUCZ, JSON.stringify(stan)); } catch (e) { /* jw. */ } }
 
@@ -681,7 +689,7 @@
     var id = a.klientId, k = klient(id), d = dzis(), s = saldo(id), dzienna = cenaStala(k, d);
     t.push(el('div', { klasa: 'licznik' + (s < 0 ? ' minus' : '') + blysk('klient', 'licznik') }, [
       el('div', { klasa: 'licznik-liczba', tekst: zl(s) }),
-      el('div', { klasa: 'licznik-pod', tekst: s < 0 ? 'do dopłaty'
+      el('div', { klasa: 'licznik-pod', tekst: s < 0 ? 'do dopłaty' : s === 0 ? 'na koncie. Zgłoś wpłatę poniżej, gdy zrobisz przelew.'
         : 'na koncie, wystarczy na około ' + obiady(Math.floor(s / dzienna)) + ' po ' + zl(dzienna) })
     ]));
     var zgl = stan.wplaty.filter(function (w) { return w.klientId === id && w.stan === 'zgloszona'; });
@@ -882,12 +890,16 @@
     t.push(el('h3', { tekst: 'Zapisz wpłatę (gotówka, klient bez aplikacji)' }));
     var opcje = stan.klienci.slice().sort(function (x, y) { return x.nazwa.localeCompare(y.nazwa, 'pl'); })
       .map(function (k) { return [k.id, k.nazwa]; });
-    t.push(el('div', { klasa: 'pola' }, [
-      wybor('Klient', 'sz-klient', opcje, opcje.length ? opcje[0][0] : ''),
-      poleKwoty('Kwota (zł)', 'sz-kwota', '250')
-    ]));
-    t.push(przycisk('Zapisz wpłatę', 'glowny szeroki', zapiszWplateRecznie));
-    t.push(komunikat('szWplata'));
+    if (opcje.length) {
+      t.push(el('div', { klasa: 'pola' }, [
+        wybor('Klient', 'sz-klient', opcje, opcje[0][0]),
+        poleKwoty('Kwota (zł)', 'sz-kwota', '250')
+      ]));
+      t.push(przycisk('Zapisz wpłatę', 'glowny szeroki', zapiszWplateRecznie));
+      t.push(komunikat('szWplata'));
+    } else {
+      t.push(el('p', { klasa: 'drobny', tekst: 'Najpierw dodaj klienta w zakładce „Klienci”.' }));
+    }
 
     // Zestawienie dla księgowości
     t.push(el('h3', { tekst: 'Zestawienie dla księgowości' }));
@@ -973,6 +985,7 @@
         nazwaGrupy(k.grupa) + ' · ' + opisKrotko(k.stale) + ', ' + dniOpis(k.stale.dni) + ' (' + zl(cenaStala(k, d)) + ') · konto ' + zl(s), s < 0,
         [przycisk('Zmień', 'maly', function () { edytuj('szefowa', k.id, 'se-'); })]));
     });
+    if (!stan.klienci.length) ul.appendChild(pusto('Jeszcze nikogo. Klient dołącza w swojej aplikacji przyciskiem „Dołącz”, a klienta bez aplikacji dodasz niżej.'));
     t.push(ul);
 
     t.push(el('h3', { tekst: 'Dodaj klienta bez aplikacji' }));
@@ -1091,8 +1104,8 @@
     window.scrollTo(0, 0);
   }
 
-  function odNowa(zParowaniem) {
-    stan = nowyStan(zParowaniem);
+  function odNowa(tryb) {
+    stan = tryb === 'pusta' ? pustyStan() : nowyStan(tryb === 'parowanie');
     ui.szkic = {}; ui.blad = {}; ui.info = {};
     ui.zakladka = 'dzis';
     ui.edycja = { klient: null, szefowa: null };
@@ -1108,8 +1121,11 @@
     b.addEventListener('click', function () { pokazTelefon(b.getAttribute('data-telefon')); });
   });
   document.getElementById('zegar').addEventListener('change', function (e) { zegarDemo = e.target.value; rysuj(); });
-  document.getElementById('od-nowa').addEventListener('click', function () { odNowa(false); });
-  document.getElementById('od-nowa-parowanie').addEventListener('click', function () { odNowa(true); });
+  document.getElementById('od-nowa').addEventListener('click', function () { odNowa(''); });
+  document.getElementById('od-nowa-parowanie').addEventListener('click', function () { odNowa('parowanie'); });
+  document.getElementById('pusta').addEventListener('click', function () {
+    if (window.confirm('Usunąć wszystkie dane prototypu (klientów, wpłaty, zamówienia) i zacząć od pustej kuchni?')) odNowa('pusta');
+  });
   // Po poszerzeniu okna wszystkie telefony są widoczne: dymki czekające na ukrytym telefonie mogą już zgasnąć.
   window.matchMedia('(min-width: 1100px)').addEventListener('change', function () {
     TELEFONY.forEach(function (t) {

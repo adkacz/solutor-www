@@ -72,8 +72,10 @@
     for (var i = 0; i < s.zmiany.length; i++) { var z = s.zmiany[i]; if (z.klientId === id && z.data === d) return z; }
     return null;
   }
-  function wDniuStalym(k, d) { return d >= k.od && !!k.stale.dni[zData(d).getDay()]; }
+  // k.od = dzień, od którego klient je i płaci; null, dopóki kuchnia nie przyjmie pierwszej wpłaty.
+  function wDniuStalym(k, d) { return !!k.od && d >= k.od && !!k.stale.dni[zData(d).getDay()]; }
   function zamowienie(k, d, s) {
+    if (!k.od || d < k.od) return null;
     var z = zmianaDnia(k.id, d, s);
     if (z) return z.nie ? null : { zupa: z.zupa, drugie: z.drugie, jak: z.jak };
     if (!wDniuStalym(k, d)) return null;
@@ -208,6 +210,7 @@
     }
     var ostatni = przed9() ? dodajDni(d, -1) : d;
     stan.klienci.forEach(function (k) {
+      if (!k.od) return;
       var x = k.naliczoneDo ? dodajDni(k.naliczoneDo, 1) : k.od;
       if (x < k.od) x = k.od;
       if (x > ostatni) return;
@@ -372,7 +375,7 @@
       if (!n) { ui.blad[p] = 'Wpisz nazwę, pod którą chcesz widzieć tego klienta.'; rysuj(); return; }
       var d = dzis();
       k = { id: noweId('k'), nazwa: n.slice(0, 40), kod: kod, apka: true, grupa: wartosc(p + '-grupa') || 'pozostali',
-        od: d, naliczoneDo: przed9() ? dodajDni(d, -1) : d, stale: { zupa: true, drugie: true, jak: 'miejsce', dni: PON_PT.slice() } };
+        od: null, naliczoneDo: null, stale: { zupa: true, drugie: true, jak: 'miejsce', dni: PON_PT.slice() } };
       stan.klienci.push(k);
     } else {
       k = klient(kogo);
@@ -419,8 +422,22 @@
     zmiana();
   }
 
+  // Pierwsza przyjęta wpłata (albo stan rozliczeń) uruchamia obiady: od dziś, gdy jest przed 9:00, inaczej od jutra.
+  function aktywuj(k) {
+    if (!k || k.od) return;
+    var d = dzis();
+    k.od = przed9() ? d : dodajDni(d, 1);
+    k.naliczoneDo = dodajDni(k.od, -1);
+    oznacz(['szefowa', 'kuchnia'], k.od === d ? 'dz-' + k.id : 'pl-' + k.od);
+    if (k.id === mojId()) dymek('klient', 'Kuchnia przyjęła wpłatę. Obiady od ' + (k.od === d ? 'dziś' : krotkoIData(k.od)) + '.');
+  }
   function przyjmij(wid) {
-    stan.wplaty.forEach(function (w) { if (w.id === wid && w.stan === 'zgloszona') { w.stan = 'przyjeta'; w.przyjeta = dzis() + ' ' + godzTeraz(); } });
+    stan.wplaty.forEach(function (w) {
+      if (w.id !== wid || w.stan !== 'zgloszona') return;
+      w.stan = 'przyjeta';
+      w.przyjeta = dzis() + ' ' + godzTeraz();
+      aktywuj(klient(w.klientId));
+    });
     zmiana();
   }
   function usunWplate(wid) {
@@ -448,6 +465,7 @@
     delete ui.blad.szWplata;
     var w = { id: noweId('w'), klientId: id, typ: 'gotowka', kwota: kwota, data: dzis(), zgl: dzis(), godz: godzTeraz(), stan: 'przyjeta' };
     stan.wplaty.push(w);
+    aktywuj(klient(id));
     delete ui.szkic['sz-kwota'];
     oznacz(['szefowa'], 'wpl-' + w.id);
     if (id === mojId()) { oznacz(['klient'], 'licznik'); dymek('klient', 'Kuchnia zapisała wpłatę ' + zl(kwota) + '. Na koncie: ' + zl(saldo(id)) + '.'); }
@@ -458,13 +476,16 @@
     var n = wartosc('sz-nazwa').trim();
     var ile = naGrosze(wartosc('sz-start') || '0', true);
     if (!n) { ui.blad.szKlient = 'Wpisz nazwę klienta.'; rysuj(); return; }
-    if (ile === null) { ui.blad.szKlient = 'Stan z zeszytu w złotych, np. 120 albo -30.'; rysuj(); return; }
+    if (ile === null) { ui.blad.szKlient = 'Stan rozliczeń w złotych, np. 120 albo -30.'; rysuj(); return; }
     delete ui.blad.szKlient;
     var d = dzis();
     var k = { id: noweId('k'), nazwa: n.slice(0, 40), kod: '', apka: false, grupa: wartosc('sz-grupa') || 'pozostali',
-      od: d, naliczoneDo: przed9() ? dodajDni(d, -1) : d, stale: { zupa: true, drugie: true, jak: 'miejsce', dni: PON_PT.slice() } };
+      od: null, naliczoneDo: null, stale: { zupa: true, drugie: true, jak: 'miejsce', dni: PON_PT.slice() } };
     stan.klienci.push(k);
-    if (ile !== 0) stan.wplaty.push({ id: noweId('w'), klientId: k.id, typ: 'start', kwota: ile, data: d, zgl: d, godz: godzTeraz(), stan: 'przyjeta' });
+    if (ile !== 0) {
+      stan.wplaty.push({ id: noweId('w'), klientId: k.id, typ: 'start', kwota: ile, data: d, zgl: d, godz: godzTeraz(), stan: 'przyjeta' });
+      aktywuj(k);
+    }
     wyczyscSzkic('sz-nazwa'); wyczyscSzkic('sz-start');
     oznacz(['szefowa', 'kuchnia'], 'kl-' + k.id);
     zmiana();
@@ -709,7 +730,10 @@
       if (nowa !== dzienna) t.push(el('p', { klasa: 'uwaga' + blysk('klient', 'cennik'), tekst: 'Od ' + ladnaData(nast.od) + ' Twój obiad kosztuje ' + zl(nowa) + ' (teraz ' + zl(dzienna) + ').' }));
     }
 
-    // Dziś
+    // Dziś i najbliższe dni — dopiero gdy kuchnia przyjmie pierwszą wpłatę
+    if (!k.od) {
+      t.push(el('p', { klasa: 'uwaga', tekst: 'Obiady zaczną się, gdy kuchnia przyjmie Twoją pierwszą wpłatę. Zgłoś ją niżej, gdy zrobisz przelew.' }));
+    } else {
     t.push(el('h3', { tekst: 'Dziś, ' + dzienIData(d) }));
     var wyd = wydanie(id, d), zDzis = zamowienie(k, d), zmDzis = zmianaDnia(id, d), naliczone = null;
     stan.naliczenia.forEach(function (n) { if (n.klientId === id && n.data === d) naliczone = n; });
@@ -746,6 +770,8 @@
     t.push(lista);
     t.push(el('p', { klasa: 'drobny', tekst: 'Urlop, „dziś tylko zupa” albo „na wynos” zaznaczysz z wyprzedzeniem. Kuchnia widzi to od razu.' }));
 
+    }
+
     // Stałe zamówienie
     t.push(el('h3', { tekst: 'Moje stałe zamówienie' }));
     if (ui.edycja.klient === 'stale') {
@@ -778,7 +804,7 @@
     var h = [];
     stan.wplaty.forEach(function (w) {
       if (w.klientId !== id) return;
-      var o = w.typ === 'start' ? 'Stan z zeszytu' : 'Wpłata' + (w.typ === 'gotowka' ? ' gotówką' : '') + (w.stan === 'usunieta' ? ' (usunięta przez kuchnię)' : '');
+      var o = w.typ === 'start' ? 'Stan rozliczeń' : 'Wpłata' + (w.typ === 'gotowka' ? ' gotówką' : '') + (w.stan === 'usunieta' ? ' (usunięta przez kuchnię)' : '');
       h.push({ k: w.zgl + ' ' + w.godz, opis: o, meta: ladnaData(w.data) + ' · ' + (w.stan === 'usunieta' ? '' : '+') + zl(w.kwota), zla: w.stan === 'usunieta' });
     });
     stan.naliczenia.forEach(function (n) {
@@ -982,7 +1008,8 @@
         return;
       }
       ul.appendChild(wiersz(blysk('szefowa', 'kl-' + k.id).trim() || null, k.nazwa, k.apka ? 'aplikacja' : 'bez aplikacji',
-        nazwaGrupy(k.grupa) + ' · ' + opisKrotko(k.stale) + ', ' + dniOpis(k.stale.dni) + ' (' + zl(cenaStala(k, d)) + ') · konto ' + zl(s), s < 0,
+        nazwaGrupy(k.grupa) + ' · ' + opisKrotko(k.stale) + ', ' + dniOpis(k.stale.dni) + ' (' + zl(cenaStala(k, d)) + ') · konto ' + zl(s) +
+          (k.od ? (k.od > d ? ' · obiady od ' + krotkoIData(k.od) : '') : ' · czeka na pierwszą wpłatę'), s < 0 || !k.od,
         [przycisk('Zmień', 'maly', function () { edytuj('szefowa', k.id, 'se-'); })]));
     });
     if (!stan.klienci.length) ul.appendChild(pusto('Jeszcze nikogo. Klient dołącza w swojej aplikacji przyciskiem „Dołącz”, a klienta bez aplikacji dodasz niżej.'));
@@ -992,11 +1019,11 @@
     t.push(el('div', { klasa: 'pola' }, [
       pole('Nazwa', 'sz-nazwa', { type: 'text', maxlength: 40, autocomplete: 'off', placeholder: 'np. Pan Józef' }, ''),
       wybor('Grupa cenowa', 'sz-grupa', GRUPY, 'pozostali'),
-      poleKwoty('Stan z zeszytu (zł)', 'sz-start', '0')
+      poleKwoty('Stan rozliczeń (zł)', 'sz-start', '0')
     ]));
     t.push(przycisk('Dodaj klienta', 'szeroki', dodajKlienta));
     t.push(komunikat('szKlient'));
-    t.push(el('p', { klasa: 'drobny', tekst: 'Nowy klient dostaje zamówienie „zupa + drugie, na miejscu, pon–pt”; zmienisz je przyciskiem „Zmień”. Klient z aplikacją sam zgłasza wpłaty i zmienia zamówienie.' }));
+    t.push(el('p', { klasa: 'drobny', tekst: 'Na wydawce klient pojawi się po pierwszej przyjętej wpłacie albo od razu, gdy wpiszesz stan rozliczeń inny niż 0 (przed 9:00 od dziś, później od jutra). Zamówienie na start: zupa + drugie, na miejscu, pon–pt — zmienisz je przyciskiem „Zmień”.' }));
     return t;
   }
 
